@@ -13,7 +13,7 @@ echo "==========================================================================
 # 1. System Packages Update
 echo -e "\n[1/7] Updating system packages and installing tools..."
 sudo apt-get update -y
-sudo apt-get install -y build-essential git curl htop nvtop unzip jq python3-pip python3-venv
+sudo apt-get install -y build-essential git curl htop nvtop unzip jq python3-pip python3-venv tmux
 
 # 2. Verify NVIDIA GPU Architecture
 echo -e "\n[2/7] Checking NVIDIA GPUs..."
@@ -39,10 +39,10 @@ fi
 source "${VENV_PATH}/bin/activate"
 pip install --upgrade pip setuptools wheel
 
-# 4. Install exact production ML dependencies
-echo -e "\n[4/7] Installing pinned ML dependencies..."
-pip install -r requirements.txt
-pip install flash-attn --no-build-isolation || echo "Notice: Flash-Attention fallback to PyTorch SDPA (native in PyTorch 2.5)"
+# 4. Install ML dependencies
+echo -e "\n[4/7] Installing ML dependencies..."
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 || pip install torch
+pip install transformers accelerate peft trl bitsandbytes datasets pyyaml pydantic numpy tqdm fastapi uvicorn sse-starlette huggingface-hub wandb
 
 # 5. Configure Accelerate Default Profile
 echo -e "\n[5/7] Configuring Hugging Face Accelerate..."
@@ -50,7 +50,7 @@ mkdir -p "${HOME}/.cache/huggingface/accelerate"
 cp configs/accelerate_config.yaml "${HOME}/.cache/huggingface/accelerate/default_config.yaml"
 echo "Accelerate config copied to ~/.cache/huggingface/accelerate/default_config.yaml"
 
-# 6. Verify PyTorch 2.5 CUDA & SDPA Support
+# 6. Verify PyTorch CUDA & SDPA Support
 echo -e "\n[6/7] Verifying PyTorch CUDA & SDPA..."
 python3 -c "
 import torch
@@ -63,13 +63,13 @@ if torch.cuda.is_available():
     print('bfloat16 supported:', torch.cuda.is_bf16_supported())
 "
 
-# 7. Verify Dataset and Audit Status
-echo -e "\n[7/7] Verifying Golden Dataset on disk..."
-if [ -f "data/n14_golden_15k.jsonl.gz" ] && [ -f "data/PHASE_1_AUDIT_PASSED.txt" ]; then
-    echo "SUCCESS: Master dataset and Phase 1 Audit signoff verified."
+# 7. Verify Dataset
+echo -e "\n[7/7] Checking dataset..."
+if [ -f "data/n14_golden_15k.jsonl.gz" ]; then
+    echo "SUCCESS: Master dataset verified on disk."
     ls -lh data/n14_golden_15k.jsonl.gz
 else
-    echo "WARNING: Dataset or audit file missing. Run 'python src/build_golden_dataset.py' to generate."
+    echo "Note: Dataset not uploaded yet. Upload via scp from local PC."
 fi
 
 echo -e "\n================================================================================"

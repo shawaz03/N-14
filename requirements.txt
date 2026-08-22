@@ -1,11 +1,11 @@
-﻿# Core Deep Learning & Transformer Stack
-torch==2.5.1
-transformers==4.48.0
-accelerate==0.36.0
-peft==0.14.0
-trl==0.14.0
-bitsandbytes==0.45.0
-datasets==3.2.0
+# Core Deep Learning & Transformer Stack
+torch>=2.1.0
+transformers>=4.48.0
+accelerate>=0.36.0
+peft>=0.14.0
+trl>=0.14.0
+bitsandbytes>=0.45.0
+datasets>=3.2.0
 
 # Tokenization & Serialization
 tokenizers>=0.21.0
@@ -16,7 +16,7 @@ tiktoken>=0.8.0
 # Configuration & Data Processing
 pyyaml>=6.0.2
 pydantic>=2.10.0
-numpy>=1.26.4
+numpy>=1.26.0
 tqdm>=4.67.0
 
 # Inference Server & Streaming (Phase 4)
