@@ -7,6 +7,7 @@ Target: Qwen/Qwen2.5-Coder-7B-Instruct on 4x NVIDIA A10G (96 GB VRAM)
 
 import argparse
 import gzip
+import inspect
 import json
 import logging
 import os
@@ -145,8 +146,10 @@ def main():
         trainable, total = model.get_nb_trainable_parameters()
         logger.info(f"Trainable params: {trainable:,} / {total:,} ({100 * trainable / total:.2f}%)")
 
-    # ── 5. Training Arguments ─────────────────────────────────────────────
-    training_args = TrainingArguments(
+    # ── 5. Training Arguments (version-proof) ───────────────────────────
+    # transformers 5.x restructured TrainingArguments, so we dynamically
+    # check which kwargs the installed version accepts.
+    desired_args = dict(
         output_dir=args.output_dir,
         num_train_epochs=train_cfg.get("num_train_epochs", 3),
         per_device_train_batch_size=train_cfg.get("per_device_train_batch_size", 2),
@@ -170,6 +173,25 @@ def main():
         report_to="none",
         ddp_find_unused_parameters=False,
     )
+
+    # Introspect TrainingArguments to filter only valid params
+    sig = inspect.signature(TrainingArguments.__init__)
+    valid_params = set(sig.parameters.keys()) - {"self"}
+    has_kwargs = any(
+        p.kind == inspect.Parameter.VAR_KEYWORD
+        for p in sig.parameters.values()
+    )
+
+    if has_kwargs:
+        # Constructor accepts **kwargs, pass everything
+        filtered_args = desired_args
+    else:
+        filtered_args = {k: v for k, v in desired_args.items() if k in valid_params}
+        skipped = set(desired_args.keys()) - set(filtered_args.keys())
+        if skipped and local_rank == 0:
+            logger.warning(f"Skipped unsupported TrainingArguments params for this transformers version: {skipped}")
+
+    training_args = TrainingArguments(**filtered_args)
 
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
