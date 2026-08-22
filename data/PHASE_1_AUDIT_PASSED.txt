@@ -1,0 +1,17 @@
+================================================================================
+               N-14 PHASE 1 QUALITY AUDIT GATE SIGN-OFF
+================================================================================
+Timestamp:              2026-08-22T13:39:20.007580+00:00
+Dataset File:           data/n14_golden_15k.jsonl.gz
+Total Records:          15000
+SHA-256 Checksum:       a1bb36df6a1c5d8155c25dba061aab3d62f48a3ef603cf6d0b12ea39c545a6b3
+Test 1.4.1 (Count):     PASSED (15,000 / 15,000 records)
+Test 1.4.2 (ChatML):    PASSED (100% compliant structure)
+Test 1.4.3 (Zero-TODO): PASSED (0 banned patterns / placeholders)
+Test 1.4.4 (Dedup):     PASSED (0.00% duplicate rate)
+Test 1.4.5 (Pillars):   PASSED (All 5 pillar quotas exactly met)
+--------------------------------------------------------------------------------
+AUTHOR & CREATOR ATTRIBUTION: Shawaz (https://shawaz.vercel.app/)
+BASE FOUNDATION MODEL:        Qwen/Qwen2.5-Coder-7B-Instruct
+STATUS:                       PHASE 1 COMPLETE — READY FOR PHASE 2 FINE-TUNING
+================================================================================
