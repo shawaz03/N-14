@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 N-14 Multi-GPU Distributed SFT Training Engine (Task 2.2)
-Target Model: Qwen/Qwen2.5-Coder-7B-Instruct
-Target Hardware: AWS EC2 g5.12xlarge (4x NVIDIA A10G, 96 GB VRAM)
+Uses transformers.Trainer directly for maximum stability across all library versions.
+Target: Qwen/Qwen2.5-Coder-7B-Instruct on 4x NVIDIA A10G (96 GB VRAM)
 """
 
 import argparse
@@ -12,11 +12,21 @@ import logging
 import os
 import sys
 from datetime import datetime, timezone
-from typing import Dict, Any, Tuple
+from typing import Dict, Any
 
+import torch
 import yaml
+from datasets import Dataset
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    Trainer,
+    TrainingArguments,
+    DataCollatorForLanguageModeling,
+)
 
-# Configure logging
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - [%(name)s] - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
@@ -28,174 +38,34 @@ logger = logging.getLogger("N14-Trainer")
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(ROOT_DIR, "configs", "model_config.yaml")
 
+
 def load_config() -> Dict[str, Any]:
     if os.path.exists(CONFIG_PATH):
         with open(CONFIG_PATH, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
     return {}
 
-def get_quantization_config(config: Dict[str, Any]):
-    """Configures 4-bit NF4 Quantization with double quant and bfloat16 compute dtype."""
-    import torch
-    from transformers import BitsAndBytesConfig
-    
-    quant_cfg = config.get("quantization", {})
-    return BitsAndBytesConfig(
-        load_in_4bit=quant_cfg.get("load_in_4bit", True),
-        bnb_4bit_quant_type=quant_cfg.get("bnb_4bit_quant_type", "nf4"),
-        bnb_4bit_compute_dtype=torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16,
-        bnb_4bit_use_double_quant=quant_cfg.get("bnb_4bit_use_double_quant", True),
+
+def tokenize_chat(example, tokenizer, max_length=2048):
+    """Tokenizes a single ChatML conversation into input_ids and labels."""
+    text = tokenizer.apply_chat_template(example["messages"], tokenize=False)
+    tokenized = tokenizer(
+        text,
+        truncation=True,
+        max_length=max_length,
+        padding=False,
+        return_tensors=None,
     )
+    tokenized["labels"] = tokenized["input_ids"].copy()
+    return tokenized
 
-def load_base_model(model_name_or_path: str, quant_config):
-    """Loads Qwen2.5-Coder base model with 4-bit quantization and SDPA attention."""
-    import torch
-    from transformers import AutoModelForCausalLM
-    from peft import prepare_model_for_kbit_training
-
-    local_rank = int(os.environ.get("LOCAL_RANK", 0))
-    logger.info(f"[Rank {local_rank}] Loading base model: {model_name_or_path} with 4-bit NF4...")
-
-    if torch.cuda.is_available():
-        torch.cuda.set_device(local_rank)
-        device_map = {"": local_rank}
-    else:
-        device_map = None
-
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name_or_path,
-        quantization_config=quant_config if torch.cuda.is_available() else None,
-        torch_dtype=torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float32,
-        device_map=device_map,
-        attn_implementation="sdpa" if torch.cuda.is_available() else "eager",
-        trust_remote_code=True,
-    )
-    
-    if torch.cuda.is_available():
-        model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
-        
-    return model
-
-def get_lora_config(config: Dict[str, Any]):
-    """Configures LoRA adapter targeting all 7 linear projection layers."""
-    from peft import LoraConfig
-    lora_cfg = config.get("lora", {})
-    target_modules = lora_cfg.get("target_modules", [
-        "q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"
-    ])
-    return LoraConfig(
-        r=lora_cfg.get("r", 32),
-        lora_alpha=lora_cfg.get("lora_alpha", 64),
-        lora_dropout=lora_cfg.get("lora_dropout", 0.05),
-        bias=lora_cfg.get("bias", "none"),
-        task_type="CAUSAL_LM",
-        target_modules=target_modules,
-    )
-
-def load_and_prepare_dataset(
-    dataset_path: str,
-    tokenizer,
-    eval_split_ratio: float = 0.05,
-    seed: int = 42
-):
-    """Loads gzip JSONL dataset and formats into Hugging Face Dataset with train/eval split."""
-    from datasets import Dataset
-    logger.info(f"Loading dataset from: {dataset_path}")
-    raw_records = []
-    with gzip.open(dataset_path, "rt", encoding="utf-8") as f:
-        for line in f:
-            raw_records.append(json.loads(line))
-            
-    logger.info(f"Loaded {len(raw_records)} records. Applying ChatML formatting...")
-    
-    formatted_data = []
-    for rec in raw_records:
-        if tokenizer is not None:
-            text = tokenizer.apply_chat_template(rec["messages"], tokenize=False)
-            formatted_data.append({"text": text})
-        else:
-            formatted_data.append({"messages": rec["messages"]})
-        
-    full_dataset = Dataset.from_list(formatted_data)
-    
-    # Train / Eval Split (95% train = 14,250 records, 5% eval = 750 records)
-    split_dataset = full_dataset.train_test_split(test_size=eval_split_ratio, seed=seed)
-    train_ds = split_dataset["train"]
-    eval_ds = split_dataset["test"]
-    
-    logger.info(f"Dataset split complete: Train={len(train_ds)} records, Eval={len(eval_ds)} records")
-    return train_ds, eval_ds
-
-def build_trainer(
-    model,
-    tokenizer,
-    train_dataset,
-    eval_dataset,
-    lora_config,
-    config: Dict[str, Any],
-    output_dir: str
-):
-    """Instantiates SFTTrainer with exact hyperparameters from model_config.yaml."""
-    import torch
-    from transformers import TrainingArguments, TrainerCallback
-    from trl import SFTTrainer
-
-    class MetricsLoggerCallback(TrainerCallback):
-        def on_log(self, args, state, control, logs=None, **kwargs):
-            if logs:
-                step = state.global_step
-                loss = logs.get("loss", "N/A")
-                eval_loss = logs.get("eval_loss", "N/A")
-                lr = logs.get("learning_rate", "N/A")
-                logger.info(f"Step {step:5d} | Train Loss: {loss} | Eval Loss: {eval_loss} | LR: {lr}")
-
-    train_cfg = config.get("training", {})
-    bf16_supported = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
-    
-    training_args = TrainingArguments(
-        output_dir=output_dir,
-        num_train_epochs=train_cfg.get("num_train_epochs", 3),
-        per_device_train_batch_size=train_cfg.get("per_device_train_batch_size", 2),
-        per_device_eval_batch_size=train_cfg.get("per_device_train_batch_size", 2),
-        gradient_accumulation_steps=train_cfg.get("gradient_accumulation_steps", 4),
-        learning_rate=float(train_cfg.get("learning_rate", 1.5e-4)),
-        lr_scheduler_type=train_cfg.get("lr_scheduler_type", "cosine"),
-        warmup_ratio=train_cfg.get("warmup_ratio", 0.05),
-        weight_decay=train_cfg.get("weight_decay", 0.01),
-        optim=train_cfg.get("optim", "paged_adamw_8bit"),
-        bf16=bf16_supported,
-        fp16=not bf16_supported and torch.cuda.is_available(),
-        gradient_checkpointing=train_cfg.get("gradient_checkpointing", True),
-        max_grad_norm=train_cfg.get("max_grad_norm", 1.0),
-        logging_steps=train_cfg.get("logging_steps", 10),
-        eval_strategy=train_cfg.get("evaluation_strategy", "steps"),
-        eval_steps=train_cfg.get("eval_steps", 500),
-        save_strategy=train_cfg.get("save_strategy", "steps"),
-        save_steps=train_cfg.get("save_steps", 500),
-        save_total_limit=train_cfg.get("save_total_limit", 6),
-        seed=train_cfg.get("seed", 42),
-        report_to="none",
-    )
-    
-    trainer = SFTTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        peft_config=lora_config,
-        tokenizer=tokenizer,
-        dataset_text_field="text",
-        max_seq_length=config.get("model", {}).get("max_seq_length", 2048),
-        callbacks=[MetricsLoggerCallback()],
-    )
-    return trainer
 
 def main():
     parser = argparse.ArgumentParser(description="N-14 Distributed SFT Training Engine")
-    parser.add_argument("--config", type=str, default=CONFIG_PATH, help="Path to model_config.yaml")
-    parser.add_argument("--dataset", type=str, default=os.path.join(ROOT_DIR, "data", "n14_golden_15k.jsonl.gz"))
-    parser.add_argument("--output_dir", type=str, default=os.path.join(ROOT_DIR, "models", "checkpoints"))
-    parser.add_argument("--dry_run", action="store_true", help="Run syntax & tokenization dry run without training")
+    parser.add_argument("--dataset", type=str,
+                        default=os.path.join(ROOT_DIR, "data", "n14_golden_15k.jsonl.gz"))
+    parser.add_argument("--output_dir", type=str,
+                        default=os.path.join(ROOT_DIR, "models", "checkpoints"))
     args = parser.parse_args()
 
     local_rank = int(os.environ.get("LOCAL_RANK", 0))
@@ -206,53 +76,124 @@ def main():
 
     config = load_config()
     model_name = config.get("model", {}).get("base_model", "Qwen/Qwen2.5-Coder-7B-Instruct")
-    
-    logger.info(f"[Rank {local_rank}] Target Base Model: {model_name}")
+    train_cfg = config.get("training", {})
+    quant_cfg = config.get("quantization", {})
+    lora_cfg = config.get("lora", {})
 
-    from transformers import AutoTokenizer
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name,
-        trust_remote_code=True,
-        padding_side="right",
-    )
+    # ── 1. Tokenizer ─────────────────────────────────────────────────────
+    logger.info(f"[Rank {local_rank}] Loading tokenizer: {model_name}")
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, padding_side="right")
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    train_ds, eval_ds = load_and_prepare_dataset(
-        args.dataset,
-        tokenizer,
-        eval_split_ratio=config.get("dataset", {}).get("eval_split_ratio", 0.05),
-        seed=config.get("training", {}).get("seed", 42)
+    # ── 2. Dataset ────────────────────────────────────────────────────────
+    logger.info(f"[Rank {local_rank}] Loading dataset: {args.dataset}")
+    raw_records = []
+    with gzip.open(args.dataset, "rt", encoding="utf-8") as f:
+        for line in f:
+            raw_records.append(json.loads(line))
+    logger.info(f"Loaded {len(raw_records)} records.")
+
+    ds = Dataset.from_list([{"messages": r["messages"]} for r in raw_records])
+    ds = ds.train_test_split(test_size=0.05, seed=42)
+    train_ds = ds["train"]
+    eval_ds = ds["test"]
+    logger.info(f"Train: {len(train_ds)}, Eval: {len(eval_ds)}")
+
+    max_seq = config.get("model", {}).get("max_seq_length", 2048)
+    train_ds = train_ds.map(lambda x: tokenize_chat(x, tokenizer, max_seq), remove_columns=train_ds.column_names)
+    eval_ds = eval_ds.map(lambda x: tokenize_chat(x, tokenizer, max_seq), remove_columns=eval_ds.column_names)
+
+    # ── 3. Model (4-bit NF4 QLoRA) ───────────────────────────────────────
+    logger.info(f"[Rank {local_rank}] Loading base model in 4-bit NF4...")
+    if torch.cuda.is_available():
+        torch.cuda.set_device(local_rank)
+
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=quant_cfg.get("load_in_4bit", True),
+        bnb_4bit_quant_type=quant_cfg.get("bnb_4bit_quant_type", "nf4"),
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=quant_cfg.get("bnb_4bit_use_double_quant", True),
     )
 
-    if args.dry_run:
-        logger.info("Dry-run validation successful!")
-        return
-
-    quant_cfg = get_quantization_config(config)
-    model = load_base_model(model_name, quant_cfg)
-    lora_cfg = get_lora_config(config)
-
-    trainer = build_trainer(
-        model=model,
-        tokenizer=tokenizer,
-        train_dataset=train_ds,
-        eval_dataset=eval_ds,
-        lora_config=lora_cfg,
-        config=config,
-        output_dir=args.output_dir
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        quantization_config=bnb_config,
+        torch_dtype=torch.bfloat16,
+        device_map={"": local_rank},
+        attn_implementation="sdpa",
+        trust_remote_code=True,
     )
 
-    logger.info(f"[Rank {local_rank}] Starting distributed training across 3 epochs...")
-    trainer.train()
+    model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
+
+    # ── 4. LoRA Adapter (r=32, alpha=64) ──────────────────────────────────
+    peft_config = LoraConfig(
+        r=lora_cfg.get("r", 32),
+        lora_alpha=lora_cfg.get("lora_alpha", 64),
+        lora_dropout=lora_cfg.get("lora_dropout", 0.05),
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules=lora_cfg.get("target_modules", [
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj",
+        ]),
+    )
+    model = get_peft_model(model, peft_config)
 
     if local_rank == 0:
-        final_adapter_dir = os.path.join(ROOT_DIR, "models", "checkpoint-final")
-        os.makedirs(final_adapter_dir, exist_ok=True)
-        logger.info(f"Saving final trained LoRA adapter to: {final_adapter_dir}")
-        trainer.model.save_pretrained(final_adapter_dir)
-        tokenizer.save_pretrained(final_adapter_dir)
-        logger.info("Distributed training completed successfully!")
+        trainable, total = model.get_nb_trainable_parameters()
+        logger.info(f"Trainable params: {trainable:,} / {total:,} ({100 * trainable / total:.2f}%)")
+
+    # ── 5. Training Arguments ─────────────────────────────────────────────
+    training_args = TrainingArguments(
+        output_dir=args.output_dir,
+        num_train_epochs=train_cfg.get("num_train_epochs", 3),
+        per_device_train_batch_size=train_cfg.get("per_device_train_batch_size", 2),
+        per_device_eval_batch_size=2,
+        gradient_accumulation_steps=train_cfg.get("gradient_accumulation_steps", 4),
+        learning_rate=float(train_cfg.get("learning_rate", 1.5e-4)),
+        lr_scheduler_type=train_cfg.get("lr_scheduler_type", "cosine"),
+        warmup_ratio=float(train_cfg.get("warmup_ratio", 0.05)),
+        weight_decay=float(train_cfg.get("weight_decay", 0.01)),
+        optim=train_cfg.get("optim", "paged_adamw_8bit"),
+        bf16=True,
+        gradient_checkpointing=True,
+        max_grad_norm=float(train_cfg.get("max_grad_norm", 1.0)),
+        logging_steps=int(train_cfg.get("logging_steps", 10)),
+        eval_strategy="steps",
+        eval_steps=int(train_cfg.get("eval_steps", 500)),
+        save_strategy="steps",
+        save_steps=int(train_cfg.get("save_steps", 500)),
+        save_total_limit=int(train_cfg.get("save_total_limit", 6)),
+        seed=42,
+        report_to="none",
+        ddp_find_unused_parameters=False,
+    )
+
+    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_ds,
+        eval_dataset=eval_ds,
+        data_collator=data_collator,
+    )
+
+    # ── 6. Train ──────────────────────────────────────────────────────────
+    logger.info(f"[Rank {local_rank}] Starting training across 3 epochs...")
+    trainer.train()
+
+    # ── 7. Save Final Adapter ─────────────────────────────────────────────
+    if local_rank == 0:
+        final_dir = os.path.join(ROOT_DIR, "models", "checkpoint-final")
+        os.makedirs(final_dir, exist_ok=True)
+        logger.info(f"Saving final LoRA adapter to: {final_dir}")
+        model.save_pretrained(final_dir)
+        tokenizer.save_pretrained(final_dir)
+        logger.info("Training completed successfully!")
+
 
 if __name__ == "__main__":
     main()
