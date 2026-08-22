@@ -1,0 +1,47 @@
+﻿# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+
+# Models & Large Artifacts (Do not track in git)
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+*.onnx
+checkpoints/
+checkpoint-*/
+
+# Datasets and compressed caches
+*.jsonl.gz
+data/*.gz
+data/cache/
+
+# Virtual Environments & Environment Variables
+venv/
+.venv/
+env/
+.env
+.env.local
+.env.*.local
+
+# Logs, WandB & Caches
+*.log
+wandb/
+.cache/
+.pytest_cache/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Next.js / Node.js (Phase 5 Studio)
+node_modules/
+.next/
+out/
+build/
+dist/

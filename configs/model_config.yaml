@@ -1,0 +1,87 @@
+﻿# ==============================================================================
+# N-14 MASTER MODEL & TRAINING CONFIGURATION
+# ==============================================================================
+
+model:
+  name: N-14
+  base_model: Qwen/Qwen2.5-Coder-7B-Instruct
+  hf_release_repo: shawaz03/n-14
+  github_repo: https://github.com/shawaz03/N-14
+  architecture: Qwen2ForCausalLM
+  context_window: 32768
+  max_seq_length: 2048
+  attn_implementation: sdpa
+
+quantization:
+  load_in_4bit: true
+  bnb_4bit_quant_type: nf4
+  bnb_4bit_compute_dtype: bfloat16
+  bnb_4bit_use_double_quant: true
+
+lora:
+  r: 32
+  lora_alpha: 64
+  lora_dropout: 0.05
+  bias: none
+  task_type: CAUSAL_LM
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+
+training:
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 0.00015
+  lr_scheduler_type: cosine
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  optim: paged_adamw_8bit
+  bf16: true
+  fp16: false
+  gradient_checkpointing: true
+  max_grad_norm: 1.0
+  logging_steps: 10
+  save_strategy: steps
+  save_steps: 500
+  save_total_limit: 6
+  evaluation_strategy: steps
+  eval_steps: 500
+  seed: 42
+  report_to: none
+
+dataset:
+  train_file: data/n14_golden_15k.jsonl.gz
+  audit_report: data/dataset_audit_report.json
+  audit_passed_marker: data/PHASE_1_AUDIT_PASSED.txt
+  total_records: 15000
+  eval_split_ratio: 0.05
+  eval_records: 750
+  train_records: 14250
+  pillars:
+    pillar_1_production_ui_ux:
+      target_records: 5250
+      target_share: 0.35
+    pillar_2_fullstack_backend:
+      target_records: 3750
+      target_share: 0.25
+    pillar_3_conversational_ai:
+      target_records: 3000
+      target_share: 0.20
+    pillar_4_self_healing_debug:
+      target_records: 1800
+      target_share: 0.12
+    pillar_5_sql_data_engineering:
+      target_records: 1200
+      target_share: 0.08
+
+paths:
+  checkpoints_dir: models/checkpoints
+  final_adapter_dir: models/checkpoint-final
+  merged_model_dir: models/n14-merged
+  gguf_dir: models/gguf
