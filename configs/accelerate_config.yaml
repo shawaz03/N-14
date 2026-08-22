@@ -1,0 +1,22 @@
+# ==============================================================================
+# N-14 HUGGING FACE ACCELERATE DISTRIBUTED CONFIGURATION
+# Multi-GPU Distributed Data Parallel (DDP) for 4x NVIDIA A10G (96 GB VRAM)
+# Target Architecture: AWS EC2 g5.12xlarge / 4x A10G Cluster
+# ==============================================================================
+
+compute_environment: LOCAL_MACHINE
+debug: false
+distributed_type: MULTI_GPU
+downcast_bf16: 'no'
+gpu_ids: all
+machine_rank: 0
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1
+num_processes: 4
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false
