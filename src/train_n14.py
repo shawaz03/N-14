@@ -3,14 +3,6 @@
 N-14 Multi-GPU Distributed SFT Training Engine (Task 2.2)
 Target Model: Qwen/Qwen2.5-Coder-7B-Instruct
 Target Hardware: AWS EC2 g5.12xlarge (4x NVIDIA A10G, 96 GB VRAM)
-Hyperparameters:
-- 3 Complete Epochs (~1,336 optimizer steps across 14,250 training records)
-- QLoRA 4-bit NF4 Quantization + Double Quantization
-- LoRA Rank r=32, Alpha=64, Target Modules: all 7 linear projections
-- Learning Rate: 1.5e-4 with Cosine Scheduler & 5% Warmup
-- Effective Batch Size: 32 (2 per-GPU * 4 GPUs * 4 gradient accumulation)
-- Max Sequence Length: 2048 tokens
-- Attention: PyTorch SDPA (Scaled Dot-Product Attention)
 """
 
 import argparse
@@ -42,9 +34,6 @@ def load_config() -> Dict[str, Any]:
             return yaml.safe_load(f)
     return {}
 
-# ----------------------------------------------------------------------
-# SUB-STEP 2.2.1: Base Model Loader in 4-bit NF4
-# ----------------------------------------------------------------------
 def get_quantization_config(config: Dict[str, Any]):
     """Configures 4-bit NF4 Quantization with double quant and bfloat16 compute dtype."""
     import torch
@@ -64,15 +53,20 @@ def load_base_model(model_name_or_path: str, quant_config):
     from transformers import AutoModelForCausalLM
     from peft import prepare_model_for_kbit_training
 
-    logger.info(f"Loading base model: {model_name_or_path} with 4-bit NF4 quantization...")
-    
-    device_map = {"": torch.cuda.current_device()} if torch.cuda.is_available() else "auto"
-    
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    logger.info(f"[Rank {local_rank}] Loading base model: {model_name_or_path} with 4-bit NF4...")
+
+    if torch.cuda.is_available():
+        torch.cuda.set_device(local_rank)
+        device_map = {"": local_rank}
+    else:
+        device_map = None
+
     model = AutoModelForCausalLM.from_pretrained(
         model_name_or_path,
         quantization_config=quant_config if torch.cuda.is_available() else None,
         torch_dtype=torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float32,
-        device_map=device_map if torch.cuda.is_available() else None,
+        device_map=device_map,
         attn_implementation="sdpa" if torch.cuda.is_available() else "eager",
         trust_remote_code=True,
     )
@@ -82,9 +76,6 @@ def load_base_model(model_name_or_path: str, quant_config):
         
     return model
 
-# ----------------------------------------------------------------------
-# SUB-STEP 2.2.2: Apply LoRA Adapter Configuration (r=32, alpha=64)
-# ----------------------------------------------------------------------
 def get_lora_config(config: Dict[str, Any]):
     """Configures LoRA adapter targeting all 7 linear projection layers."""
     from peft import LoraConfig
@@ -101,9 +92,6 @@ def get_lora_config(config: Dict[str, Any]):
         target_modules=target_modules,
     )
 
-# ----------------------------------------------------------------------
-# SUB-STEP 2.2.3: ChatML Formatting & Tokenizer Setup
-# ----------------------------------------------------------------------
 def load_and_prepare_dataset(
     dataset_path: str,
     tokenizer,
@@ -118,11 +106,15 @@ def load_and_prepare_dataset(
         for line in f:
             raw_records.append(json.loads(line))
             
-    logger.info(f"Loaded {len(raw_records)} records. Converting to ChatML tokens...")
+    logger.info(f"Loaded {len(raw_records)} records. Applying ChatML formatting...")
     
     formatted_data = []
     for rec in raw_records:
-        formatted_data.append({"messages": rec["messages"]})
+        if tokenizer is not None:
+            text = tokenizer.apply_chat_template(rec["messages"], tokenize=False)
+            formatted_data.append({"text": text})
+        else:
+            formatted_data.append({"messages": rec["messages"]})
         
     full_dataset = Dataset.from_list(formatted_data)
     
@@ -134,9 +126,6 @@ def load_and_prepare_dataset(
     logger.info(f"Dataset split complete: Train={len(train_ds)} records, Eval={len(eval_ds)} records")
     return train_ds, eval_ds
 
-# ----------------------------------------------------------------------
-# SUB-STEP 2.2.4 & 2.2.5: SFTTrainer Setup, Hyperparameters & Checkpointing
-# ----------------------------------------------------------------------
 def build_trainer(
     model,
     tokenizer,
@@ -187,7 +176,7 @@ def build_trainer(
         seed=train_cfg.get("seed", 42),
         report_to="none",
         max_seq_length=config.get("model", {}).get("max_seq_length", 2048),
-        dataset_text_field=None,
+        dataset_text_field="text",
         packing=False,
     )
     
@@ -210,28 +199,25 @@ def main():
     parser.add_argument("--dry_run", action="store_true", help="Run syntax & tokenization dry run without training")
     args = parser.parse_args()
 
-    print("=" * 80)
-    print("  N-14 DISTRIBUTED SFT TRAINING ENGINE (PHASE 2)")
-    print("=" * 80)
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
+    if local_rank == 0:
+        print("=" * 80)
+        print("  N-14 DISTRIBUTED SFT TRAINING ENGINE (PHASE 2)")
+        print("=" * 80)
 
     config = load_config()
     model_name = config.get("model", {}).get("base_model", "Qwen/Qwen2.5-Coder-7B-Instruct")
     
-    logger.info(f"Target Base Model: {model_name}")
-    logger.info(f"Output Directory: {args.output_dir}")
+    logger.info(f"[Rank {local_rank}] Target Base Model: {model_name}")
 
-    try:
-        from transformers import AutoTokenizer
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_name,
-            trust_remote_code=True,
-            padding_side="right",
-        )
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-    except Exception as e:
-        logger.warning(f"Could not load online tokenizer ({e}). Proceeding in offline structure check mode.")
-        tokenizer = None
+    from transformers import AutoTokenizer
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_name,
+        trust_remote_code=True,
+        padding_side="right",
+    )
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
 
     train_ds, eval_ds = load_and_prepare_dataset(
         args.dataset,
@@ -241,8 +227,7 @@ def main():
     )
 
     if args.dry_run:
-        logger.info("Dry-run validation successful. Dataset and training configurations verified!")
-        print("=" * 80)
+        logger.info("Dry-run validation successful!")
         return
 
     quant_cfg = get_quantization_config(config)
@@ -259,17 +244,16 @@ def main():
         output_dir=args.output_dir
     )
 
-    logger.info("Starting distributed training run across 3 epochs...")
+    logger.info(f"[Rank {local_rank}] Starting distributed training across 3 epochs...")
     trainer.train()
 
-    final_adapter_dir = os.path.join(ROOT_DIR, "models", "checkpoint-final")
-    os.makedirs(final_adapter_dir, exist_ok=True)
-    logger.info(f"Saving final trained LoRA adapter to: {final_adapter_dir}")
-    trainer.model.save_pretrained(final_adapter_dir)
-    if tokenizer:
+    if local_rank == 0:
+        final_adapter_dir = os.path.join(ROOT_DIR, "models", "checkpoint-final")
+        os.makedirs(final_adapter_dir, exist_ok=True)
+        logger.info(f"Saving final trained LoRA adapter to: {final_adapter_dir}")
+        trainer.model.save_pretrained(final_adapter_dir)
         tokenizer.save_pretrained(final_adapter_dir)
-
-    logger.info("Distributed training completed successfully!")
+        logger.info("Distributed training completed successfully!")
 
 if __name__ == "__main__":
     main()
