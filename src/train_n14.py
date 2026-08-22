@@ -137,8 +137,8 @@ def build_trainer(
 ):
     """Instantiates SFTTrainer with exact hyperparameters from model_config.yaml."""
     import torch
-    from transformers import TrainerCallback
-    from trl import SFTTrainer, SFTConfig
+    from transformers import TrainingArguments, TrainerCallback
+    from trl import SFTTrainer
 
     class MetricsLoggerCallback(TrainerCallback):
         def on_log(self, args, state, control, logs=None, **kwargs):
@@ -152,7 +152,7 @@ def build_trainer(
     train_cfg = config.get("training", {})
     bf16_supported = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
     
-    training_args = SFTConfig(
+    training_args = TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=train_cfg.get("num_train_epochs", 3),
         per_device_train_batch_size=train_cfg.get("per_device_train_batch_size", 2),
@@ -175,9 +175,6 @@ def build_trainer(
         save_total_limit=train_cfg.get("save_total_limit", 6),
         seed=train_cfg.get("seed", 42),
         report_to="none",
-        max_seq_length=config.get("model", {}).get("max_seq_length", 2048),
-        dataset_text_field="text",
-        packing=False,
     )
     
     trainer = SFTTrainer(
@@ -187,6 +184,8 @@ def build_trainer(
         eval_dataset=eval_dataset,
         peft_config=lora_config,
         tokenizer=tokenizer,
+        dataset_text_field="text",
+        max_seq_length=config.get("model", {}).get("max_seq_length", 2048),
         callbacks=[MetricsLoggerCallback()],
     )
     return trainer
