@@ -25,7 +25,7 @@ from transformers import (
     BitsAndBytesConfig,
     Trainer,
     TrainingArguments,
-    DataCollatorForLanguageModeling,
+    DataCollatorForSeq2Seq,
 )
 
 logging.basicConfig(
@@ -193,7 +193,7 @@ def main():
 
     training_args = TrainingArguments(**filtered_args)
 
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True, return_tensors="pt")
 
     trainer = Trainer(
         model=model,
