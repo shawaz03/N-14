@@ -1,0 +1,56 @@
+{
+  "dataset_name": "N-14 Golden 15K Dataset",
+  "generated_at": "2026-08-22T13:21:46.217270+00:00",
+  "total_records": 15000,
+  "target_records": 15000,
+  "format": "ChatML (system/user/assistant)",
+  "file_path": "data/n14_golden_15k.jsonl.gz",
+  "file_size_bytes": 7121234,
+  "file_size_mb": 6.79,
+  "file_sha256": "a1bb36df6a1c5d8155c25dba061aab3d62f48a3ef603cf6d0b12ea39c545a6b3",
+  "shuffle_seed": 42,
+  "pillar_distribution": {
+    "production_ui_ux": {
+      "count": 5250,
+      "target": 5250,
+      "percentage": 35.0,
+      "target_percentage": 35.0,
+      "status": "PASS"
+    },
+    "fullstack_backend": {
+      "count": 3750,
+      "target": 3750,
+      "percentage": 25.0,
+      "target_percentage": 25.0,
+      "status": "PASS"
+    },
+    "conversational_ai": {
+      "count": 3000,
+      "target": 3000,
+      "percentage": 20.0,
+      "target_percentage": 20.0,
+      "status": "PASS"
+    },
+    "self_healing_debug": {
+      "count": 1800,
+      "target": 1800,
+      "percentage": 12.0,
+      "target_percentage": 12.0,
+      "status": "PASS"
+    },
+    "sql_data_engineering": {
+      "count": 1200,
+      "target": 1200,
+      "percentage": 8.0,
+      "target_percentage": 8.0,
+      "status": "PASS"
+    }
+  },
+  "character_statistics": {
+    "avg_user_prompt_chars": 392.8,
+    "avg_assistant_response_chars": 2499.9,
+    "total_character_count": 43391094
+  },
+  "build_duration_seconds": 6.08,
+  "status": "SUCCESS"
+}
