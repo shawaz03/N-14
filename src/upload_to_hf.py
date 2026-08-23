@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-N-14 Phase 3.3: Hugging Face Hub Release Engine
+RAIZEN Phase 3.3: Hugging Face Hub Release Engine
 Uploads merged weights, tokenizer, GGUF binary, and official Model Card
 to Hugging Face with attribution to SHAWAZ (https://shawaz.vercel.app/).
 """
@@ -17,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=[logging.StreamHandler(sys.stdout)],
 )
-logger = logging.getLogger("N14-HuggingFace")
+logger = logging.getLogger("RAIZEN-HuggingFace")
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MERGED_MODEL_DIR = os.path.join(ROOT_DIR, "models", "n14-merged")
@@ -42,12 +42,13 @@ tags:
 - sql
 - debugging
 - qwen2.5
+- raizen
 base_model: Qwen/Qwen2.5-Coder-7B-Instruct
 pipeline_tag: text-generation
 inference: false
 ---
 
-# 🚀 N-14: Enterprise Full-Stack Coding Intelligence
+# ⚡ RAIZEN: Enterprise Full-Stack Coding Intelligence
 
 <p align="center">
   <b>Architected, Fine-Tuned & Created by <a href="https://shawaz.vercel.app/">SHAWAZ</a></b>
@@ -56,6 +57,7 @@ inference: false
 <p align="center">
   <a href="https://shawaz.vercel.app/"><img src="https://img.shields.io/badge/Creator-SHAWAZ-blue.svg?style=for-the-badge" alt="Creator"></a>
   <a href="https://shawaz.vercel.app/"><img src="https://img.shields.io/badge/Portfolio-shawaz.vercel.app-green.svg?style=for-the-badge" alt="Portfolio"></a>
+  <img src="https://img.shields.io/badge/Model-RAIZEN--7B-red.svg?style=for-the-badge" alt="Model">
   <img src="https://img.shields.io/badge/Base_Model-Qwen2.5--Coder--7B--Instruct-purple.svg?style=for-the-badge" alt="Base Model">
   <img src="https://img.shields.io/badge/Parameters-7.61B-orange.svg?style=for-the-badge" alt="Params">
   <img src="https://img.shields.io/badge/Training-15K_Golden_Dataset-gold.svg?style=for-the-badge" alt="Dataset">
@@ -63,11 +65,11 @@ inference: false
 
 ---
 
-## 🌟 About N-14
+## 🌟 About RAIZEN
 
-**N-14** is a specialized, production-grade 7B coding model fine-tuned across **15,000 rigorous golden records** engineered across 5 core pillars of modern software engineering.
+**RAIZEN** is a specialized, production-grade 7B coding intelligence fine-tuned across **15,000 rigorous golden records** engineered across 5 core pillars of modern software engineering.
 
-### 🏛️ The 5 Pillars of N-14
+### 🏛️ The 5 Pillars of RAIZEN
 1. **Frontend & UI/UX Design System**: High-aesthetic React, Next.js App Router, Tailwind CSS, Framer Motion, accessible interactive dashboards.
 2. **Backend & Architecture**: Type-safe FastAPI, async endpoints, Pydantic v2 schemas, JWT/OAuth2 security, microservices.
 3. **Conversational Code Explanation**: Senior staff engineer persona, trade-off breakdowns, architectural reasoning.
@@ -100,7 +102,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 
 messages = [
-    {{"role": "system", "content": "You are N-14, an elite AI coding assistant created by SHAWAZ (https://shawaz.vercel.app/)."}},
+    {{"role": "system", "content": "You are RAIZEN, an elite AI coding intelligence created by SHAWAZ (https://shawaz.vercel.app/)."}},
     {{"role": "user", "content": "Build a modern full-stack authentication flow in Next.js 14 App Router with Tailwind CSS."}}
 ]
 
@@ -127,9 +129,9 @@ Apache 2.0. Open for commercial and research use.
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Upload N-14 to Hugging Face")
-    parser.add_argument("--repo_id", type=str, default="shawaz03/n-14",
-                        help="Hugging Face repo ID (e.g., shawaz03/n-14)")
+    parser = argparse.ArgumentParser(description="Upload RAIZEN to Hugging Face")
+    parser.add_argument("--repo_id", type=str, default="shawaz03/RAIZEN",
+                        help="Hugging Face repo ID (e.g., shawaz03/RAIZEN)") ID (e.g., shawaz03/n-14)")
     parser.add_argument("--token", type=str, default=os.environ.get("HF_TOKEN", ""),
                         help="Hugging Face API Token")
     parser.add_argument("--private", action="store_true",
