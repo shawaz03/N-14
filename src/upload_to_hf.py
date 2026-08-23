@@ -131,7 +131,7 @@ Apache 2.0. Open for commercial and research use.
 def main():
     parser = argparse.ArgumentParser(description="Upload RAIZEN to Hugging Face")
     parser.add_argument("--repo_id", type=str, default="shawaz03/RAIZEN",
-                        help="Hugging Face repo ID (e.g., shawaz03/RAIZEN)") ID (e.g., shawaz03/n-14)")
+                        help="Hugging Face repo ID (e.g., shawaz03/RAIZEN)")
     parser.add_argument("--token", type=str, default=os.environ.get("HF_TOKEN", ""),
                         help="Hugging Face API Token")
     parser.add_argument("--private", action="store_true",
