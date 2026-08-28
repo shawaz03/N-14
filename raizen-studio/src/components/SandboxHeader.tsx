@@ -10,6 +10,7 @@ import {
   Maximize2,
   Minimize2,
   FileCode,
+  Download,
 } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -22,6 +23,7 @@ interface SandboxHeaderProps {
   language?: string;
   code: string;
   onReset?: () => void;
+  onExport?: () => void;
   onToggleFullscreen?: () => void;
   isFullscreen?: boolean;
   className?: string;
@@ -34,6 +36,7 @@ export function SandboxHeader({
   language = "typescript",
   code,
   onReset,
+  onExport,
   onToggleFullscreen,
   isFullscreen = false,
   className,
@@ -99,6 +102,19 @@ export function SandboxHeader({
 
       {/* Right: Actions */}
       <div className="flex items-center gap-1">
+        {/* Export / Download Code */}
+        {onExport && (
+          <button
+            type="button"
+            onClick={onExport}
+            className="p-1.5 bg-void hover:bg-surface-elevated border border-edge text-text-muted hover:text-text-primary transition-colors text-[10px] flex items-center gap-1"
+            title="Download Standalone Component HTML/TSX"
+          >
+            <Download className="w-3 h-3 text-signal" />
+            <span className="hidden md:inline">EXPORT</span>
+          </button>
+        )}
+
         {/* Reset Code */}
         {onReset && (
           <button

@@ -17,6 +17,7 @@ import { useRaizenChat } from "../hooks/useRaizenChat";
 import { useSandboxBridge } from "../hooks/useSandboxBridge";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useToast } from "../hooks/useToast";
+import { useCodeExport } from "../hooks/useCodeExport";
 
 export default function RaizenStudioPage() {
   // 1. Connection Hook
@@ -46,10 +47,13 @@ export default function RaizenStudioPage() {
     setActiveTab,
   } = useSandboxBridge();
 
-  // 4. Toast Notification Hook
+  // 4. Code Export Hook
+  const { downloadHtml } = useCodeExport();
+
+  // 5. Toast Notification Hook
   const { toasts, showToast, dismissToast } = useToast();
 
-  // 5. UI View States
+  // 6. UI View States
   const [viewMode, setViewMode] = useState<WorkspaceViewMode>("split");
   const [isColabModalOpen, setIsColabModalOpen] = useState<boolean>(false);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +65,7 @@ export default function RaizenStudioPage() {
     }
   }, [messages, isStreaming]);
 
-  // 6. Global Keyboard Shortcuts
+  // 7. Global Keyboard Shortcuts
   useKeyboardShortcuts({
     isStreaming,
     onStopStreaming: () => {
@@ -88,6 +92,11 @@ export default function RaizenStudioPage() {
     if (viewMode === "chat") {
       setViewMode("split");
     }
+  };
+
+  const handleExportCode = () => {
+    downloadHtml(code, language, "RaizenWidget.html");
+    showToast("Exported standalone portable HTML component", "success", "FILE DOWNLOADED");
   };
 
   return (
@@ -176,6 +185,7 @@ export default function RaizenStudioPage() {
                 resetCode();
                 showToast("Sandbox restored to starter template", "info", "CODE RESET");
               }}
+              onExport={handleExportCode}
               isFullscreen={viewMode === "sandbox"}
               onToggleFullscreen={() =>
                 setViewMode((prev) => (prev === "sandbox" ? "split" : "sandbox"))
