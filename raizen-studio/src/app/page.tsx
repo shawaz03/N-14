@@ -11,10 +11,12 @@ import { ChatInput } from "../components/ChatInput";
 import { SandboxHeader } from "../components/SandboxHeader";
 import { CodeEditor } from "../components/CodeEditor";
 import { ComponentPreview } from "../components/ComponentPreview";
+import { ToastContainer } from "../components/Toast";
 import { useRaizenConnection } from "../hooks/useRaizenConnection";
 import { useRaizenChat } from "../hooks/useRaizenChat";
 import { useSandboxBridge } from "../hooks/useSandboxBridge";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useToast } from "../hooks/useToast";
 
 export default function RaizenStudioPage() {
   // 1. Connection Hook
@@ -44,7 +46,10 @@ export default function RaizenStudioPage() {
     setActiveTab,
   } = useSandboxBridge();
 
-  // 4. UI View States
+  // 4. Toast Notification Hook
+  const { toasts, showToast, dismissToast } = useToast();
+
+  // 5. UI View States
   const [viewMode, setViewMode] = useState<WorkspaceViewMode>("split");
   const [isColabModalOpen, setIsColabModalOpen] = useState<boolean>(false);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
@@ -56,11 +61,17 @@ export default function RaizenStudioPage() {
     }
   }, [messages, isStreaming]);
 
-  // 5. Global Keyboard Shortcuts
+  // 6. Global Keyboard Shortcuts
   useKeyboardShortcuts({
     isStreaming,
-    onStopStreaming: stopStreaming,
-    onClearChat: clearMessages,
+    onStopStreaming: () => {
+      stopStreaming();
+      showToast("Stream execution halted by user", "warning", "PROCESS STOPPED");
+    },
+    onClearChat: () => {
+      clearMessages();
+      showToast("Terminal screen and history cleared", "info", "TERMINAL CLEARED");
+    },
     onToggleSandbox: () => {
       setViewMode((prev) => (prev === "split" ? "chat" : "split"));
     },
@@ -72,6 +83,7 @@ export default function RaizenStudioPage() {
 
   const handleRunInSandbox = (codeToRun: string, codeLang: string) => {
     loadCode(codeToRun, codeLang);
+    showToast("Code extracted and loaded into Live Sandbox", "success", "SANDBOX RUNNING");
     // If in chat-only mode, automatically switch to split view so user sees the preview
     if (viewMode === "chat") {
       setViewMode("split");
@@ -131,7 +143,10 @@ export default function RaizenStudioPage() {
             <StreamingIndicator
               isStreaming={isStreaming}
               tokensPerSec={tokensPerSec}
-              onStop={stopStreaming}
+              onStop={() => {
+                stopStreaming();
+                showToast("Stream halted", "warning", "ABORTED");
+              }}
             />
 
             {/* Chat Command Input Bar */}
@@ -140,7 +155,10 @@ export default function RaizenStudioPage() {
                 onSendMessage={handleSendMessage}
                 isStreaming={isStreaming}
                 onStopStreaming={stopStreaming}
-                onClearChat={clearMessages}
+                onClearChat={() => {
+                  clearMessages();
+                  showToast("Chat history reset", "info", "TERMINAL CLEARED");
+                }}
               />
             </div>
           </div>
@@ -154,7 +172,10 @@ export default function RaizenStudioPage() {
               filename={filename}
               language={language}
               code={code}
-              onReset={resetCode}
+              onReset={() => {
+                resetCode();
+                showToast("Sandbox restored to starter template", "info", "CODE RESET");
+              }}
               isFullscreen={viewMode === "sandbox"}
               onToggleFullscreen={() =>
                 setViewMode((prev) => (prev === "sandbox" ? "split" : "sandbox"))
@@ -194,6 +215,9 @@ export default function RaizenStudioPage() {
         onClose={() => setIsColabModalOpen(false)}
         connection={connection}
       />
+
+      {/* 5. Terminal Toast Notification System */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }
