@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd raizen-studio && npm install && npm run build",
+  "outputDirectory": "raizen-studio/.next",
+  "framework": "nextjs"
+}

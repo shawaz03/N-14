@@ -1,0 +1,12 @@
+{
+  "name": "raizen-project",
+  "version": "1.0.0",
+  "description": "RAIZEN 7.61B - Enterprise AI Coding Intelligence by SHAWAZ",
+  "author": "SHAWAZ <https://shawaz.vercel.app/>",
+  "scripts": {
+    "dev": "npm run dev --prefix raizen-studio",
+    "build": "npm run build --prefix raizen-studio",
+    "start": "npm run start --prefix raizen-studio",
+    "lint": "npm run lint --prefix raizen-studio"
+  }
+}
