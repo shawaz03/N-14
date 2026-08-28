@@ -39,27 +39,40 @@ export function exportStandaloneHtml(
     ) ||
     code.includes("import React") ||
     code.includes("<") ||
-    code.includes("export default function");
+    code.includes("export default function") ||
+    code.includes("function ");
 
-  let processedCode = code;
+  let cleanSource = code;
   if (isReact) {
-    processedCode = processedCode
-      .replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"];?/g, "")
-      .replace(/export\s+default\s+function\s+([A-Za-z0-9_]+)/g, "function $1\nwindow.__RAIZEN_ROOT_COMPONENT__ = $1;")
-      .replace(/export\s+function\s+([A-Za-z0-9_]+)/g, "function $1")
-      .replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, "window.__RAIZEN_ROOT_COMPONENT__ = $1;")
-      .replace(/export\s+default\s+/g, "window.__RAIZEN_ROOT_COMPONENT__ = ");
+    cleanSource = cleanSource.replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"];?/g, "");
+    cleanSource = cleanSource.replace(/export\s+default\s+function\s+([A-Za-z0-9_]+)/g, "function $1");
+    cleanSource = cleanSource.replace(/export\s+function\s+([A-Za-z0-9_]+)/g, "function $1");
+    cleanSource = cleanSource.replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, "window.__RAIZEN_ROOT_COMPONENT__ = $1;");
+    cleanSource = cleanSource.replace(/export\s+default\s+/g, "window.__RAIZEN_ROOT_COMPONENT__ = ");
+    cleanSource = cleanSource.replace(/export\s*\{[^}]*\};?/g, "");
 
-    if (!processedCode.includes("window.__RAIZEN_ROOT_COMPONENT__")) {
-      const funcMatches = Array.from(
-        processedCode.matchAll(/function\s+([A-Z]\w+)/g)
-      );
-      if (funcMatches.length > 0) {
-        const lastFunc = funcMatches[funcMatches.length - 1][1];
-        processedCode += `\nwindow.__RAIZEN_ROOT_COMPONENT__ = ${lastFunc};`;
-      }
+    const allFunctions = Array.from(cleanSource.matchAll(/function\s+([A-Z][A-Za-z0-9_]*)/g)).map(m => m[1]);
+    let rootName = null;
+    if (allFunctions.includes("App")) {
+      rootName = "App";
+    } else if (allFunctions.includes("LandingPage")) {
+      rootName = "LandingPage";
+    } else if (allFunctions.includes("Main")) {
+      rootName = "Main";
+    } else if (allFunctions.includes("Page")) {
+      rootName = "Page";
+    } else if (allFunctions.includes("Dashboard")) {
+      rootName = "Dashboard";
+    } else if (allFunctions.length > 0) {
+      rootName = allFunctions[allFunctions.length - 1];
+    }
+
+    if (rootName) {
+      cleanSource += `\nwindow.__RAIZEN_ROOT_COMPONENT__ = ${rootName};`;
     }
   }
+
+  const encodedSource = JSON.stringify(cleanSource);
 
   const standaloneHtml = `<!DOCTYPE html>
 <!--
@@ -83,17 +96,17 @@ export function exportStandaloneHtml(
     }
     function createLucideReactComponent(iconName, iconDef) {
       return function IconComponent(props) {
-        const p = props || {};
-        const size = p.size || p.width || 20;
-        const strokeWidth = p.strokeWidth || 2;
-        const className = p.className || '';
-        const color = p.color || 'currentColor';
-        let inner = '';
+        var p = props || {};
+        var size = p.size || p.width || 20;
+        var strokeWidth = p.strokeWidth || 2;
+        var className = p.className || '';
+        var color = p.color || 'currentColor';
+        var inner = '';
         if (Array.isArray(iconDef)) {
           inner = iconDef.map(function(item) {
-            const tag = item[0];
-            const attrs = item[1];
-            const attrStr = Object.keys(attrs).map(function(k) { return k + '="' + attrs[k] + '"'; }).join(' ');
+            var tag = item[0];
+            var attrs = item[1];
+            var attrStr = Object.keys(attrs).map(function(k) { return k + '="' + attrs[k] + '"'; }).join(' ');
             return '<' + tag + ' ' + attrStr + '></' + tag + '>';
           }).join('');
         }
@@ -113,15 +126,15 @@ export function exportStandaloneHtml(
       };
     }
     window.__initLucideIcons = function() {
-      const lucideObj = window.lucide || {};
-      const icons = lucideObj.icons || {};
+      var lucideObj = window.lucide || {};
+      var icons = lucideObj.icons || {};
       Object.keys(icons).forEach(function(key) {
-        const pascal = toPascalCase(key);
-        const comp = createLucideReactComponent(key, icons[key]);
+        var pascal = toPascalCase(key);
+        var comp = createLucideReactComponent(key, icons[key]);
         window[pascal] = comp;
         window[key] = comp;
       });
-      const fallbackIcon = function FallbackIcon(props) {
+      var fallbackIcon = function FallbackIcon(props) {
         return React.createElement('span', { className: (props && props.className) || 'inline-block text-signal font-mono' }, '✦');
       };
       [
@@ -132,7 +145,7 @@ export function exportStandaloneHtml(
         'ShoppingCart', 'Heart', 'Package', 'CreditCard', 'Activity', 'Sliders', 'Layers'
       ].forEach(function(name) {
         if (!window[name]) {
-          const lowerKey = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+          var lowerKey = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
           if (icons[lowerKey]) {
             window[name] = createLucideReactComponent(lowerKey, icons[lowerKey]);
           } else {
@@ -146,7 +159,7 @@ export function exportStandaloneHtml(
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 24px;
+      padding: 16px;
       background-color: #050505;
       color: #E5E5E5;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -159,17 +172,35 @@ export function exportStandaloneHtml(
   ${
     isReact
       ? `
-      <script type="text/babel" data-presets="react,typescript">
-        const { useState, useEffect, useRef, useMemo, useCallback } = React;
-        if (window.__initLucideIcons) window.__initLucideIcons();
+      <script>
+        (function() {
+          try {
+            window.__initLucideIcons();
+            var rawSource = ${encodedSource};
+            var compiled = Babel.transform(rawSource, {
+              presets: ['react', 'typescript'],
+              filename: 'component.tsx'
+            }).code;
 
-        ${processedCode}
+            var executeFn = new Function(
+              'React', 'ReactDOM', 'useState', 'useEffect', 'useRef', 'useMemo', 'useCallback',
+              compiled
+            );
 
-        const Target = window.__RAIZEN_ROOT_COMPONENT__;
-        if (Target) {
-          const root = ReactDOM.createRoot(document.getElementById('root'));
-          root.render(React.createElement(Target));
-        }
+            executeFn(
+              React, ReactDOM,
+              React.useState, React.useEffect, React.useRef, React.useMemo, React.useCallback
+            );
+
+            var TargetComponent = window.__RAIZEN_ROOT_COMPONENT__;
+            if (TargetComponent) {
+              var root = ReactDOM.createRoot(document.getElementById('root'));
+              root.render(React.createElement(TargetComponent));
+            }
+          } catch (err) {
+            document.getElementById('root').innerHTML = '<div style="padding: 16px; font-family: monospace; color: #FF6666; background: #150505; border: 1px solid #FF3333;"><h4 style="margin: 0 0 8px 0; color: #FF3333;">[EXECUTION ERROR]</h4><pre style="margin: 0; white-space: pre-wrap; font-size: 11px;">' + (err.message || String(err)) + '</pre></div>';
+          }
+        })();
       </script>
       `
       : `
