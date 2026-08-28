@@ -1,101 +1,199 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState, useRef, useEffect } from "react";
+import { Header } from "../components/Header";
+import { StatusBar } from "../components/StatusBar";
+import { ColabModal } from "../components/ColabModal";
+import { SandboxContainer, WorkspaceViewMode } from "../components/SandboxContainer";
+import { ChatMessageItem } from "../components/ChatMessageItem";
+import { StreamingIndicator } from "../components/StreamingIndicator";
+import { ChatInput } from "../components/ChatInput";
+import { SandboxHeader } from "../components/SandboxHeader";
+import { CodeEditor } from "../components/CodeEditor";
+import { ComponentPreview } from "../components/ComponentPreview";
+import { useRaizenConnection } from "../hooks/useRaizenConnection";
+import { useRaizenChat } from "../hooks/useRaizenChat";
+import { useSandboxBridge } from "../hooks/useSandboxBridge";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+
+export default function RaizenStudioPage() {
+  // 1. Connection Hook
+  const connection = useRaizenConnection();
+
+  // 2. Chat Conversation Hook
+  const {
+    messages,
+    isStreaming,
+    totalTokens,
+    tokensPerSec,
+    error: chatError,
+    sendMessage,
+    stopStreaming,
+    clearMessages,
+  } = useRaizenChat();
+
+  // 3. Sandbox Live Bridge Hook
+  const {
+    code,
+    language,
+    filename,
+    activeTab,
+    loadCode,
+    updateCode,
+    resetCode,
+    setActiveTab,
+  } = useSandboxBridge();
+
+  // 4. UI View States
+  const [viewMode, setViewMode] = useState<WorkspaceViewMode>("split");
+  const [isColabModalOpen, setIsColabModalOpen] = useState<boolean>(false);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-scroll chat to bottom on new messages / tokens
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [messages, isStreaming]);
+
+  // 5. Global Keyboard Shortcuts
+  useKeyboardShortcuts({
+    isStreaming,
+    onStopStreaming: stopStreaming,
+    onClearChat: clearMessages,
+    onToggleSandbox: () => {
+      setViewMode((prev) => (prev === "split" ? "chat" : "split"));
+    },
+  });
+
+  const handleSendMessage = (prompt: string, temperature: number) => {
+    sendMessage(prompt, connection.tunnelUrl, temperature);
+  };
+
+  const handleRunInSandbox = (codeToRun: string, codeLang: string) => {
+    loadCode(codeToRun, codeLang);
+    // If in chat-only mode, automatically switch to split view so user sees the preview
+    if (viewMode === "chat") {
+      setViewMode("split");
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="w-screen h-screen flex flex-col bg-void text-text-primary overflow-hidden select-none font-mono">
+      {/* 1. Mission Control Header Bar */}
+      <Header
+        connection={connection}
+        onOpenColabModal={() => setIsColabModalOpen(true)}
+      />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      {/* 2. Workspace Split Grid */}
+      <SandboxContainer
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        chatSlot={
+          <div className="w-full h-full flex flex-col bg-void overflow-hidden">
+            {/* Connection Error Banner if disconnected */}
+            {connection.errorMessage && (
+              <div className="px-4 py-2 bg-terminal-error/20 border-b border-terminal-error/40 text-terminal-error text-xs flex items-center justify-between font-mono shrink-0">
+                <span>⚠ {connection.errorMessage}</span>
+                <button
+                  type="button"
+                  onClick={() => setIsColabModalOpen(true)}
+                  className="underline font-bold text-[11px] hover:text-white"
+                >
+                  Launch Colab GPU →
+                </button>
+              </div>
+            )}
+
+            {/* Chat Error Banner */}
+            {chatError && (
+              <div className="px-4 py-2 bg-terminal-error/20 border-b border-terminal-error/40 text-terminal-error text-xs font-mono shrink-0">
+                ⚠ {chatError}
+              </div>
+            )}
+
+            {/* Chat Messages Feed */}
+            <div
+              ref={chatScrollRef}
+              className="flex-1 w-full overflow-y-auto px-4 py-3 space-y-2 select-text"
+            >
+              {messages.map((msg) => (
+                <ChatMessageItem
+                  key={msg.id}
+                  message={msg}
+                  onRunInSandbox={handleRunInSandbox}
+                />
+              ))}
+            </div>
+
+            {/* Active Streaming Telemetry Indicator */}
+            <StreamingIndicator
+              isStreaming={isStreaming}
+              tokensPerSec={tokensPerSec}
+              onStop={stopStreaming}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+            {/* Chat Command Input Bar */}
+            <div className="p-3 bg-void border-t border-edge shrink-0">
+              <ChatInput
+                onSendMessage={handleSendMessage}
+                isStreaming={isStreaming}
+                onStopStreaming={stopStreaming}
+                onClearChat={clearMessages}
+              />
+            </div>
+          </div>
+        }
+        sandboxSlot={
+          <div className="w-full h-full flex flex-col bg-void overflow-hidden">
+            {/* Sandbox Tab Header */}
+            <SandboxHeader
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              filename={filename}
+              language={language}
+              code={code}
+              onReset={resetCode}
+              isFullscreen={viewMode === "sandbox"}
+              onToggleFullscreen={() =>
+                setViewMode((prev) => (prev === "sandbox" ? "split" : "sandbox"))
+              }
+            />
+
+            {/* Editor or Preview Pane */}
+            <div className="flex-1 w-full h-[calc(100%-36px)] overflow-hidden">
+              {activeTab === "editor" ? (
+                <CodeEditor
+                  code={code}
+                  language={language}
+                  onChange={updateCode}
+                />
+              ) : (
+                <ComponentPreview
+                  code={code}
+                  language={language}
+                />
+              )}
+            </div>
+          </div>
+        }
+      />
+
+      {/* 3. Industrial Telemetry Status Bar */}
+      <StatusBar
+        connection={connection}
+        tokenCount={totalTokens}
+        tokensPerSec={tokensPerSec}
+        isStreaming={isStreaming}
+      />
+
+      {/* 4. Colab Quick-Launch Guide Modal */}
+      <ColabModal
+        isOpen={isColabModalOpen}
+        onClose={() => setIsColabModalOpen(false)}
+        connection={connection}
+      />
     </div>
   );
 }
