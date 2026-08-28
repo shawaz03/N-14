@@ -58,9 +58,9 @@ export function ComponentPreview({
     if (isReact) {
       processedCode = processedCode
         .replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"];?/g, "")
-        .replace(/export\s+default\s+function\s+(\w+)/g, "function $1")
-        .replace(/export\s+function\s+(\w+)/g, "function $1")
-        .replace(/export\s+default\s+(\w+);?/g, "window.__RAIZEN_ROOT_COMPONENT__ = $1;")
+        .replace(/export\s+default\s+function\s+([A-Za-z0-9_]+)/g, "function $1\nwindow.__RAIZEN_ROOT_COMPONENT__ = $1;")
+        .replace(/export\s+function\s+([A-Za-z0-9_]+)/g, "function $1")
+        .replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, "window.__RAIZEN_ROOT_COMPONENT__ = $1;")
         .replace(/export\s+default\s+/g, "window.__RAIZEN_ROOT_COMPONENT__ = ");
 
       // If no explicit default export, detect the last defined React function component
@@ -106,6 +106,88 @@ export function ComponentPreview({
           <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
           <!-- Lucide Icons Bundle -->
           <script src="https://unpkg.com/lucide@latest"></script>
+          <script>
+            // Helper to convert kebab-case to PascalCase
+            function toPascalCase(str) {
+              return str.replace(/(^\\w|-\\w)/g, function(c) { return c.replace('-', '').toUpperCase(); });
+            }
+
+            // Create SVG React component for Lucide icons
+            function createLucideReactComponent(iconName, iconDef) {
+              return function IconComponent(props) {
+                const p = props || {};
+                const size = p.size || p.width || 20;
+                const strokeWidth = p.strokeWidth || 2;
+                const className = p.className || '';
+                const color = p.color || 'currentColor';
+
+                let inner = '';
+                if (Array.isArray(iconDef)) {
+                  inner = iconDef.map(function(item) {
+                    const tag = item[0];
+                    const attrs = item[1];
+                    const attrStr = Object.keys(attrs).map(function(k) {
+                      return k + '="' + attrs[k] + '"';
+                    }).join(' ');
+                    return '<' + tag + ' ' + attrStr + '></' + tag + '>';
+                  }).join('');
+                }
+
+                return React.createElement('svg', {
+                  xmlns: 'http://www.w3.org/2000/svg',
+                  width: size,
+                  height: size,
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: color,
+                  strokeWidth: strokeWidth,
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round',
+                  className: className,
+                  dangerouslySetInnerHTML: { __html: inner }
+                });
+              };
+            }
+
+            // Universal Lucide React Component Shim
+            window.__initLucideIcons = function() {
+              const lucideObj = window.lucide || {};
+              const icons = lucideObj.icons || {};
+
+              // Expose all available Lucide icons into window
+              Object.keys(icons).forEach(function(key) {
+                const pascal = toPascalCase(key);
+                const comp = createLucideReactComponent(key, icons[key]);
+                window[pascal] = comp;
+                window[key] = comp;
+              });
+
+              // Generic fallback icon
+              const fallbackIcon = function FallbackIcon(props) {
+                return React.createElement('span', { className: (props && props.className) || 'inline-block text-signal font-mono' }, '✦');
+              };
+
+              // Ensure popular Lucide icons are pre-registered
+              [
+                'Sparkles', 'Check', 'ArrowRight', 'ArrowLeft', 'ShieldCheck', 'Zap', 'Code', 'Eye',
+                'Copy', 'RotateCcw', 'Maximize2', 'Minimize2', 'FileCode', 'Download', 'MessageSquare',
+                'Columns', 'Code2', 'Cpu', 'Terminal', 'Play', 'Pause', 'Trash', 'Settings', 'Search',
+                'Menu', 'X', 'ExternalLink', 'Github', 'ChevronRight', 'ChevronDown', 'Star', 'User',
+                'ShoppingCart', 'Heart', 'Package', 'CreditCard', 'Activity', 'Sliders', 'Layers',
+                'Globe', 'Lock', 'Mail', 'Phone', 'MapPin', 'Calendar', 'Clock', 'Bell', 'AlertTriangle',
+                'Info', 'CheckCircle2', 'Plus', 'Minus', 'RefreshCw'
+              ].forEach(function(name) {
+                if (!window[name]) {
+                  const lowerKey = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+                  if (icons[lowerKey]) {
+                    window[name] = createLucideReactComponent(lowerKey, icons[lowerKey]);
+                  } else {
+                    window[name] = fallbackIcon;
+                  }
+                }
+              });
+            };
+          </script>
           <style>
             * { box-sizing: border-box; }
             body {
@@ -122,9 +204,10 @@ export function ComponentPreview({
 
           <script>
             window.onerror = function(msg, url, lineNo, columnNo, error) {
+              const detail = (error && error.message) ? error.message : msg;
               window.parent.postMessage({
                 type: 'RAIZEN_SANDBOX_ERROR',
-                message: msg + (lineNo ? ' (line: ' + lineNo + ')' : '')
+                message: detail + (lineNo ? ' (line: ' + lineNo + ')' : '')
               }, '*');
               return false;
             };
@@ -144,9 +227,11 @@ export function ComponentPreview({
                 try {
                   const { useState, useEffect, useRef, useMemo, useCallback } = React;
                   
-                  // Setup Lucide icons shim if referenced in component
-                  const LucideIcons = window.lucide || {};
-                  
+                  // Initialize Lucide Icons
+                  if (window.__initLucideIcons) {
+                    window.__initLucideIcons();
+                  }
+
                   ${processedCode}
 
                   const TargetComponent = window.__RAIZEN_ROOT_COMPONENT__;

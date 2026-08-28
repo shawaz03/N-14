@@ -45,9 +45,9 @@ export function exportStandaloneHtml(
   if (isReact) {
     processedCode = processedCode
       .replace(/import\s+[\s\S]*?from\s+['"][^'"]+['"];?/g, "")
-      .replace(/export\s+default\s+function\s+(\w+)/g, "function $1")
-      .replace(/export\s+function\s+(\w+)/g, "function $1")
-      .replace(/export\s+default\s+(\w+);?/g, "window.__RAIZEN_ROOT_COMPONENT__ = $1;")
+      .replace(/export\s+default\s+function\s+([A-Za-z0-9_]+)/g, "function $1\nwindow.__RAIZEN_ROOT_COMPONENT__ = $1;")
+      .replace(/export\s+function\s+([A-Za-z0-9_]+)/g, "function $1")
+      .replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, "window.__RAIZEN_ROOT_COMPONENT__ = $1;")
       .replace(/export\s+default\s+/g, "window.__RAIZEN_ROOT_COMPONENT__ = ");
 
     if (!processedCode.includes("window.__RAIZEN_ROOT_COMPONENT__")) {
@@ -77,6 +77,71 @@ export function exportStandaloneHtml(
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    function toPascalCase(str) {
+      return str.replace(/(^\\w|-\\w)/g, function(c) { return c.replace('-', '').toUpperCase(); });
+    }
+    function createLucideReactComponent(iconName, iconDef) {
+      return function IconComponent(props) {
+        const p = props || {};
+        const size = p.size || p.width || 20;
+        const strokeWidth = p.strokeWidth || 2;
+        const className = p.className || '';
+        const color = p.color || 'currentColor';
+        let inner = '';
+        if (Array.isArray(iconDef)) {
+          inner = iconDef.map(function(item) {
+            const tag = item[0];
+            const attrs = item[1];
+            const attrStr = Object.keys(attrs).map(function(k) { return k + '="' + attrs[k] + '"'; }).join(' ');
+            return '<' + tag + ' ' + attrStr + '></' + tag + '>';
+          }).join('');
+        }
+        return React.createElement('svg', {
+          xmlns: 'http://www.w3.org/2000/svg',
+          width: size,
+          height: size,
+          viewBox: '0 0 24 24',
+          fill: 'none',
+          stroke: color,
+          strokeWidth: strokeWidth,
+          strokeLinecap: 'round',
+          strokeLinejoin: 'round',
+          className: className,
+          dangerouslySetInnerHTML: { __html: inner }
+        });
+      };
+    }
+    window.__initLucideIcons = function() {
+      const lucideObj = window.lucide || {};
+      const icons = lucideObj.icons || {};
+      Object.keys(icons).forEach(function(key) {
+        const pascal = toPascalCase(key);
+        const comp = createLucideReactComponent(key, icons[key]);
+        window[pascal] = comp;
+        window[key] = comp;
+      });
+      const fallbackIcon = function FallbackIcon(props) {
+        return React.createElement('span', { className: (props && props.className) || 'inline-block text-signal font-mono' }, '✦');
+      };
+      [
+        'Sparkles', 'Check', 'ArrowRight', 'ArrowLeft', 'ShieldCheck', 'Zap', 'Code', 'Eye',
+        'Copy', 'RotateCcw', 'Maximize2', 'Minimize2', 'FileCode', 'Download', 'MessageSquare',
+        'Columns', 'Code2', 'Cpu', 'Terminal', 'Play', 'Pause', 'Trash', 'Settings', 'Search',
+        'Menu', 'X', 'ExternalLink', 'Github', 'ChevronRight', 'ChevronDown', 'Star', 'User',
+        'ShoppingCart', 'Heart', 'Package', 'CreditCard', 'Activity', 'Sliders', 'Layers'
+      ].forEach(function(name) {
+        if (!window[name]) {
+          const lowerKey = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+          if (icons[lowerKey]) {
+            window[name] = createLucideReactComponent(lowerKey, icons[lowerKey]);
+          } else {
+            window[name] = fallbackIcon;
+          }
+        }
+      });
+    };
+  </script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -96,7 +161,7 @@ export function exportStandaloneHtml(
       ? `
       <script type="text/babel" data-presets="react,typescript">
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
-        const LucideIcons = window.lucide || {};
+        if (window.__initLucideIcons) window.__initLucideIcons();
 
         ${processedCode}
 
