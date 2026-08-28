@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { ChatMessage } from "../types/chat";
 import { TerminalCursor } from "./TerminalCursor";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
@@ -12,6 +13,7 @@ interface ChatMessageItemProps {
 
 export function ChatMessageItem({
   message,
+  onRunInSandbox,
 }: ChatMessageItemProps) {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === "user";
@@ -88,9 +90,12 @@ export function ChatMessageItem({
           </div>
         </div>
 
-        {/* Message Content Body */}
-        <div className="text-xs text-text-primary leading-relaxed font-mono whitespace-pre-wrap break-words">
-          {message.content}
+        {/* Message Content Body with Rich Markdown & Code Blocks */}
+        <div className="text-xs text-text-primary leading-relaxed font-mono">
+          <MarkdownRenderer
+            content={message.content}
+            onRunInSandbox={onRunInSandbox}
+          />
           {message.isStreaming && <TerminalCursor size="sm" />}
         </div>
       </div>
