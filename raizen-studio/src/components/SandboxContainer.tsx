@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { MessageSquare, Columns, Code2 } from "lucide-react";
+import { MessageSquare, Columns, Code2, Sparkles } from "lucide-react";
 import { cn } from "../lib/utils";
 
 export type WorkspaceViewMode = "chat" | "split" | "sandbox";
@@ -20,21 +20,21 @@ export function SandboxContainer({
   onViewModeChange,
   chatSlot,
   sandboxSlot,
-  hasActiveSandbox = false,
+  hasActiveSandbox = true,
   className,
 }: SandboxContainerProps) {
   return (
     <div
       className={cn(
-        "flex-1 w-full h-[calc(100vh-45px-28px)] flex flex-col bg-void overflow-hidden select-none font-mono",
+        "flex-1 w-full h-[calc(100dvh-56px-28px)] sm:h-[calc(100vh-56px-28px)] flex flex-col bg-void overflow-hidden select-none font-mono relative",
         className
       )}
     >
-      {/* Workspace Control Bar (Visible when sandbox is loaded or on larger screens) */}
-      <div className="w-full h-8 bg-surface border-b border-edge flex items-center justify-between px-3 text-xs shrink-0 select-none">
+      {/* Workspace Control Bar (Desktop & Tablet top bar) */}
+      <div className="w-full h-8 bg-surface border-b border-edge flex items-center justify-between px-3 text-xs shrink-0 select-none z-10">
         {/* Left: Workspace Title */}
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
+          <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider hidden sm:inline">
             WORKSPACE:
           </span>
           <span className="text-[10px] text-signal font-bold">
@@ -53,23 +53,23 @@ export function SandboxContainer({
             type="button"
             onClick={() => onViewModeChange("chat")}
             className={cn(
-              "flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase font-bold transition-colors",
+              "flex items-center gap-1 px-2.5 py-0.5 text-[10px] uppercase font-bold transition-colors",
               viewMode === "chat"
                 ? "bg-signal text-void shadow-hard-sm"
                 : "text-text-muted hover:text-text-primary hover:bg-surface-elevated"
             )}
-            title="Chat Terminal Fullscreen"
+            title="Chat Terminal View"
           >
             <MessageSquare className="w-2.5 h-2.5" />
-            <span className="hidden sm:inline">CHAT</span>
+            <span>CHAT</span>
           </button>
 
-          {/* Split Mode */}
+          {/* Split Mode (Hidden on small mobile screens where split would be too cramped) */}
           <button
             type="button"
             onClick={() => onViewModeChange("split")}
             className={cn(
-              "flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase font-bold transition-colors",
+              "hidden lg:flex items-center gap-1 px-2.5 py-0.5 text-[10px] uppercase font-bold transition-colors",
               viewMode === "split"
                 ? "bg-signal text-void shadow-hard-sm"
                 : "text-text-muted hover:text-text-primary hover:bg-surface-elevated"
@@ -77,7 +77,7 @@ export function SandboxContainer({
             title="Split-Pane Dual View (Ctrl+\)"
           >
             <Columns className="w-2.5 h-2.5" />
-            <span className="hidden sm:inline">SPLIT</span>
+            <span>SPLIT</span>
           </button>
 
           {/* Sandbox Mode */}
@@ -85,24 +85,24 @@ export function SandboxContainer({
             type="button"
             onClick={() => onViewModeChange("sandbox")}
             className={cn(
-              "flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase font-bold transition-colors relative",
+              "flex items-center gap-1 px-2.5 py-0.5 text-[10px] uppercase font-bold transition-colors relative",
               viewMode === "sandbox"
                 ? "bg-signal text-void shadow-hard-sm"
                 : "text-text-muted hover:text-text-primary hover:bg-surface-elevated"
             )}
-            title="Live Sandbox Fullscreen"
+            title="Live Sandbox View"
           >
             <Code2 className="w-2.5 h-2.5" />
-            <span className="hidden sm:inline">SANDBOX</span>
+            <span>SANDBOX</span>
             {hasActiveSandbox && viewMode !== "sandbox" && (
-              <span className="w-1.5 h-1.5 bg-signal rounded-full animate-pulse inline-block ml-0.5" />
+              <span className="w-1.5 h-1.5 bg-signal rounded-full animate-ping inline-block ml-0.5" />
             )}
           </button>
         </div>
       </div>
 
-      {/* Main Workspace Split Grid */}
-      <div className="flex-1 w-full h-[calc(100%-32px)] flex overflow-hidden">
+      {/* Main Workspace View Grid */}
+      <div className="flex-1 w-full h-[calc(100%-32px)] flex overflow-hidden relative">
         {/* Left Pane: Chat Terminal */}
         <div
           className={cn(
@@ -126,6 +126,19 @@ export function SandboxContainer({
         >
           {sandboxSlot}
         </div>
+
+        {/* Mobile Floating Quick Switch Pill (Shown when on small screen in chat mode with active sandbox) */}
+        {hasActiveSandbox && viewMode === "chat" && (
+          <button
+            type="button"
+            onClick={() => onViewModeChange("sandbox")}
+            className="lg:hidden absolute bottom-20 right-4 z-20 flex items-center gap-1.5 px-3 py-2 bg-signal text-void border border-signal font-mono font-bold text-xs shadow-hard-sm animate-bounce"
+            title="Jump to Live Sandbox Preview"
+          >
+            <Sparkles className="w-3.5 h-3.5 fill-current" />
+            <span>VIEW SANDBOX</span>
+          </button>
+        )}
       </div>
     </div>
   );
