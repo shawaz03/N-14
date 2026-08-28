@@ -113,10 +113,10 @@ export function ComponentPreview({
               }
             };
           </script>
-          <!-- React 18 & Babel Standalone -->
+          <!-- React 18 & Babel Standalone (v7.24.4 Stable) -->
           <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
           <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-          <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+          <script src="https://unpkg.com/@babel/standalone@7.24.4/babel.min.js"></script>
           <!-- Lucide Icons Bundle -->
           <script src="https://unpkg.com/lucide@latest"></script>
           <style>
