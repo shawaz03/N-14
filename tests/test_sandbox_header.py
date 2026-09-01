@@ -3,9 +3,9 @@ import os
 
 class TestSandboxHeader(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.5.4:
+    Automated Audit Suite for SandboxHeader Toolbar Component:
     Verifies SandboxHeader toolbar component, dual-engine tab navigation,
-    filename badge, copy trigger, and fullscreen action.
+    filename badge, copy trigger, and fullscreen action with Swiss styling.
     """
 
     def setUp(self):
@@ -23,15 +23,15 @@ class TestSandboxHeader(unittest.TestCase):
         self.assertIn("CODE EDITOR", content, "Must have Code Editor tab")
         self.assertIn("LIVE PREVIEW", content, "Must have Live Preview tab")
 
-    def test_controls_and_brutalist_styling(self):
+    def test_controls_and_swiss_styling(self):
         with open(self.header_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("COPY", content, "Must provide copy action")
         self.assertIn("RESET", content, "Must provide reset action")
-        self.assertIn("bg-surface", content, "Must use bg-surface")
-        self.assertIn("border-edge", content, "Must use border-edge")
-        self.assertIn("bg-signal", content, "Active tab must use bg-signal")
+        self.assertIn("bg-white", content, "Must use bg-white")
+        self.assertIn("border-swiss-border", content, "Must use border-swiss-border")
+        self.assertIn("bg-swiss-saffron", content, "Active tab must use bg-swiss-saffron")
 
 if __name__ == "__main__":
     unittest.main()

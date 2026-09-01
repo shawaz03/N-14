@@ -3,9 +3,9 @@ import os
 
 class TestToastSystem(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.6.2:
-    Verifies the Toast notification system, useToast hook,
-    and integration into page.tsx with Terminal Brutalism styles.
+    Automated Audit Suite for Toast Notification System:
+    Verifies Toast notification system, useToast hook,
+    and integration into page.tsx with Swiss Editorial styles.
     """
 
     def setUp(self):
@@ -19,14 +19,15 @@ class TestToastSystem(unittest.TestCase):
         self.assertTrue(os.path.exists(self.hook_path), "useToast.ts must exist")
         self.assertTrue(os.path.exists(self.types_path), "toast.ts must exist")
 
-    def test_toast_brutalist_styling(self):
+    def test_toast_swiss_styling(self):
         with open(self.toast_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("export function ToastContainer", content)
-        self.assertIn("border-l-4 border-l-signal", content, "Must use 4px solid left accent border")
-        self.assertIn("bg-surface", content, "Must use bg-surface")
-        self.assertIn("shadow-hard-dark", content, "Must use shadow-hard-dark")
+        self.assertIn("border-l-4 border-l-swiss-saffron", content, "Must use Swiss Saffron left accent border")
+        self.assertIn("bg-white", content, "Must use pure white card background")
+        self.assertIn("shadow-swiss-lg", content, "Must use shadow-swiss-lg")
+        self.assertIn("font-frozen", content, "Must use Frozen font for toast title")
 
     def test_page_toast_integration(self):
         with open(self.page_path, "r", encoding="utf-8") as f:

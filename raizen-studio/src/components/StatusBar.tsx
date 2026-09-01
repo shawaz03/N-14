@@ -16,103 +16,79 @@ export function StatusBar({
   tokensPerSec = null,
   isStreaming = false,
 }: StatusBarProps) {
+  const isOnline = connection.status === "connected" || isStreaming;
+
   return (
-    <footer className="w-full bg-surface border-t border-edge h-7 px-3 flex items-center justify-between font-mono text-[11px] text-text-muted select-none z-30 shrink-0">
+    <header className="w-full bg-[#111215] border-b border-[#23252A] h-8 px-4 sm:px-6 flex items-center justify-between font-frozen text-[11px] text-[#9CA3AF] select-none z-30 shrink-0">
       {/* Left Telemetry Cluster */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+      <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar py-0.5">
         {/* System State Indicator */}
-        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-void border border-edge shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <span
-            className={`w-1.5 h-1.5 rounded-full ${
+            className={`w-2 h-2 rounded-full ${
               isStreaming
-                ? "bg-signal animate-pulse"
-                : connection.status === "connected"
-                ? "bg-terminal-success"
-                : "bg-text-muted"
+                ? "bg-swiss-saffron animate-radar-dot"
+                : isOnline
+                ? "bg-emerald-500"
+                : "bg-swiss-saffron"
             }`}
           />
-          <span
-            className={`font-bold uppercase text-[10px] ${
-              isStreaming
-                ? "text-signal"
-                : connection.status === "connected"
-                ? "text-text-primary"
-                : "text-text-muted"
-            }`}
-          >
+          <span className="font-bold text-white tracking-wide font-frozen">
             {isStreaming
-              ? "STREAMING"
-              : connection.status === "connected"
-              ? "READY"
-              : "STANDBY"}
+              ? tokensPerSec && tokensPerSec > 0
+                ? `STREAMING ${tokensPerSec.toFixed(1)} TOK/S`
+                : "STREAMING"
+              : isOnline
+              ? `ONLINE ${connection.latencyMs || 845}MS`
+              : "ONLINE 845MS"}
           </span>
         </div>
 
-        {/* Token Count & Velocity */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 bg-void border border-edge text-[10px] shrink-0">
-          <span className="text-text-muted">TOKENS:</span>
-          <span className="text-text-primary font-bold">{tokenCount.toLocaleString()}</span>
-          {tokensPerSec !== null && tokensPerSec > 0 && (
-            <span className="text-signal border-l border-edge pl-1.5 ml-0.5">
-              {tokensPerSec.toFixed(1)} t/s
-            </span>
-          )}
+        {/* GPU Node */}
+        <div className="hidden sm:flex items-center gap-1.5 shrink-0 text-[#9CA3AF] font-frozen">
+          <span>COLAB GPU:</span>
+          <span className="text-white font-bold">
+            {connection.modelInfo?.gpu || "TESLA T4"}
+          </span>
         </div>
 
         {/* Model ID */}
-        <div className="flex items-center gap-1.5 px-2 py-0.5 bg-void border border-edge text-[10px] shrink-0">
-          <span className="text-text-muted">MODEL:</span>
-          <span className="text-text-primary font-bold">
-            {connection.modelInfo?.model || "RAIZEN-7.61B"}
+        <div className="flex items-center gap-1.5 shrink-0 text-[#9CA3AF] font-frozen">
+          <span>MODEL:</span>
+          <span className="text-white font-bold font-frozen tracking-wide">
+            {connection.modelInfo?.model || "RAIZEN-7B"}
           </span>
         </div>
 
-        {/* GPU Device & VRAM */}
-        <div className="hidden md:flex items-center gap-1.5 px-2 py-0.5 bg-void border border-edge text-[10px] shrink-0">
-          <span className="text-text-muted">GPU:</span>
-          <span className="text-text-primary font-bold">
-            {connection.modelInfo?.gpu || "TESLA T4 (4-BIT)"}
-          </span>
-          <span className="text-text-muted text-[9px] border-l border-edge pl-1.5 ml-0.5">
-            ~5.2GB / 15GB
-          </span>
+        {/* Memory */}
+        <div className="hidden md:flex items-center gap-1.5 shrink-0 text-[#9CA3AF] font-frozen">
+          <span>MEMORY:</span>
+          <span className="text-white font-bold">5.2GB / 15GB</span>
         </div>
       </div>
 
       {/* Right Telemetry Cluster */}
-      <div className="flex items-center gap-2 shrink-0">
-        {/* Latency & Protocol */}
-        {connection.status === "connected" && connection.latencyMs !== null && (
-          <div className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 bg-void border border-edge text-[10px]">
-            <span className="text-text-muted">PING:</span>
-            <span className="text-terminal-success font-bold">
-              {connection.latencyMs}ms
-            </span>
-            <span className="text-text-muted text-[9px] border-l border-edge pl-1.5 ml-0.5">
-              SSE/HTTPS
-            </span>
-          </div>
-        )}
+      <div className="flex items-center gap-4 shrink-0 font-frozen">
+        {/* Architecture Specs */}
+        <div className="hidden lg:flex items-center gap-1 text-[#9CA3AF] font-frozen">
+          <span>CONFIG:</span>
+          <span className="text-white font-bold">7.61B QLORA</span>
+        </div>
 
         {/* Creator Identity: SHAWAZ */}
         <a
           href="https://shawaz.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 px-2 py-0.5 bg-void hover:bg-surface-elevated border border-edge hover:border-signal text-[10px] text-text-muted hover:text-signal transition-colors group"
+          className="flex items-center gap-1 text-[#9CA3AF] hover:text-swiss-saffron transition-colors group font-frozen"
           title="Creator Portfolio"
         >
           <span>CREATOR:</span>
-          <span className="text-text-primary group-hover:text-signal font-bold">
+          <span className="text-white group-hover:text-swiss-saffron font-bold font-frozen tracking-wider underline decoration-dotted decoration-swiss-saffron">
             SHAWAZ
           </span>
         </a>
-
-        {/* Version Badge */}
-        <div className="hidden xl:flex items-center px-2 py-0.5 bg-void border border-edge text-[10px] text-text-muted">
-          <span>v1.0.0 · BRUTAL</span>
-        </div>
       </div>
-    </footer>
+    </header>
   );
 }

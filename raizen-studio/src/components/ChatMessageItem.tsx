@@ -3,17 +3,18 @@
 import React, { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { ChatMessage } from "../types/chat";
-import { TerminalCursor } from "./TerminalCursor";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
   onRunInSandbox?: (code: string, language: string) => void;
+  onSaveSnippet?: (code: string, language: string, filename?: string) => void;
 }
 
 export function ChatMessageItem({
   message,
   onRunInSandbox,
+  onSaveSnippet,
 }: ChatMessageItemProps) {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === "user";
@@ -26,16 +27,16 @@ export function ChatMessageItem({
 
   if (isUser) {
     return (
-      <div className="w-full flex flex-col items-end my-3 select-text font-mono">
+      <div className="w-full flex flex-col items-end my-3 select-text animate-in fade-in duration-200">
         {/* User Message Header */}
-        <div className="flex items-center gap-2 mb-1 text-[11px]">
-          <span className="text-signal font-bold tracking-wider">&gt; YOU</span>
-          <span className="text-text-muted">{message.timestamp}</span>
+        <div className="flex items-center gap-2 mb-1 text-[11px] font-mono">
+          <span className="text-swiss-saffron font-bold font-frozen">SHAWAZ (You)</span>
+          <span className="text-swiss-muted">{message.timestamp}</span>
         </div>
 
-        {/* User Message Body: Flat minimal container with 1px border */}
-        <div className="max-w-[85%] sm:max-w-[75%] p-3.5 bg-void border border-edge hover:border-edge-light text-text-primary text-xs leading-relaxed transition-colors shadow-hard-dark">
-          <p className="whitespace-pre-wrap break-words font-mono">
+        {/* User Message Body: Solid Burnt Saffron Pill Card */}
+        <div className="max-w-[85%] sm:max-w-[75%] p-3.5 px-4 bg-swiss-saffron text-white text-sm sm:text-[15px] leading-relaxed rounded-2xl rounded-tr-sm shadow-swiss-saffron">
+          <p className="whitespace-pre-wrap break-words font-sans font-medium text-white">
             {message.content}
           </p>
         </div>
@@ -43,42 +44,45 @@ export function ChatMessageItem({
     );
   }
 
-  // AI Assistant Message: Brutalist flat block with 2px solid left accent border
+  // AI Assistant Message: Swiss Matte White Card with Hairline Borders
   return (
-    <div className="w-full flex flex-col items-start my-4 select-text font-mono">
+    <div className="w-full flex flex-col items-start my-4 select-text animate-in fade-in duration-200">
       {/* AI Assistant Message Container */}
-      <div className="w-full bg-surface border border-edge border-l-2 border-l-signal p-4 space-y-3 transition-colors shadow-hard-dark">
+      <div className="w-full bg-white border border-swiss-border-card rounded-card p-4 sm:p-5 space-y-3 shadow-swiss transition-all">
         {/* Message Top Header */}
-        <div className="flex items-center justify-between border-b border-edge/60 pb-2 text-[11px]">
+        <div className="flex items-center justify-between border-b border-swiss-border/60 pb-2.5 text-[11px]">
           <div className="flex items-center gap-2">
-            <span className="text-signal font-bold tracking-wider flex items-center gap-1">
-              <span className="text-signal">█</span> RAIZEN
+            <div className="w-5 h-5 rounded-md bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-[10px] font-bold">
+              ✦
+            </div>
+            <span className="text-swiss-ink font-bold tracking-wider font-frozen text-sm sm:text-base uppercase">
+              RAIZEN Engine
             </span>
-            <span className="text-[10px] px-1.5 py-0.2 bg-void border border-edge text-text-muted">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text font-bold font-mono border border-swiss-saffron/20">
               7.61B
             </span>
-            <span className="text-text-muted text-[10px]">
+            <span className="text-swiss-muted text-[10.5px] font-mono">
               {message.timestamp}
             </span>
           </div>
 
-          {/* Actions: Copy & Token Badge */}
-          <div className="flex items-center gap-2">
+          {/* Actions: Copy & Token Count */}
+          <div className="flex items-center gap-2 font-mono">
             {message.tokensCount !== undefined && message.tokensCount > 0 && (
-              <span className="hidden sm:inline text-[10px] text-text-muted">
+              <span className="hidden sm:inline text-[10px] text-swiss-muted font-mono">
                 {message.tokensCount} tokens
               </span>
             )}
             <button
               type="button"
               onClick={handleCopy}
-              className="p-1 hover:bg-surface-elevated border border-transparent hover:border-edge text-text-muted hover:text-text-primary text-[10px] flex items-center gap-1 transition-colors"
+              className="p-1 px-2 rounded-pill hover:bg-swiss-canvas border border-transparent hover:border-swiss-border text-swiss-muted hover:text-swiss-ink text-[10.5px] flex items-center gap-1 transition-colors font-mono"
               title={copied ? "Copied to Clipboard" : "Copy Message"}
             >
               {copied ? (
                 <>
-                  <Check className="w-3 h-3 text-terminal-success" />
-                  <span className="text-terminal-success">COPIED</span>
+                  <Check className="w-3 h-3 text-emerald-600" />
+                  <span className="text-emerald-600 font-bold">COPIED</span>
                 </>
               ) : (
                 <>
@@ -90,13 +94,13 @@ export function ChatMessageItem({
           </div>
         </div>
 
-        {/* Message Content Body with Rich Markdown & Code Blocks */}
-        <div className="text-xs text-text-primary leading-relaxed font-mono">
+        {/* Message Content Body with Markdown, Code Blocks & Reasoning */}
+        <div className="text-sm sm:text-[15px] text-swiss-ink leading-relaxed font-sans">
           <MarkdownRenderer
             content={message.content}
             onRunInSandbox={onRunInSandbox}
+            onSaveSnippet={onSaveSnippet}
           />
-          {message.isStreaming && <TerminalCursor size="sm" />}
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ class TestThoughtAccordion(unittest.TestCase):
         with open(self.accordion_path, "r", encoding="utf-8") as f:
             content = f.read()
         self.assertIn("export function ThoughtAccordion", content)
-        self.assertIn("REASONING / CHAIN OF THOUGHT", content)
+        self.assertIn("Thought & Architectural Reasoning", content)
 
         with open(self.divider_path, "r", encoding="utf-8") as f:
             div_content = f.read()

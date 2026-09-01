@@ -3,10 +3,10 @@ import os
 
 class TestChatMessageItem(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.4.1:
-    Verifies ChatMessageItem component conforms strictly to Terminal Brutalism specs:
-    flat message blocks, zero rounded bubbles, 2px left accent border on AI messages,
-    > YOU user label, and █ RAIZEN indicator.
+    Automated Audit Suite for ChatMessageItem Component:
+    Verifies Swiss matte white AI cards, solid Burnt Saffron user pill bubbles,
+    Frozen font for Engine titles, Beauty and the Beast for chat message prose,
+    copy feedback, and MarkdownRenderer integration.
     """
 
     def setUp(self):
@@ -15,30 +15,24 @@ class TestChatMessageItem(unittest.TestCase):
     def test_component_file_exists(self):
         self.assertTrue(os.path.exists(self.component_path), "ChatMessageItem.tsx must exist")
 
-    def test_terminal_brutalism_message_structures(self):
+    def test_editorial_message_structures_and_fonts(self):
         with open(self.component_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("export function ChatMessageItem", content)
-        self.assertIn("border-l-2 border-l-signal", content, "AI message must have 2px solid left accent border")
-        self.assertIn("&gt; YOU", content, "User message must have > YOU label")
-        self.assertIn("█", content, "AI indicator must use solid terminal block symbol █")
-        self.assertIn("RAIZEN", content, "AI indicator must display RAIZEN")
+        self.assertIn("bg-swiss-saffron", content, "User message must use Swiss Saffron pill")
+        self.assertIn("SHAWAZ", content, "User header must attribute SHAWAZ")
+        self.assertIn("RAIZEN Engine", content, "AI indicator must display RAIZEN Engine")
+        self.assertIn("font-frozen", content, "Must use Frozen font for engine title")
+        self.assertIn("font-sans", content, "Must use clean Sans font for chat messages")
+        self.assertIn("font-mono", content, "Must use Monospace font for metadata")
 
-    def test_no_rounded_bubbles(self):
-        with open(self.component_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        self.assertNotIn("rounded-2xl", content, "Must not use rounded-2xl bubbles")
-        self.assertNotIn("rounded-3xl", content, "Must not use rounded-3xl bubbles")
-        self.assertNotIn("rounded-xl", content, "Must not use rounded-xl bubbles")
-
-    def test_copy_action_and_streaming_cursor(self):
+    def test_copy_action_and_markdown(self):
         with open(self.component_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("COPY", content, "Must provide COPY action button")
-        self.assertIn("TerminalCursor", content, "Must mount TerminalCursor while streaming")
+        self.assertIn("MarkdownRenderer", content, "Must integrate MarkdownRenderer")
 
 if __name__ == "__main__":
     unittest.main()

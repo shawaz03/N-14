@@ -3,9 +3,9 @@ import os
 
 class TestStatusBarComponent(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.2.4:
-    Verifies the Bottom Terminal Status Bar component, real-time telemetry metrics,
-    GPU status, and SHAWAZ creator attribution link.
+    Automated Audit Suite for Top Obsidian Telemetry Status Bar:
+    Verifies top telemetry status bar, GPU status, Model stats,
+    Frozen font tokens, and SHAWAZ creator attribution link.
     """
 
     def setUp(self):
@@ -26,17 +26,9 @@ class TestStatusBarComponent(unittest.TestCase):
             content = f.read()
 
         self.assertIn("RAIZEN", content, "StatusBar must display RAIZEN model name")
-        self.assertIn("TOKENS:", content, "StatusBar must track token count")
         self.assertIn("GPU:", content, "StatusBar must display GPU telemetry")
-        self.assertIn("PING:", content, "StatusBar must display ping latency")
-
-    def test_terminal_brutalism_styling(self):
-        with open(self.status_bar_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        self.assertIn("bg-surface", content, "StatusBar must use bg-surface token")
-        self.assertIn("border-edge", content, "StatusBar must use border-edge token")
-        self.assertIn("font-mono", content, "StatusBar must use font-mono token")
+        self.assertIn("ONLINE", content, "StatusBar must display ONLINE status")
+        self.assertIn("font-frozen", content, "StatusBar must use font-frozen")
 
 if __name__ == "__main__":
     unittest.main()

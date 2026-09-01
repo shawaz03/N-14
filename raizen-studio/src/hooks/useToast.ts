@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { ToastMessage, ToastType } from "../types/toast";
 
 export interface UseToastReturn {
@@ -11,8 +11,13 @@ export interface UseToastReturn {
 
 export function useToast(): UseToastReturn {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const timersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   const dismissToast = useCallback((id: string) => {
+    if (timersRef.current.has(id)) {
+      clearTimeout(timersRef.current.get(id));
+      timersRef.current.delete(id);
+    }
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
@@ -35,13 +40,23 @@ export function useToast(): UseToastReturn {
       setToasts((prev) => [...prev, newToast]);
 
       if (duration > 0) {
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           dismissToast(id);
         }, duration);
+        timersRef.current.set(id, timer);
       }
     },
     [dismissToast]
   );
+
+  // Clear all pending timeouts on unmount
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+      timers.clear();
+    };
+  }, []);
 
   return {
     toasts,

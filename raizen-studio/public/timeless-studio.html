@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAIZEN — Timeless Architectural Studio</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-canvas:         #FAF8F5;  /* Warm ivory paper */
+      --bg-sidebar:        #F3EFEB;  /* Warm sandstone */
+      --bg-card:           #FFFFFF;  /* Pure matte white */
+      --bg-card-subtle:    #F7F5F0;  /* Subtle sand tile */
+      
+      --accent-solid:      #EA580C;  /* Warm burnt saffron / terracotta */
+      --accent-hover:      #C2410C;  /* Deep terracotta */
+      --accent-tint:       #FFF2EB;  /* Light peach cream */
+      --accent-text:       #9A3412;  /* Deep terracotta text */
+
+      --text-heading:      #121316;  /* Swiss deep charcoal */
+      --text-body:         #374151;  /* Neutral graphite */
+      --text-muted:        #6B7280;  /* Muted slate */
+      --text-subtle:       #9CA3AF;  /* Subtle hairline grey */
+
+      --border-main:       1px solid #E6E1D8;
+      --border-card:       1px solid #E5DFD5;
+      --border-focus:      1.5px solid #EA580C;
+
+      --header-dark:       #111215;  /* Pure obsidian telemetry */
+      
+      --radius-sm:         6px;
+      --radius-md:         12px;
+      --radius-lg:         18px;
+      --radius-pill:       9999px;
+
+      --shadow-sm:         0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md:         0 6px 16px rgba(0, 0, 0, 0.04);
+      --shadow-lg:         0 12px 32px rgba(0, 0, 0, 0.06);
+    }
+
+    [data-theme="nordic"] {
+      --bg-canvas:         #F8F9FA;
+      --bg-sidebar:        #EFF1F4;
+      --bg-card:           #FFFFFF;
+      --bg-card-subtle:    #F1F3F6;
+      --accent-solid:      #1D4ED8;
+      --accent-hover:      #1E40AF;
+      --accent-tint:       #EFF6FF;
+      --accent-text:       #1E3A8A;
+      --text-heading:      #0F172A;
+      --text-body:         #334155;
+      --text-muted:        #64748B;
+      --border-main:       1px solid #E2E8F0;
+      --border-card:       1px solid #CBD5E1;
+      --border-focus:      1.5px solid #1D4ED8;
+      --header-dark:       #0F172A;
+    }
+
+    [data-theme="kurogane"] {
+      --bg-canvas:         #151618;
+      --bg-sidebar:        #1A1B1E;
+      --bg-card:           #212328;
+      --bg-card-subtle:    #292C33;
+      --accent-solid:      #D97706;
+      --accent-hover:      #B45309;
+      --accent-tint:       rgba(217, 119, 6, 0.15);
+      --accent-text:       #F59E0B;
+      --text-heading:      #F4F4F5;
+      --text-body:         #D4D4D8;
+      --text-muted:        #A1A1AA;
+      --text-subtle:       #52525B;
+      --border-main:       1px solid #2E3036;
+      --border-card:       1px solid #383B42;
+      --border-focus:      1.5px solid #D97706;
+      --header-dark:       #0D0E10;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-body);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .top-telemetry-bar {
+      background-color: var(--header-dark);
+      color: #9CA3AF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 7px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+
+    .telemetry-group { display: flex; align-items: center; gap: 24px; }
+    .telemetry-item { display: inline-flex; align-items: center; gap: 7px; }
+    .telemetry-dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--accent-solid); }
+    .telemetry-author { color: #FFFFFF; text-decoration: none; font-weight: 700; transition: color 0.15s; }
+    .telemetry-author:hover { color: var(--accent-solid); }
+
+    .app-workspace {
+      flex: 1; display: flex; height: calc(100vh - 31px); overflow: hidden;
+    }
+
+    .sidebar {
+      width: 270px; background-color: var(--bg-sidebar); border-right: var(--border-main);
+      display: flex; flex-direction: column; flex-shrink: 0; z-index: 20;
+    }
+
+    .sidebar-header {
+      padding: 20px 20px 14px 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand-group { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-heading); }
+    .brand-logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+    .badge-studio {
+      font-size: 10px; font-weight: 700; background-color: var(--accent-tint); color: var(--accent-text);
+      padding: 2px 7px; border-radius: var(--radius-pill); border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .sidebar-btn-wrap { padding: 0 16px 14px 16px; }
+    .btn-new-chat {
+      width: 100%; background-color: var(--accent-solid); color: #FFFFFF; border: none;
+      padding: 10px 16px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+      box-shadow: var(--shadow-sm); transition: background-color 0.15s, transform 0.15s;
+    }
+    .btn-new-chat:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+    .btn-new-chat .btn-left { display: flex; align-items: center; gap: 8px; }
+    .btn-new-chat .kbd-tag {
+      font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px;
+      background-color: rgba(255, 255, 255, 0.2); border-radius: 4px;
+    }
+
+    .sidebar-nav-scroll { flex: 1; overflow-y: auto; padding: 6px 12px 16px 12px; }
+    .nav-header-label {
+      font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text-muted); padding: 12px 10px 6px 10px;
+    }
+    .nav-link {
+      display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
+      border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; color: var(--text-body);
+      cursor: pointer; text-decoration: none; transition: all 0.15s ease; margin-bottom: 2px;
+    }
+    .nav-link-content { display: flex; align-items: center; gap: 10px; }
+    .nav-link:hover { background-color: rgba(0, 0, 0, 0.04); color: var(--text-heading); }
+    .nav-link.active {
+      background-color: var(--bg-card); color: var(--text-heading); font-weight: 700; border: var(--border-card); box-shadow: var(--shadow-sm);
+    }
+    .nav-badge-pill {
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: var(--radius-pill); background-color: var(--accent-tint); color: var(--accent-text);
+    }
+
+    .history-item {
+      padding: 7px 12px; border-radius: var(--radius-sm); font-size: 12px; color: var(--text-muted);
+      cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: all 0.15s; margin-bottom: 2px;
+    }
+    .history-item:hover { background-color: rgba(0, 0, 0, 0.04); color: var(--text-heading); }
+    .history-item.active-chat {
+      background-color: var(--bg-card); font-weight: 600; border-left: 3px solid var(--accent-solid); color: var(--text-heading);
+    }
+
+    .sidebar-footer {
+      padding: 12px 14px; border-top: var(--border-main); background-color: var(--bg-sidebar); display: flex; flex-direction: column; gap: 2px;
+    }
+    .user-profile-widget {
+      margin-top: 4px; padding: 8px 10px; background-color: var(--bg-card); border: var(--border-card); border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .user-left { display: flex; align-items: center; gap: 9px; }
+    .user-avatar-circle {
+      width: 26px; height: 26px; border-radius: 50%; background-color: var(--accent-tint); color: var(--accent-text);
+      font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    }
+    .user-text-name { font-size: 12px; font-weight: 700; color: var(--text-heading); line-height: 1.2; }
+    .user-text-sub { font-size: 10px; color: var(--text-muted); }
+
+    .main-chat-pane {
+      flex: 1; display: flex; flex-direction: column; background-color: var(--bg-canvas); min-width: 0; position: relative;
+    }
+    .chat-top-header {
+      height: 56px; padding: 0 32px; background-color: var(--bg-card); border-bottom: var(--border-main); display: flex;
+      align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .chat-header-title { font-size: 15px; font-weight: 700; color: var(--text-heading); display: flex; align-items: gap: 10px; }
+    .online-indicator-pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; background-color: #ECFDF5;
+      color: #047857; border-radius: var(--radius-pill); font-size: 11px; font-weight: 700; border: 1px solid rgba(4, 120, 87, 0.2);
+    }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .action-btn {
+      padding: 6px 12px; background-color: var(--bg-card); border: var(--border-card); border-radius: var(--radius-pill);
+      font-size: 12px; font-weight: 600; color: var(--text-body); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s;
+    }
+    .action-btn:hover { background-color: var(--bg-card-subtle); color: var(--text-heading); }
+
+    .chat-feed-scroll {
+      flex: 1; overflow-y: auto; padding: 28px 40px; display: flex; flex-direction: column; gap: 22px; max-width: 900px; width: 100%; margin: 0 auto;
+    }
+    .chat-message-row { display: flex; gap: 14px; width: 100%; animation: fadeInRow 0.2s ease-out; }
+    @keyframes fadeInRow { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .chat-message-row.user-row { flex-direction: row-reverse; }
+
+    .msg-avatar-icon {
+      width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12.5px; font-weight: 800;
+    }
+    .ai-row .msg-avatar-icon { background-color: var(--text-heading); color: var(--bg-card); }
+    .user-row .msg-avatar-icon { background-color: var(--accent-solid); color: #FFFFFF; }
+
+    .msg-content-wrapper { max-width: 80%; display: flex; flex-direction: column; gap: 5px; }
+    .msg-header-info { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: var(--text-muted); padding: 0 4px; }
+    .user-row .msg-header-info { justify-content: flex-end; }
+
+    .msg-card-body {
+      padding: 16px 20px; border-radius: var(--radius-lg); font-size: 14px; line-height: 1.65; box-shadow: var(--shadow-sm);
+    }
+    .ai-row .msg-card-body {
+      background-color: var(--bg-card); border: var(--border-card); border-top-left-radius: 4px; color: var(--text-heading);
+    }
+    .user-row .msg-card-body {
+      background-color: var(--accent-solid); color: #FFFFFF; border-top-right-radius: 4px;
+    }
+
+    .chat-code-block {
+      margin-top: 12px; background-color: #111215; border-radius: var(--radius-md); overflow: hidden; border: 1px solid #23252A;
+    }
+    .code-block-header {
+      background-color: #18191E; padding: 8px 14px; display: flex; align-items: center; justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9CA3AF; border-bottom: 1px solid #23252A;
+    }
+    .btn-run-code {
+      background-color: var(--accent-solid); color: #FFFFFF; border: none; font-size: 10.5px; font-weight: 700;
+      padding: 3px 10px; border-radius: var(--radius-pill); cursor: pointer; transition: background-color 0.15s;
+    }
+    .btn-run-code:hover { background-color: var(--accent-hover); }
+
+    .code-block-code {
+      padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; color: #F3F4F6; overflow-x: auto;
+    }
+    .ck-kw { color: #F97316; font-weight: 600; }
+    .ck-str { color: #86EFAC; }
+    .ck-fn { color: #60A5FA; }
+
+    .chip-deck { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chip-btn {
+      background-color: var(--accent-tint); border: 1px solid rgba(0, 0, 0, 0.08); color: var(--accent-text);
+      font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: var(--radius-pill); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease;
+    }
+    .chip-btn:hover { background-color: var(--accent-solid); color: #FFFFFF; transform: translateY(-1px); }
+
+    .chat-input-dock {
+      padding: 16px 36px 20px 36px; background-color: var(--bg-canvas); border-top: var(--border-main); flex-shrink: 0;
+    }
+    .input-dock-max { max-width: 900px; margin: 0 auto; }
+    .input-capsule {
+      background-color: var(--bg-card); border: var(--border-card); border-radius: var(--radius-pill);
+      padding: 6px 8px 6px 18px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input-capsule:focus-within {
+      border-color: var(--accent-solid); box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.15);
+    }
+    .chat-field {
+      flex: 1; border: none; background: transparent; outline: none; font-size: 14px; font-family: inherit; color: var(--text-heading); padding: 8px 0;
+    }
+    .chat-field::placeholder { color: var(--text-subtle); }
+    .input-right-tools { display: flex; align-items: center; gap: 4px; }
+    .btn-input-tool {
+      width: 32px; height: 32px; border-radius: 50%; background: transparent; border: none; color: var(--text-muted);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .btn-input-tool:hover { background-color: rgba(0, 0, 0, 0.05); color: var(--text-heading); }
+    .btn-submit-send {
+      background-color: var(--accent-solid); color: #FFFFFF; border: none; padding: 8px 18px; border-radius: var(--radius-pill);
+      font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background-color 0.15s, transform 0.15s;
+    }
+    .btn-submit-send:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+
+    .input-bottom-meta {
+      display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 0 8px; font-size: 11px; color: var(--text-muted);
+    }
+    .footer-author-tag { font-weight: 700; color: var(--text-heading); text-decoration: none; }
+    .footer-author-tag:hover { color: var(--accent-solid); }
+
+    .palette-dock-bar {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: #111215;
+      padding: 6px 10px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 6px;
+      border: 1px solid #282A30; box-shadow: var(--shadow-lg); z-index: 100;
+    }
+    .palette-btn {
+      font-size: 11.5px; font-weight: 700; color: #9CA3AF; padding: 6px 14px; border-radius: var(--radius-pill);
+      border: none; background: transparent; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s ease;
+    }
+    .palette-btn:hover { color: #FFFFFF; }
+    .palette-btn.active { background-color: #FFFFFF; color: #111111; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); }
+    .color-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div class="top-telemetry-bar">
+    <div class="telemetry-group">
+      <div class="telemetry-item">
+        <span class="telemetry-dot"></span>
+        <span>ONLINE 845MS</span>
+      </div>
+      <div class="telemetry-item">
+        <span>COLAB GPU: TESLA T4</span>
+      </div>
+    </div>
+    <div class="telemetry-group">
+      <div class="telemetry-item">
+        <span>MODEL: RAIZEN-7B</span>
+      </div>
+      <div class="telemetry-item">
+        <span>MEMORY: 5.2GB / 15GB</span>
+      </div>
+      <div class="telemetry-item">
+        <span>ARCHITECT: <a href="https://shawaz.vercel.app/" target="_blank" class="telemetry-author">SHAWAZ</a></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-workspace">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="brand-group">
+          <span class="brand-logo-text">RAIZEN</span>
+        </a>
+        <span class="badge-studio">STUDIO</span>
+      </div>
+
+      <div class="sidebar-btn-wrap">
+        <button class="btn-new-chat" id="newChatBtn">
+          <div class="btn-left">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>New Chat</span>
+          </div>
+          <span class="kbd-tag">⌘N</span>
+        </button>
+      </div>
+
+      <div class="sidebar-nav-scroll">
+        <div class="nav-header-label">Workspace</div>
+        <a class="nav-link active" href="#">
+          <div class="nav-link-content">
+            <svg style="color: var(--accent-solid);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span>Chat</span>
+          </div>
+          <span class="nav-badge-pill">Active</span>
+        </a>
+
+        <a class="nav-link" href="#">
+          <div class="nav-link-content">
+            <svg style="color: var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+            <span>Explore</span>
+          </div>
+        </a>
+
+        <a class="nav-link" href="#">
+          <div class="nav-link-content">
+            <svg style="color: var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>History</span>
+          </div>
+        </a>
+
+        <a class="nav-link" href="#">
+          <div class="nav-link-content">
+            <svg style="color: var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+            <span>Saved</span>
+          </div>
+        </a>
+
+        <a class="nav-link" href="#">
+          <div class="nav-link-content">
+            <svg style="color: var(--text-muted);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            <span>Tools</span>
+          </div>
+        </a>
+
+        <div class="nav-header-label">Recent Sessions</div>
+        <div class="history-item active-chat">E-Commerce Landing Page</div>
+        <div class="history-item">React State Counter Widget</div>
+        <div class="history-item">Lucide React Universal Shim</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-widget">
+          <div class="user-left">
+            <div class="user-avatar-circle">SW</div>
+            <div>
+              <div class="user-text-name">SHAWAZ</div>
+              <div class="user-text-sub">Architect & Creator</div>
+            </div>
+          </div>
+          <svg style="color: var(--text-subtle);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-chat-pane">
+      <header class="chat-top-header">
+        <div class="chat-header-title">
+          <span>Component Studio</span>
+          <div class="online-indicator-pill">
+            <span style="width: 5px; height: 5px; border-radius: 50%; background: #047857;"></span>
+            <span>RAIZEN-7B Online</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="action-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Search</span>
+          </button>
+          <button class="action-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Export Code</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="chat-feed-scroll" id="chatFeed">
+        <div class="chat-message-row ai-row">
+          <div class="msg-avatar-icon">R</div>
+          <div class="msg-content-wrapper">
+            <div class="msg-header-info"><span>RAIZEN Engine</span> • <span>09:41 AM</span></div>
+            <div class="msg-card-body">
+              Welcome to the <strong>RAIZEN Architectural Studio</strong>. Engineered for pure focus, high readability, and rapid React component generation.<br><br>
+              Select a preset or ask a question to begin:
+              
+              <div class="chip-deck">
+                <button class="chip-btn" onclick="sendPrompt('Generate a modern pricing table component in React')">💳 Pricing Matrix</button>
+                <button class="chip-btn" onclick="sendPrompt('Create an interactive dashboard widget with useState')">📊 Analytics Widget</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-message-row user-row">
+          <div class="msg-avatar-icon">SW</div>
+          <div class="msg-content-wrapper">
+            <div class="msg-header-info"><span>SHAWAZ (You)</span> • <span>09:42 AM</span></div>
+            <div class="msg-card-body">
+              Write a complete modern E-Commerce Landing Page in React and Tailwind CSS called 'NEO-STORE' with interactive cart state and full Lucide icon support.
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-message-row ai-row">
+          <div class="msg-avatar-icon">R</div>
+          <div class="msg-content-wrapper">
+            <div class="msg-header-info"><span>RAIZEN Engine</span> • <span>09:43 AM</span></div>
+            <div class="msg-card-body">
+              Here is the production-ready React component structure:
+
+              <div class="chat-code-block">
+                <div class="code-block-header">
+                  <span>NeoStore.tsx (React 18 + Tailwind)</span>
+                  <button class="btn-run-code" onclick="alert('Running component in sandbox...')">▶ RUN IN SANDBOX</button>
+                </div>
+                <div class="code-block-code">
+                  <div><span class="ck-kw">import</span> React, { useState } <span class="ck-kw">from</span> <span class="ck-str">'react'</span>;</div>
+                  <div><span class="ck-kw">import</span> { ShoppingCart, Sparkles, Check, ArrowRight } <span class="ck-kw">from</span> <span class="ck-str">'lucide-react'</span>;</div>
+                  <br>
+                  <div><span class="ck-kw">export default function</span> <span class="ck-fn">App</span>() {</div>
+                  <div>&nbsp;&nbsp;<span class="ck-kw">const</span> [cart, setCart] = <span class="ck-fn">useState</span>(14);</div>
+                  <div>&nbsp;&nbsp;<span class="ck-kw">return</span> (</div>
+                  <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="ck-kw">div</span> <span class="ck-fn">className</span>=<span class="ck-str">"min-h-screen bg-slate-950 text-slate-100"</span>&gt;</div>
+                  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="ck-kw">Navbar</span> <span class="ck-fn">cartCount</span>={cart} /&gt;</div>
+                  <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="ck-kw">Hero</span> <span class="ck-fn">onAdd</span>={() =&gt; <span class="ck-fn">setCart</span>(c =&gt; c + 1)} /&gt;</div>
+                  <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="ck-kw">div</span>&gt;</div>
+                  <div>&nbsp;&nbsp;);</div>
+                  <div>}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-dock">
+        <div class="input-dock-max">
+          <form id="chatForm" onsubmit="handleSend(event)">
+            <div class="input-capsule">
+              <button type="button" class="btn-input-tool" title="Attach file">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+              </button>
+
+              <input 
+                type="text" 
+                class="chat-field" 
+                id="chatInput" 
+                placeholder="Ask RAIZEN to design a component, write logic, or refactor..." 
+                autocomplete="off"
+              />
+
+              <div class="input-right-tools">
+                <button type="button" class="btn-input-tool" title="Voice Input">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                </button>
+
+                <button type="submit" class="btn-submit-send">
+                  <span>Send</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div class="input-bottom-meta">
+            <div>
+              <span>RAIZEN-7B Model · Created & Traind by <a href="https://shawaz.vercel.app/" target="_blank" class="footer-author-tag">SHAWAZ</a></span>
+            </div>
+            <div>
+              <span>Press <strong>Enter</strong> to send</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="palette-dock-bar">
+    <button class="palette-btn active" onclick="switchTheme('swiss', this)">
+      <span class="color-dot" style="background: #EA580C;"></span>
+      <span>Swiss Saffron</span>
+    </button>
+    <button class="palette-btn" onclick="switchTheme('nordic', this)">
+      <span class="color-dot" style="background: #1D4ED8;"></span>
+      <span>Nordic Cobalt</span>
+    </button>
+    <button class="palette-btn" onclick="switchTheme('kurogane', this)">
+      <span class="color-dot" style="background: #D97706;"></span>
+      <span>Matte Graphite</span>
+    </button>
+  </div>
+
+  <script>
+    function switchTheme(themeName, btn) {
+      if (themeName === 'swiss') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeName);
+      }
+      document.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    function handleSend(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      appendUser(text);
+      input.value = '';
+      setTimeout(() => {
+        appendAi("I have processed your prompt: \"" + text + "\" and generated the corresponding React code.");
+      }, 450);
+    }
+    function sendPrompt(promptText) {
+      appendUser(promptText);
+      setTimeout(() => {
+        appendAi("Compiling \"" + promptText + "\" with QLoRA speed.");
+      }, 450);
+    }
+    function appendUser(text) {
+      const feed = document.getElementById('chatFeed');
+      const row = document.createElement('div');
+      row.className = 'chat-message-row user-row';
+      row.innerHTML = `<div class="msg-avatar-icon">SW</div><div class="msg-content-wrapper"><div class="msg-header-info"><span>SHAWAZ (You)</span> • <span>Just now</span></div><div class="msg-card-body">${escapeHtml(text)}</div></div>`;
+      feed.appendChild(row);
+      feed.scrollTop = feed.scrollHeight;
+    }
+    function appendAi(text) {
+      const feed = document.getElementById('chatFeed');
+      const row = document.createElement('div');
+      row.className = 'chat-message-row ai-row';
+      row.innerHTML = `<div class="msg-avatar-icon">R</div><div class="msg-content-wrapper"><div class="msg-header-info"><span>RAIZEN Engine</span> • <span>Just now</span></div><div class="msg-card-body">${escapeHtml(text)}</div></div>`;
+      feed.appendChild(row);
+      feed.scrollTop = feed.scrollHeight;
+    }
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  </script>
+</body>
+</html>

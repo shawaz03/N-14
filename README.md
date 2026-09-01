@@ -48,7 +48,7 @@
   5. *Deep Chain-of-Thought Reasoning* (Step-by-step `<think>` decomposition)
 - 🚀 **Distributed Training**: Distributed across **4× NVIDIA A10G GPUs** (`g5.12xlarge`) using PyTorch DDP, FlashAttention-2, and QLoRA across 3 full epochs (1,338 steps).
 - 📦 **Hugging Face Model Release**: [shawaz03/RAIZEN](https://huggingface.co/shawaz03/RAIZEN) (Self-contained, merged weights ready for Hugging Face Transformers & vLLM).
-- ⚡ **1-Click Google Colab Backend**: Server-Sent Events (SSE) FastAPI engine running on free T4/A100 GPUs with Cloudflare Quick Tunnels and keep-alive watchdog.
+- ⚡ **1-Click Google Colab Backend**: High-throughput vLLM PagedAttention streaming engine (8–15 tok/s) running on free T4/A100 GPUs with Cloudflare Quick Tunnels and keep-alive watchdog.
 - 🖤 **Terminal Brutalism Next.js Studio**: High-contrast OLED Black (`#050505`) and Acid Lime (`#CCFF00`) developer interface with Monaco Editor and live React component preview runner.
 
 ---

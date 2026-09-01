@@ -3,29 +3,29 @@ import os
 
 class TestGlobalsCss(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.1.4:
-    Verifies global CSS rules for Terminal Brutalism in globals.css,
-    including machine-snap scrolling, custom scrollbar, selection color,
-    engineering grid pattern, and terminal block cursor animation.
+    Automated Audit Suite for Swiss Editorial & Architectural Design System in globals.css:
+    Verifies warm alabaster canvas, peach/saffron selection rules, custom minimalist scrollbars,
+    Frozen font-face binding, and Claude-style searching & reasoning shimmer animations.
     """
 
     def setUp(self):
         self.css_path = os.path.abspath("raizen-studio/src/app/globals.css")
 
-    def test_machine_scroll_behavior(self):
+    def test_swiss_canvas_and_scroll_behavior(self):
         with open(self.css_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        self.assertIn("scroll-behavior: auto", content, "globals.css must specify scroll-behavior: auto")
-        self.assertIn("background-color: #050505", content, "globals.css must set canvas to OLED black")
+        self.assertIn("scroll-behavior: smooth", content, "globals.css must specify smooth scroll behavior")
+        self.assertIn("--swiss-canvas: #FAF8F5", content, "globals.css must set canvas to Warm Alabaster (#FAF8F5)")
+        self.assertIn("--swiss-saffron: #EA580C", content, "globals.css must define Swiss Saffron (#EA580C)")
 
     def test_selection_rules(self):
         with open(self.css_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("::selection", content, "globals.css must define ::selection")
-        self.assertIn("#ccff00", content.lower(), "selection highlight must be Acid Lime (#ccff00)")
-        self.assertIn("#050505", content.lower(), "selection text must be OLED black (#050505)")
+        self.assertIn("#fff2eb", content.lower(), "selection highlight must be Peach Tint (#FFF2EB)")
+        self.assertIn("#ea580c", content.lower(), "selection text must be Burnt Saffron (#EA580C)")
 
     def test_scrollbar_styling(self):
         with open(self.css_path, "r", encoding="utf-8") as f:
@@ -33,15 +33,24 @@ class TestGlobalsCss(unittest.TestCase):
 
         self.assertIn("::-webkit-scrollbar", content, "globals.css must define custom scrollbar")
         self.assertIn("::-webkit-scrollbar-thumb", content, "globals.css must define scrollbar thumb")
-        self.assertIn("#1f1f1f", content.lower(), "scrollbar thumb base color must be #1f1f1f")
+        self.assertIn("#e6e1d8", content.lower(), "scrollbar thumb base color must be #E6E1D8")
 
-    def test_grid_pattern_and_cursor(self):
+    def test_claude_shimmer_and_radar_animations(self):
         with open(self.css_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        self.assertIn(".bg-grid-pattern", content, "globals.css must define .bg-grid-pattern")
-        self.assertIn("@keyframes terminal-blink", content, "globals.css must define terminal-blink keyframes")
-        self.assertIn(".animate-terminal-cursor", content, "globals.css must define .animate-terminal-cursor")
+        self.assertIn("@keyframes claude-shimmer", content, "globals.css must define claude-shimmer keyframes")
+        self.assertIn(".animate-claude-shimmer", content, "globals.css must define .animate-claude-shimmer class")
+        self.assertIn("@keyframes thought-pulse", content, "globals.css must define thought-pulse keyframes")
+        self.assertIn("@keyframes live-dot-radar", content, "globals.css must define live-dot-radar keyframes")
+
+    def test_custom_font_face_bindings(self):
+        with open(self.css_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        self.assertIn("font-family: 'Frozen'", content, "globals.css must define @font-face for Frozen")
+        self.assertIn("--font-mono", content, "globals.css must define --font-mono")
+        self.assertIn("--font-sans", content, "globals.css must define --font-sans")
 
 if __name__ == "__main__":
     unittest.main()

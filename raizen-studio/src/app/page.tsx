@@ -1,217 +1,126 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { Header } from "../components/Header";
+import React, { useRef, useEffect, useState } from "react";
+import { Sidebar } from "../components/Sidebar";
 import { StatusBar } from "../components/StatusBar";
-import { ColabModal } from "../components/ColabModal";
-import { SandboxContainer, WorkspaceViewMode } from "../components/SandboxContainer";
 import { ChatMessageItem } from "../components/ChatMessageItem";
-import { StreamingIndicator } from "../components/StreamingIndicator";
 import { ChatInput } from "../components/ChatInput";
-import { SandboxHeader } from "../components/SandboxHeader";
-import { CodeEditor } from "../components/CodeEditor";
-import { ComponentPreview } from "../components/ComponentPreview";
+import { ClaudeLoadingEffect } from "../components/ClaudeLoadingEffect";
+import { ColabModal } from "../components/ColabModal";
+import { HistoryView } from "../components/HistoryView";
+import { SavedSnippetsView } from "../components/SavedSnippetsView";
+import { ModelExplorerView } from "../components/ModelExplorerView";
+import { SandboxBridgeView } from "../components/SandboxBridgeView";
 import { ToastContainer } from "../components/Toast";
+import { useToast } from "../hooks/useToast";
 import { useRaizenConnection } from "../hooks/useRaizenConnection";
 import { useRaizenChat } from "../hooks/useRaizenChat";
-import { useSandboxBridge } from "../hooks/useSandboxBridge";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
-import { useToast } from "../hooks/useToast";
+import { useRaizenHistory } from "../hooks/useRaizenHistory";
+import { useSavedSnippets } from "../hooks/useSavedSnippets";
 import { useCodeExport } from "../hooks/useCodeExport";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { ArrowUpRight } from "lucide-react";
+import { ChatSession } from "../types/session";
+import { RaizenPersona } from "../types/model";
+
+export type WorkspaceTab = "chat" | "explore" | "history" | "saved" | "tools";
 
 export default function RaizenStudioPage() {
-  // 1. Connection Hook
-  const connection = useRaizenConnection();
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>("chat");
+  const [isColabModalOpen, setIsColabModalOpen] = useState(false);
+  const { toasts, showToast, dismissToast } = useToast();
 
-  // 2. Chat Conversation Hook
+  const connection = useRaizenConnection();
+  const history = useRaizenHistory();
+  const snippetsVault = useSavedSnippets();
   const {
     messages,
     isStreaming,
     totalTokens,
     tokensPerSec,
     error: chatError,
+    activePersona,
+    setActivePersona,
     sendMessage,
     stopStreaming,
     clearMessages,
+    setMessages,
   } = useRaizenChat();
 
-  // 3. Sandbox Live Bridge Hook
-  const {
-    code,
-    language,
-    filename,
-    activeTab,
-    loadCode,
-    updateCode,
-    resetCode,
-    setActiveTab,
-  } = useSandboxBridge();
-
-  // 4. Code Export Hook
-  const { downloadHtml } = useCodeExport();
-
-  // 5. Toast Notification Hook
-  const { toasts, showToast, dismissToast } = useToast();
-
-  // 6. UI View States
-  const [viewMode, setViewMode] = useState<WorkspaceViewMode>("split");
-  const [isColabModalOpen, setIsColabModalOpen] = useState<boolean>(false);
+  const { downloadCode } = useCodeExport();
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto-scroll chat to bottom on new messages / tokens
+  // Sync active session messages to history whenever conversation updates
   useEffect(() => {
-    if (chatScrollRef.current) {
-      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    if (messages.length > 0 && !isStreaming) {
+      history.updateActiveSessionMessages(messages, totalTokens);
     }
-  }, [messages, isStreaming]);
+  }, [messages, isStreaming, totalTokens, history.updateActiveSessionMessages]);
 
-  // 7. Global Keyboard Shortcuts
+  // Auto-scroll to bottom of chat feed when new messages or tokens arrive
+  useEffect(() => {
+    if (chatScrollRef.current && activeTab === "chat") {
+      chatScrollRef.current.scrollTo({
+        top: chatScrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages, isStreaming, activeTab]);
+
+  const handleStartNewSession = () => {
+    history.createSession("New Architectural Session", []);
+    clearMessages();
+    setActiveTab("chat");
+    showToast("Started fresh chat session", "info", "NEW SESSION");
+  };
+
+  const handleSelectSession = (session: ChatSession) => {
+    history.switchSession(session.id);
+    setMessages(session.messages);
+    setActiveTab("chat");
+    showToast(`Resumed: ${session.title}`, "info", "SESSION RESTORED");
+  };
+
+  const handleSendMessage = (promptText: string, temperature: number = 0.2) => {
+    sendMessage(promptText, connection.tunnelUrl, temperature);
+  };
+
+  const handleRunInSandbox = (code: string, language: string) => {
+    // Sandbox is already launched directly by CodeBlock in the click gesture stack.
+    // This callback is only for UI toast notification feedback.
+    showToast("Launching component in Open-Source Sandbox...", "success", "SANDBOX RUNNER");
+  };
+
+  const handleSaveSnippet = (code: string, language: string, filename?: string) => {
+    const saved = snippetsVault.saveSnippet({
+      code,
+      language,
+      filename,
+    });
+    showToast(`Saved to Vault: ${saved.title}`, "success", "VAULT BOOKMARK");
+  };
+
+  const handleSelectPersona = (persona: RaizenPersona) => {
+    setActivePersona(persona);
+    showToast(`Active Specialist: ${persona.name}`, "info", "PERSONA SWITCHED");
+  };
+
+  const handleExportCode = (code: string, filename: string) => {
+    downloadCode(code, filename);
+  };
+
   useKeyboardShortcuts({
     isStreaming,
-    onStopStreaming: () => {
-      stopStreaming();
-      showToast("Stream execution halted by user", "warning", "PROCESS STOPPED");
-    },
+    onStopStreaming: stopStreaming,
     onClearChat: () => {
       clearMessages();
-      showToast("Terminal screen and history cleared", "info", "TERMINAL CLEARED");
-    },
-    onToggleSandbox: () => {
-      setViewMode((prev) => (prev === "split" ? "chat" : "split"));
+      showToast("Cleared conversation", "info", "CLEARED");
     },
   });
 
-  const handleSendMessage = (prompt: string, temperature: number) => {
-    sendMessage(prompt, connection.tunnelUrl, temperature);
-  };
-
-  const handleRunInSandbox = (codeToRun: string, codeLang: string) => {
-    loadCode(codeToRun, codeLang);
-    showToast("Code extracted and loaded into Live Sandbox", "success", "SANDBOX RUNNING");
-    // If in chat-only mode, automatically switch to split view so user sees the preview
-    if (viewMode === "chat") {
-      setViewMode("split");
-    }
-  };
-
-  const handleExportCode = () => {
-    downloadHtml(code, language, "RaizenWidget.html");
-    showToast("Exported standalone portable HTML component", "success", "FILE DOWNLOADED");
-  };
-
   return (
-    <div className="w-screen h-screen flex flex-col bg-void text-text-primary overflow-hidden select-none font-mono">
-      {/* 1. Mission Control Header Bar */}
-      <Header
-        connection={connection}
-        onOpenColabModal={() => setIsColabModalOpen(true)}
-      />
-
-      {/* 2. Workspace Split Grid */}
-      <SandboxContainer
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        chatSlot={
-          <div className="w-full h-full flex flex-col bg-void overflow-hidden">
-            {/* Connection Error Banner if disconnected */}
-            {connection.errorMessage && (
-              <div className="px-4 py-2 bg-terminal-error/20 border-b border-terminal-error/40 text-terminal-error text-xs flex items-center justify-between font-mono shrink-0">
-                <span>⚠ {connection.errorMessage}</span>
-                <button
-                  type="button"
-                  onClick={() => setIsColabModalOpen(true)}
-                  className="underline font-bold text-[11px] hover:text-white"
-                >
-                  Launch Colab GPU →
-                </button>
-              </div>
-            )}
-
-            {/* Chat Error Banner */}
-            {chatError && (
-              <div className="px-4 py-2 bg-terminal-error/20 border-b border-terminal-error/40 text-terminal-error text-xs font-mono shrink-0">
-                ⚠ {chatError}
-              </div>
-            )}
-
-            {/* Chat Messages Feed */}
-            <div
-              ref={chatScrollRef}
-              className="flex-1 w-full overflow-y-auto px-4 py-3 space-y-2 select-text"
-            >
-              {messages.map((msg) => (
-                <ChatMessageItem
-                  key={msg.id}
-                  message={msg}
-                  onRunInSandbox={handleRunInSandbox}
-                />
-              ))}
-            </div>
-
-            {/* Active Streaming Telemetry Indicator */}
-            <StreamingIndicator
-              isStreaming={isStreaming}
-              tokensPerSec={tokensPerSec}
-              onStop={() => {
-                stopStreaming();
-                showToast("Stream halted", "warning", "ABORTED");
-              }}
-            />
-
-            {/* Chat Command Input Bar */}
-            <div className="p-3 bg-void border-t border-edge shrink-0">
-              <ChatInput
-                onSendMessage={handleSendMessage}
-                isStreaming={isStreaming}
-                onStopStreaming={stopStreaming}
-                onClearChat={() => {
-                  clearMessages();
-                  showToast("Chat history reset", "info", "TERMINAL CLEARED");
-                }}
-              />
-            </div>
-          </div>
-        }
-        sandboxSlot={
-          <div className="w-full h-full flex flex-col bg-void overflow-hidden">
-            {/* Sandbox Tab Header */}
-            <SandboxHeader
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              filename={filename}
-              language={language}
-              code={code}
-              onReset={() => {
-                resetCode();
-                showToast("Sandbox restored to starter template", "info", "CODE RESET");
-              }}
-              onExport={handleExportCode}
-              isFullscreen={viewMode === "sandbox"}
-              onToggleFullscreen={() =>
-                setViewMode((prev) => (prev === "sandbox" ? "split" : "sandbox"))
-              }
-            />
-
-            {/* Editor or Preview Pane */}
-            <div className="flex-1 w-full h-[calc(100%-36px)] overflow-hidden">
-              {activeTab === "editor" ? (
-                <CodeEditor
-                  code={code}
-                  language={language}
-                  onChange={updateCode}
-                />
-              ) : (
-                <ComponentPreview
-                  code={code}
-                  language={language}
-                />
-              )}
-            </div>
-          </div>
-        }
-      />
-
-      {/* 3. Industrial Telemetry Status Bar */}
+    <div className="flex flex-col h-screen w-screen bg-swiss-canvas text-swiss-ink overflow-hidden font-sans select-none">
+      {/* 1. Top Obsidian Precision Telemetry Bar */}
       <StatusBar
         connection={connection}
         tokenCount={totalTokens}
@@ -219,14 +128,144 @@ export default function RaizenStudioPage() {
         isStreaming={isStreaming}
       />
 
-      {/* 4. Colab Quick-Launch Guide Modal */}
+      {/* 2. Main Studio Canvas (Sidebar + Dynamic Workspace Canvas) */}
+      <div className="flex flex-1 min-h-0 relative overflow-hidden">
+        {/* Left Collapsible Architectural Navigation Drawer */}
+        <Sidebar
+          activeTab={activeTab}
+          onSelectTab={(tabId) => setActiveTab(tabId as WorkspaceTab)}
+          onNewChat={handleStartNewSession}
+          onOpenColabModal={() => setIsColabModalOpen(true)}
+        />
+
+        {/* Dynamic Center Canvas View */}
+        <main className="flex-1 flex flex-col h-full bg-swiss-canvas relative min-w-0 overflow-hidden">
+          
+          {/* Connection Error Banner if disconnected */}
+          {connection.errorMessage && (
+            <div className="px-4 py-2 bg-red-50 border-b border-red-200 text-red-700 text-xs flex items-center justify-between font-frozen tracking-wide shrink-0">
+              <span className="flex items-center gap-1.5 font-frozen">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                <span>Tunnel Offline: {connection.errorMessage}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsColabModalOpen(true)}
+                className="underline font-bold text-[11px] hover:text-red-900 flex items-center gap-1 font-frozen tracking-wide"
+              >
+                <span>Launch Google Colab GPU</span>
+                <ArrowUpRight className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+
+          {/* Chat Error Banner */}
+          {chatError && (
+            <div className="px-4 py-2 bg-red-50 border-b border-red-200 text-red-700 text-xs font-frozen tracking-wide shrink-0">
+              ⚠ {chatError}
+            </div>
+          )}
+
+          {/* VIEW A: Model Explorer View */}
+          {activeTab === "explore" && (
+            <div className="flex-1 overflow-hidden animate-in fade-in duration-150">
+              <ModelExplorerView
+                activePersona={activePersona}
+                onSelectPersona={handleSelectPersona}
+              />
+            </div>
+          )}
+
+          {/* VIEW B: History Timeline View */}
+          {activeTab === "history" && (
+            <div className="flex-1 overflow-hidden animate-in fade-in duration-150">
+              <HistoryView
+                history={history}
+                onSelectSession={handleSelectSession}
+                onNewSession={handleStartNewSession}
+              />
+            </div>
+          )}
+
+          {/* VIEW C: Saved Snippets Vault View */}
+          {activeTab === "saved" && (
+            <div className="flex-1 overflow-hidden animate-in fade-in duration-150">
+              <SavedSnippetsView
+                snippetsVault={snippetsVault}
+                onRunInSandbox={handleRunInSandbox}
+                onExportCode={handleExportCode}
+              />
+            </div>
+          )}
+
+          {/* VIEW D: Sandbox Bridge View */}
+          {activeTab === "tools" && (
+            <div className="flex-1 overflow-hidden animate-in fade-in duration-150">
+              <SandboxBridgeView onRunInSandbox={handleRunInSandbox} />
+            </div>
+          )}
+
+          {/* VIEW E: Chat Studio Conversation View */}
+          {activeTab === "chat" && (
+            <>
+              {/* Single-Column Chat Stream: Full-width scroll container for edge-to-edge scrolling */}
+              <div
+                ref={chatScrollRef}
+                className="flex-1 w-full overflow-y-auto px-4 md:px-8 py-6 select-text"
+              >
+                <div className="max-w-4xl mx-auto space-y-6">
+                  {/* Render Chat Messages */}
+                  {messages
+                    .filter(
+                      (msg) =>
+                        msg.id !== "initial-welcome" &&
+                        !msg.content.includes("I am **RAIZEN**, an enterprise")
+                    )
+                    .map((msg) => (
+                      <ChatMessageItem
+                        key={msg.id}
+                        message={msg}
+                        onRunInSandbox={handleRunInSandbox}
+                        onSaveSnippet={handleSaveSnippet}
+                      />
+                    ))}
+
+                  {/* Claude-Style Searching & Progressive Shimmer Loading Effect */}
+                  {isStreaming && (
+                    <ClaudeLoadingEffect
+                      isStreaming={isStreaming}
+                      onStop={stopStreaming}
+                      tokensPerSec={tokensPerSec}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Floating Command Bar Input Dock */}
+              <div className="w-full bg-gradient-to-t from-swiss-canvas via-swiss-canvas to-transparent pt-4 pb-5 px-4 md:px-8 shrink-0">
+                <div className="max-w-4xl mx-auto">
+                  <ChatInput
+                    onSendMessage={handleSendMessage}
+                    isStreaming={isStreaming}
+                    onStopStreaming={stopStreaming}
+                    onClearChat={clearMessages}
+                    disabled={false}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </main>
+      </div>
+
+      {/* Google Colab Connection Modal */}
       <ColabModal
         isOpen={isColabModalOpen}
         onClose={() => setIsColabModalOpen(false)}
         connection={connection}
       />
 
-      {/* 5. Terminal Toast Notification System */}
+      {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );

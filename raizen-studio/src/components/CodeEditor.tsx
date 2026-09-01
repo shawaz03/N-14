@@ -13,7 +13,7 @@ interface CodeEditorProps {
   className?: string;
 }
 
-export const RAIZEN_MONACO_THEME = "raizen-dark";
+export const RAIZEN_MONACO_THEME = "raizen-obsidian";
 
 export function CodeEditor({
   code,
@@ -40,26 +40,26 @@ export function CodeEditor({
       base: "vs-dark",
       inherit: true,
       rules: [
-        { token: "", foreground: "E5E5E5", background: "050505" },
-        { token: "comment", foreground: "666666", fontStyle: "italic" },
-        { token: "keyword", foreground: "CCFF00", fontStyle: "bold" },
-        { token: "string", foreground: "00FF66" },
-        { token: "number", foreground: "FFB800" },
-        { token: "type", foreground: "00F0FF" },
+        { token: "", foreground: "EDEDEE", background: "111215" },
+        { token: "comment", foreground: "6B7280", fontStyle: "italic" },
+        { token: "keyword", foreground: "EA580C", fontStyle: "bold" },
+        { token: "string", foreground: "10B981" },
+        { token: "number", foreground: "F59E0B" },
+        { token: "type", foreground: "3B82F6" },
         { token: "identifier", foreground: "FFFFFF" },
-        { token: "delimiter", foreground: "888888" },
+        { token: "delimiter", foreground: "9CA3AF" },
       ],
       colors: {
-        "editor.background": "#050505",
-        "editor.foreground": "#E5E5E5",
-        "editorCursor.foreground": "#CCFF00",
-        "editor.lineHighlightBackground": "#0A0A0A",
-        "editorLineNumber.foreground": "#444444",
-        "editorLineNumber.activeForeground": "#CCFF00",
-        "editor.selectionBackground": "#CCFF0033",
-        "editor.inactiveSelectionBackground": "#CCFF001A",
-        "editorIndentGuide.background": "#1F1F1F",
-        "editorIndentGuide.activeBackground": "#333333",
+        "editor.background": "#111215",
+        "editor.foreground": "#EDEDEE",
+        "editorCursor.foreground": "#EA580C",
+        "editor.lineHighlightBackground": "#18191E",
+        "editorLineNumber.foreground": "#555861",
+        "editorLineNumber.activeForeground": "#EA580C",
+        "editor.selectionBackground": "#EA580C33",
+        "editor.inactiveSelectionBackground": "#EA580C1A",
+        "editorIndentGuide.background": "#26282E",
+        "editorIndentGuide.activeBackground": "#4B5563",
       },
     });
   }, []);
@@ -67,7 +67,7 @@ export function CodeEditor({
   return (
     <div
       className={cn(
-        "relative w-full h-full bg-void font-mono border-t border-edge",
+        "relative w-full h-full bg-[#111215] font-mono border-t border-swiss-border",
         className
       )}
     >
@@ -84,11 +84,11 @@ export function CodeEditor({
           fontSize: 12,
           lineHeight: 20,
           fontFamily:
-            "var(--font-jetbrains), 'JetBrains Mono', 'Consolas', monospace",
+            "var(--font-mono), 'JetBrains Mono', 'Consolas', monospace",
           fontLigatures: true,
           cursorBlinking: "solid",
-          cursorStyle: "block",
-          smoothScrolling: false,
+          cursorStyle: "line",
+          smoothScrolling: true,
           scrollBeyondLastLine: false,
           automaticLayout: true,
           tabSize: 2,
@@ -96,8 +96,8 @@ export function CodeEditor({
           padding: { top: 12, bottom: 12 },
         }}
         loading={
-          <div className="w-full h-full flex flex-col items-center justify-center bg-void font-mono text-xs text-text-muted gap-2">
-            <span className="text-signal animate-pulse">█ LOADING MONACO ENGINE...</span>
+          <div className="w-full h-full flex flex-col items-center justify-center bg-[#111215] font-mono text-xs text-swiss-muted gap-2">
+            <span className="text-swiss-saffron animate-pulse font-frozen font-bold">✦ LOADING CODE ENGINE...</span>
           </div>
         }
       />

@@ -55,13 +55,13 @@ class TestNotebookStreamingContract(unittest.TestCase):
             self.assertIn(field, self.clean_code, f"Missing request field: {field}")
 
     def test_sse_streaming_response_protocol(self):
-        """Verify Server-Sent Events protocol components."""
+        """Verify Server-Sent Events protocol components and vLLM async engine."""
         self.assertIn("StreamingResponse(", self.clean_code)
         self.assertIn('media_type="text/event-stream"', self.clean_code)
         self.assertIn("chat.completion.chunk", self.clean_code)
         self.assertIn("data: [DONE]", self.clean_code)
-        self.assertIn("TextIteratorStreamer", self.clean_code)
-        self.assertIn("threading.Thread", self.clean_code)
+        self.assertIn("AsyncLLMEngine", self.clean_code)
+        self.assertIn("SamplingParams", self.clean_code)
 
     def test_non_streaming_fallback_support(self):
         """Verify non-streaming response object structure exists."""

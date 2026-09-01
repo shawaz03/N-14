@@ -117,8 +117,9 @@ export async function streamRaizenChat(options: StreamChatOptions): Promise<stri
     onComplete?.(fullAccumulated, tokenCount);
     return fullAccumulated;
   } catch (err: unknown) {
-    if (signal?.aborted) {
+    if (signal?.aborted || (err instanceof Error && err.name === "AbortError")) {
       const abortErr = new Error("Stream aborted by user");
+      abortErr.name = "AbortError";
       onError?.(abortErr);
       return fullAccumulated;
     }

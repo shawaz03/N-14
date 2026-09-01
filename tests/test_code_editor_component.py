@@ -3,9 +3,9 @@ import os
 
 class TestCodeEditorComponent(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.5.2:
+    Automated Audit Suite for CodeEditor Component:
     Verifies the CodeEditor component integrating Monaco Editor,
-    custom raizen-dark theme (#050505 background, #CCFF00 cursor),
+    custom raizen-obsidian theme (#111215 background, #EA580C cursor),
     and monospace font configuration.
     """
 
@@ -23,14 +23,13 @@ class TestCodeEditorComponent(unittest.TestCase):
         self.assertIn("@monaco-editor/react", content, "Must import @monaco-editor/react")
         self.assertIn("RAIZEN_MONACO_THEME", content)
 
-    def test_brutalist_theme_definition(self):
+    def test_obsidian_theme_definition(self):
         with open(self.editor_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("defineTheme", content, "Must define custom Monaco theme")
-        self.assertIn('"editor.background": "#050505"', content, "Monaco bg must be #050505")
-        self.assertIn('"editorCursor.foreground": "#CCFF00"', content, "Monaco cursor must be #CCFF00")
-        self.assertIn("cursorStyle: \"block\"", content, "Must use solid block cursor")
+        self.assertIn('"editor.background": "#111215"', content, "Monaco bg must be #111215")
+        self.assertIn('"editorCursor.foreground": "#EA580C"', content, "Monaco cursor must be #EA580C")
 
 if __name__ == "__main__":
     unittest.main()

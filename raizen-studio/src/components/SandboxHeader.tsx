@@ -52,22 +52,22 @@ export function SandboxHeader({
   return (
     <div
       className={cn(
-        "w-full h-9 bg-surface border-b border-edge flex items-center justify-between px-3 text-xs select-none font-mono shrink-0",
+        "w-full h-10 bg-white border-b border-swiss-border flex items-center justify-between px-3 text-xs select-none font-mono shrink-0 shadow-swiss",
         className
       )}
     >
       {/* Left: Dual Engine Tab Switcher */}
-      <div className="flex items-center gap-1 bg-void border border-edge p-0.5">
+      <div className="flex items-center gap-1 bg-swiss-canvas border border-swiss-border p-0.5 rounded-pill">
         <button
           type="button"
           onClick={() => onTabChange("editor")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase transition-colors",
+            "flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase transition-all rounded-pill font-frozen",
             activeTab === "editor"
-              ? "bg-signal text-void shadow-hard-sm"
-              : "text-text-muted hover:text-text-primary hover:bg-surface-elevated"
+              ? "bg-swiss-saffron text-white shadow-swiss-saffron"
+              : "text-swiss-muted hover:text-swiss-ink"
           )}
-          title="Switch to Monaco Code Editor"
+          title="Switch to Code Editor"
         >
           <Code className="w-3 h-3" />
           <span>CODE EDITOR</span>
@@ -77,10 +77,10 @@ export function SandboxHeader({
           type="button"
           onClick={() => onTabChange("preview")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase transition-colors",
+            "flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase transition-all rounded-pill font-frozen",
             activeTab === "preview"
-              ? "bg-signal text-void shadow-hard-sm"
-              : "text-text-muted hover:text-text-primary hover:bg-surface-elevated"
+              ? "bg-swiss-saffron text-white shadow-swiss-saffron"
+              : "text-swiss-muted hover:text-swiss-ink"
           )}
           title="Switch to Live Component Preview"
         >
@@ -89,13 +89,13 @@ export function SandboxHeader({
         </button>
       </div>
 
-      {/* Middle: Active File & Language Pill (Hidden on extra small screens) */}
-      <div className="hidden sm:flex items-center gap-2 text-[10px] text-text-muted">
-        <div className="flex items-center gap-1 text-text-primary font-bold">
-          <FileCode className="w-3 h-3 text-signal" />
+      {/* Middle: Active File & Language Pill */}
+      <div className="hidden sm:flex items-center gap-2 text-[10px] text-swiss-muted">
+        <div className="flex items-center gap-1 text-swiss-ink font-bold font-mono">
+          <FileCode className="w-3.5 h-3.5 text-swiss-saffron" />
           <span>{filename}</span>
         </div>
-        <span className="px-1.5 py-0.2 bg-void border border-edge uppercase text-[9px]">
+        <span className="px-2 py-0.5 bg-swiss-canvas border border-swiss-border uppercase text-[9px] font-mono font-bold rounded-pill text-swiss-ink">
           {language}
         </span>
       </div>
@@ -107,11 +107,11 @@ export function SandboxHeader({
           <button
             type="button"
             onClick={onExport}
-            className="p-1.5 bg-void hover:bg-surface-elevated border border-edge text-text-muted hover:text-text-primary transition-colors text-[10px] flex items-center gap-1"
-            title="Download Standalone Component HTML/TSX"
+            className="px-2.5 py-1 bg-swiss-canvas hover:bg-white border border-swiss-border rounded-pill text-swiss-body hover:text-swiss-ink transition-colors text-[10px] font-mono flex items-center gap-1"
+            title="Download Component"
           >
-            <Download className="w-3 h-3 text-signal" />
-            <span className="hidden md:inline">EXPORT</span>
+            <Download className="w-3 h-3 text-swiss-saffron" />
+            <span className="hidden md:inline font-bold">EXPORT</span>
           </button>
         )}
 
@@ -120,11 +120,11 @@ export function SandboxHeader({
           <button
             type="button"
             onClick={onReset}
-            className="p-1.5 bg-void hover:bg-surface-elevated border border-edge text-text-muted hover:text-text-primary transition-colors text-[10px] flex items-center gap-1"
+            className="px-2.5 py-1 bg-swiss-canvas hover:bg-white border border-swiss-border rounded-pill text-swiss-body hover:text-swiss-ink transition-colors text-[10px] font-mono flex items-center gap-1"
             title="Reset to Initial Code"
           >
             <RotateCcw className="w-3 h-3" />
-            <span className="hidden md:inline">RESET</span>
+            <span className="hidden md:inline font-bold">RESET</span>
           </button>
         )}
 
@@ -132,18 +132,18 @@ export function SandboxHeader({
         <button
           type="button"
           onClick={handleCopy}
-          className="p-1.5 bg-void hover:bg-surface-elevated border border-edge text-text-muted hover:text-text-primary transition-colors text-[10px] flex items-center gap-1"
+          className="px-2.5 py-1 bg-swiss-canvas hover:bg-white border border-swiss-border rounded-pill text-swiss-body hover:text-swiss-ink transition-colors text-[10px] font-mono flex items-center gap-1"
           title={copied ? "Copied to Clipboard" : "Copy Code"}
         >
           {copied ? (
             <>
-              <Check className="w-3 h-3 text-terminal-success" />
-              <span className="text-terminal-success hidden md:inline">COPIED</span>
+              <Check className="w-3 h-3 text-emerald-600" />
+              <span className="text-emerald-600 font-bold hidden md:inline">COPIED</span>
             </>
           ) : (
             <>
               <Copy className="w-3 h-3" />
-              <span className="hidden md:inline">COPY</span>
+              <span className="hidden md:inline font-bold">COPY</span>
             </>
           )}
         </button>
@@ -153,11 +153,11 @@ export function SandboxHeader({
           <button
             type="button"
             onClick={onToggleFullscreen}
-            className="p-1.5 bg-void hover:bg-surface-elevated border border-edge text-text-muted hover:text-text-primary transition-colors"
+            className="p-1.5 bg-swiss-canvas hover:bg-white border border-swiss-border rounded-pill text-swiss-body hover:text-swiss-ink transition-colors"
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Sandbox"}
           >
             {isFullscreen ? (
-              <Minimize2 className="w-3 h-3 text-signal" />
+              <Minimize2 className="w-3 h-3 text-swiss-saffron" />
             ) : (
               <Maximize2 className="w-3 h-3" />
             )}

@@ -134,7 +134,7 @@ export function exportStandaloneHtml(
         window[key] = comp;
       });
       var fallbackIcon = function FallbackIcon(props) {
-        return React.createElement('span', { className: (props && props.className) || 'inline-block text-signal font-mono' }, '✦');
+        return React.createElement('span', { className: (props && props.className) || 'inline-block text-orange-500 font-mono' }, '✦');
       };
       [
         'Sparkles', 'Check', 'ArrowRight', 'ArrowLeft', 'ShieldCheck', 'Zap', 'Code', 'Eye',
@@ -159,8 +159,8 @@ export function exportStandaloneHtml(
     body {
       margin: 0;
       padding: 16px;
-      background-color: #050505;
-      color: #E5E5E5;
+      background-color: #0F1015;
+      color: #EDEDEE;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
   </style>

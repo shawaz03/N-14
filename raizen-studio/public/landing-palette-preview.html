@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAIZEN — Code at the Speed of Thought</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main:             #E8EEF3;  /* Sky Mimic 7420 */
+      --surface-sidebar:     #D4E5F1;  /* Light Sky 7331 */
+      --btn-primary-bg:      #4B6B92;  /* Blue Dawn 7275 Primary */
+      --btn-primary-soft:    #C8D4E6;  /* Blue Dawn 7275 Soft */
+      --accent-hover:        #DEEAEA;  /* Whispering Breeze 7412 */
+      --accent-secondary:    #E5ECD5;  /* Serene Valley 7675 */
+      --card-bg:             #EDF4F8;  /* Snow Princess 7332 */
+      --pure-white:          #F7F8F5;  /* Mirage White 8276 */
+      
+      --icon-blue-dawn:      #3B5B82;
+      --icon-serene:         #5C7845;
+      --icon-whisper:        #4A7D7D;
+      --icon-warm-magic:     #D97736;
+      --icon-soft-peach:     #D96B4F;
+      --icon-soft-pastel:    #8E5BB5;
+
+      --text-heading:        #152433;
+      --text-body:           #2C3E52;
+      --text-muted:          #62778E;
+      --text-subtle:         #899EAF;
+
+      --border-subtle:       1px solid rgba(75, 107, 146, 0.16);
+      --border-card:         1px solid rgba(75, 107, 146, 0.22);
+      --shadow-soft:         0 8px 30px rgba(30, 46, 64, 0.05);
+      --shadow-lift:         0 16px 40px rgba(30, 46, 64, 0.08);
+      --radius-sm:           8px;
+      --radius-md:           14px;
+      --radius-lg:           22px;
+      --radius-pill:         9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    .telemetry-bar {
+      background-color: #121E2B;
+      color: #98B0C8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 8px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1C2D3E;
+    }
+
+    .telemetry-item { display: inline-flex; align-items: center; gap: 7px; }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background-color: #7BDCB5; box-shadow: 0 0 8px #7BDCB5;
+    }
+
+    .telemetry-link { color: #C8D4E6; text-decoration: none; font-weight: 700; }
+    .telemetry-link:hover { color: #FFFFFF; text-decoration: underline; }
+
+    .main-navbar {
+      position: sticky; top: 0; z-index: 100;
+      background-color: rgba(247, 248, 245, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: var(--border-subtle);
+      padding: 14px 48px;
+    }
+
+    .navbar-container {
+      max-width: 1240px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 40px; }
+    .brand-title-box { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-heading); }
+    .brand-logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-link { font-size: 14px; font-weight: 600; color: var(--text-body); text-decoration: none; transition: color 0.15s; }
+    .nav-link:hover { color: var(--btn-primary-bg); }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-signin-btn { font-size: 13.5px; font-weight: 600; color: var(--text-body); text-decoration: none; padding: 8px 16px; border-radius: var(--radius-pill); transition: all 0.15s; }
+    .nav-signin-btn:hover { background-color: var(--accent-hover); }
+
+    .btn-start-building {
+      background-color: var(--btn-primary-bg);
+      color: #FFFFFF; text-decoration: none; font-size: 13.5px; font-weight: 700;
+      padding: 10px 22px; border-radius: var(--radius-pill);
+      box-shadow: 0 4px 14px rgba(75, 107, 146, 0.25);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-start-building:hover { background-color: #38567A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(75, 107, 146, 0.35); }
+
+    .hero-section {
+      max-width: 1240px; margin: 60px auto 80px auto; padding: 0 48px;
+      display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: center;
+    }
+
+    .hero-left { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+    .hero-pill-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px; background-color: var(--accent-secondary);
+      border-radius: var(--radius-pill); border: 1px solid rgba(92, 120, 69, 0.2);
+      font-size: 12px; font-weight: 700; color: var(--icon-serene);
+    }
+
+    .hero-headline {
+      font-size: 58px; font-weight: 800; line-height: 1.08; letter-spacing: -1.8px; color: var(--text-heading);
+    }
+    .hero-headline .highlight-word {
+      color: #3B5B82;
+      background: linear-gradient(135deg, #3B5B82 0%, #4B6B92 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .hero-subtitle { font-size: 17px; line-height: 1.6; color: var(--text-muted); max-width: 540px; }
+    .hero-cta-deck { display: flex; align-items: center; gap: 14px; margin-top: 8px; }
+
+    .btn-hero-primary {
+      background-color: var(--btn-primary-bg); color: #FFFFFF; font-size: 14.5px; font-weight: 700;
+      padding: 13px 26px; border-radius: var(--radius-pill); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 6px 18px rgba(75, 107, 146, 0.28);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-hero-primary:hover { background-color: #38567A; transform: translateY(-2px); }
+
+    .btn-hero-ghost {
+      background-color: var(--pure-white); color: var(--text-heading); border: var(--border-card);
+      font-size: 14.5px; font-weight: 700; padding: 13px 24px; border-radius: var(--radius-pill);
+      text-decoration: none; transition: all 0.2s ease; box-shadow: var(--shadow-soft);
+    }
+    .btn-hero-ghost:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
+
+    .hero-preview-box {
+      background-color: var(--card-bg); border: var(--border-card); border-radius: var(--radius-lg);
+      padding: 28px; box-shadow: var(--shadow-lift); position: relative; overflow: hidden;
+      aspect-ratio: 1.05 / 1; display: flex; flex-direction: column; justify-content: space-between;
+    }
+
+    .hero-preview-top {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(75, 107, 146, 0.12); padding-bottom: 14px;
+    }
+    .window-dots { display: flex; gap: 6px; }
+    .w-dot { width: 10px; height: 10px; border-radius: 50%; background-color: rgba(75, 107, 146, 0.3); }
+    .preview-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+
+    .preview-hero-center {
+      background: var(--pure-white); border-radius: var(--radius-md); padding: 32px 24px;
+      border: var(--border-subtle); text-align: center; display: flex; flex-direction: column;
+      align-items: center; gap: 14px; box-shadow: var(--shadow-soft);
+    }
+    .preview-orbit-dot {
+      width: 44px; height: 44px; border-radius: 50%; background: var(--btn-primary-soft);
+      display: flex; align-items: center; justify-content: center; color: var(--icon-blue-dawn);
+    }
+    .preview-skeleton-bar { width: 140px; height: 8px; background: rgba(75, 107, 146, 0.15); border-radius: 4px; }
+    .preview-sub-skeleton { width: 90px; height: 6px; background: rgba(75, 107, 146, 0.1); border-radius: 3px; }
+
+    .split-section {
+      max-width: 1240px; margin: 40px auto 100px auto; padding: 0 48px; text-align: center;
+    }
+    .section-headline { font-size: 38px; font-weight: 800; letter-spacing: -1px; color: var(--text-heading); }
+    .section-subheadline { font-size: 16px; color: var(--text-muted); max-width: 620px; margin: 12px auto 44px auto; }
+
+    .dual-split-card {
+      background: var(--pure-white); border: var(--border-card); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lift); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; text-align: left;
+    }
+
+    .editor-pane { background: #111A24; border-right: 1px solid #1D2D3E; display: flex; flex-direction: column; }
+    .editor-pane-header {
+      background: #182533; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #1D2D3E; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #92ACCE;
+    }
+    .editor-body {
+      padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.7; color: #E2EDFA; flex: 1; overflow-x: auto;
+    }
+    .code-num { color: #4B637E; margin-right: 14px; user-select: none; }
+    .code-kw { color: #82B1FF; font-weight: 600; }
+    .code-fn { color: #80CBC4; }
+    .code-str { color: #C3E88D; }
+    .code-prop { color: #FFCB6B; }
+
+    .editor-prompt-bar { padding: 14px 18px; background: #15222F; border-top: 1px solid #1D2D3E; display: flex; align-items: center; gap: 10px; }
+    .editor-prompt-input {
+      flex: 1; background: #0E1620; border: 1px solid #23374D; padding: 10px 14px; border-radius: var(--radius-sm); color: #E2EDFA; font-family: inherit; font-size: 12.5px; outline: none;
+    }
+
+    .preview-pane {
+      background: var(--card-bg); padding: 32px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .preview-interactive-widget {
+      width: 100%; max-width: 420px; background: var(--pure-white); border: var(--border-card);
+      border-radius: var(--radius-md); padding: 28px; box-shadow: var(--shadow-soft); text-align: center;
+    }
+    .widget-title { font-size: 18px; font-weight: 800; color: var(--text-heading); margin-bottom: 6px; }
+    .widget-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 20px; }
+    .counter-badge-display {
+      display: inline-block; font-size: 32px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      color: var(--btn-primary-bg); background: var(--accent-hover); padding: 6px 24px; border-radius: var(--radius-md);
+      margin-bottom: 20px; border: 1px solid rgba(74, 125, 125, 0.3);
+    }
+    .widget-actions { display: flex; gap: 10px; justify-content: center; }
+    .widget-btn { padding: 9px 18px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
+    .widget-btn-primary { background: var(--btn-primary-bg); color: #FFFFFF; }
+    .widget-btn-primary:hover { background: #38567A; }
+    .widget-btn-ghost { background: var(--btn-primary-soft); color: var(--text-heading); }
+
+    .features-section {
+      max-width: 1240px; margin: 0 auto 100px auto; padding: 0 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    }
+    .feature-card {
+      background: var(--pure-white); border: var(--border-card); border-radius: var(--radius-lg);
+      padding: 36px 30px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); border-color: rgba(75, 107, 146, 0.35); }
+    .feature-icon-circle { width: 48px; height: 48px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(30, 46, 64, 0.04); }
+    .feature-title { font-size: 19px; font-weight: 800; color: var(--text-heading); letter-spacing: -0.3px; }
+    .feature-desc { font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+
+    .cta-banner-section { max-width: 1240px; margin: 0 auto 100px auto; padding: 0 48px; }
+    .cta-banner-card {
+      background: #111B26; background: linear-gradient(145deg, #111B26 0%, #1A2838 100%);
+      border-radius: var(--radius-lg); padding: 64px 48px; text-align: center; color: #FFFFFF; position: relative; overflow: hidden;
+      box-shadow: var(--shadow-lift); border: 1px solid #22374E;
+    }
+    .cta-banner-headline { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 14px; }
+    .cta-banner-sub { font-size: 16px; color: #A0B8D0; max-width: 580px; margin: 0 auto 36px auto; }
+    .cta-banner-actions { display: flex; justify-content: center; gap: 16px; }
+    .btn-banner-primary {
+      background-color: var(--btn-primary-bg); color: #FFFFFF; font-size: 14.5px; font-weight: 700; padding: 14px 30px; border-radius: var(--radius-pill); text-decoration: none; transition: all 0.2s ease; box-shadow: 0 6px 20px rgba(75, 107, 146, 0.35);
+    }
+    .btn-banner-primary:hover { background-color: #38567A; transform: translateY(-2px); }
+    .btn-banner-ghost {
+      background-color: rgba(255, 255, 255, 0.08); color: #FFFFFF; font-size: 14.5px; font-weight: 700; padding: 14px 28px; border-radius: var(--radius-pill); text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.2s ease;
+    }
+    .btn-banner-ghost:hover { background-color: rgba(255, 255, 255, 0.14); }
+
+    .style-switcher-bar {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: rgba(18, 30, 43, 0.95); backdrop-filter: blur(16px);
+      padding: 8px 12px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 6px;
+      border: 1px solid #23374D; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25); z-index: 200;
+    }
+    .style-pill { font-size: 12px; font-weight: 700; color: #92ACCE; padding: 7px 16px; border-radius: var(--radius-pill); cursor: pointer; text-decoration: none; transition: all 0.15s ease; }
+    .style-pill:hover { color: #FFFFFF; }
+    .style-pill.active { background: var(--btn-primary-bg); color: #FFFFFF; box-shadow: 0 2px 8px rgba(75, 107, 146, 0.4); }
+
+    .site-footer {
+      max-width: 1240px; margin: 0 auto; padding: 0 48px 100px 48px; display: flex; align-items: center; justify-content: space-between;
+      font-size: 12.5px; color: var(--text-muted); border-top: var(--border-subtle); padding-top: 24px;
+    }
+    .footer-author-link { font-weight: 700; color: var(--text-heading); text-decoration: none; }
+    .footer-author-link:hover { color: var(--btn-primary-bg); }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TOP TELEMETRY BAR -->
+  <div class="telemetry-bar">
+    <div class="telemetry-item">
+      <span class="live-dot"></span>
+      <span>ONLINE 845MS</span>
+    </div>
+    <div class="telemetry-item">
+      <span>COLAB GPU: TESLA T4</span>
+    </div>
+    <div class="telemetry-item">
+      <span>MODEL: RAIZEN-7B (QLORA)</span>
+    </div>
+    <div class="telemetry-item">
+      <span>MEMORY: 5.2GB / 15GB</span>
+    </div>
+    <div class="telemetry-item">
+      <span>ARCHITECT: <a href="https://shawaz.vercel.app/" target="_blank" class="telemetry-link">SHAWAZ</a></span>
+    </div>
+  </div>
+
+  <!-- 2. MAIN NAVBAR -->
+  <nav class="main-navbar">
+    <div class="navbar-container">
+      <div class="nav-left">
+        <a href="#" class="brand-title-box">
+          <span class="brand-logo-text">RAIZEN</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#" class="nav-link">Engine</a></li>
+          <li><a href="#" class="nav-link">Studio</a></li>
+          <li><a href="#" class="nav-link">Docs</a></li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="nav-signin-btn">Sign in</a>
+        <a href="#" class="btn-start-building">Start Building</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 3. HERO SECTION -->
+  <header class="hero-section">
+    <div class="hero-left">
+      <div class="hero-pill-badge">
+        <span>•</span>
+        <span>v2.4 Now Live</span>
+      </div>
+
+      <h1 class="hero-headline">
+        Code at the<br>speed of <span class="highlight-word">thought.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        The studio for crafting React components with a high-performance AI engine. Real-time sandboxing, zero-latency previews, and precision code generation.
+      </p>
+
+      <div class="hero-cta-deck">
+        <a href="#" class="btn-hero-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <span>Get Started Free</span>
+        </a>
+        <a href="#" class="btn-hero-ghost">View Examples</a>
+      </div>
+    </div>
+
+    <!-- Hero Right Visual Identity Mockup -->
+    <div class="hero-preview-box">
+      <div class="hero-preview-top">
+        <div class="window-dots">
+          <div class="w-dot"></div>
+          <div class="w-dot"></div>
+          <div class="w-dot"></div>
+        </div>
+        <span class="preview-tag">VISUAL IDENTITY</span>
+      </div>
+
+      <div class="preview-hero-center">
+        <div class="preview-orbit-dot">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="preview-skeleton-bar"></div>
+        <div class="preview-sub-skeleton"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
+        <span>Asian Paints Curated</span>
+        <span>7.61B Qwen2.5 Base</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 4. DUAL-SPLIT ENGINE SHOWCASE -->
+  <section class="split-section">
+    <h2 class="section-headline">The Dual-Split Engine</h2>
+    <p class="section-subheadline">
+      Seamless transition from high-level natural language to production-ready React code with instant preview feedback.
+    </p>
+
+    <div class="dual-split-card">
+      <div class="editor-pane">
+        <div class="editor-pane-header">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #E78284;"></div>
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #E5C890;"></div>
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #A6D189;"></div>
+            <span style="margin-left: 8px;">Component.tsx</span>
+          </div>
+          <span style="font-size: 11px; color: #7B99BA;">React 18</span>
+        </div>
+
+        <div class="editor-body">
+          <div><span class="code-num">01</span><span class="code-kw">export default function</span> <span class="code-fn">RaizenCard</span>() {</div>
+          <div><span class="code-num">02</span>&nbsp;&nbsp;<span class="code-kw">const</span> [count, setCount] = <span class="code-fn">useState</span>(<span class="code-prop">14</span>);</div>
+          <div><span class="code-num">03</span>&nbsp;&nbsp;<span class="code-kw">return</span> (</div>
+          <div><span class="code-num">04</span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-prop">div</span> <span class="code-fn">className</span>=<span class="code-str">"p-6 rounded-xl bg-slate-900"</span>&gt;</div>
+          <div><span class="code-num">05</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-prop">h3</span> <span class="code-fn">className</span>=<span class="code-str">"font-bold text-white"</span>&gt;Interactive Element&lt;/<span class="code-prop">h3</span>&gt;</div>
+          <div><span class="code-num">06</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-prop">p</span> <span class="code-fn">className</span>=<span class="code-str">"text-slate-400"</span>&gt;Generated by Raizen-7B&lt;/<span class="code-prop">p</span>&gt;</div>
+          <div><span class="code-num">07</span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="code-prop">div</span>&gt;</div>
+          <div><span class="code-num">08</span>&nbsp;&nbsp;)</div>
+          <div><span class="code-num">09</span>}</div>
+        </div>
+
+        <div class="editor-prompt-bar">
+          <input type="text" class="editor-prompt-input" value="Describe a change... e.g. Add live counter state" readonly />
+        </div>
+      </div>
+
+      <div class="preview-pane">
+        <div class="preview-interactive-widget">
+          <h3 class="widget-title">Interactive Element</h3>
+          <p class="widget-desc">Generated by RAIZEN-7B with live state binding</p>
+
+          <div class="counter-badge-display" id="widgetCounter2">14</div>
+
+          <div class="widget-actions">
+            <button class="widget-btn widget-btn-primary" onclick="incrementWidget2()">＋ Add Items</button>
+            <button class="widget-btn widget-btn-ghost" onclick="resetWidget2()">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. THREE FEATURE CARDS GRID -->
+  <section class="features-section">
+    <div class="feature-card">
+      <div class="feature-icon-circle" style="background: rgba(217, 119, 54, 0.12); color: var(--icon-warm-magic);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+        </svg>
+      </div>
+      <h3 class="feature-title">Ultra-Low Latency</h3>
+      <p class="feature-desc">
+        Optimized for rapid iteration cycles. See your changes reflect in under 200ms with our custom QLoRA engine.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon-circle" style="background: rgba(92, 120, 69, 0.12); color: var(--icon-serene);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <h3 class="feature-title">Sandboxed Runtime</h3>
+      <p class="feature-desc">
+        Execute AI-generated components safely in a secure container environment with full dependency isolation.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon-circle" style="background: rgba(75, 107, 146, 0.14); color: var(--icon-blue-dawn);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+      </div>
+      <h3 class="feature-title">Modern Stack</h3>
+      <p class="feature-desc">
+        Direct export to Next.js, Remix, or Vite. Clean code that follows your brand guidelines and system rules.
+      </p>
+    </div>
+  </section>
+
+  <!-- 6. HERO BOTTOM CTA BANNER -->
+  <section class="cta-banner-section">
+    <div class="cta-banner-card">
+      <h2 class="cta-banner-headline">Start building with Raizen today</h2>
+      <p class="cta-banner-sub">
+        Join thousands of developers using our AI engine to accelerate their React workflow.
+      </p>
+      <div class="cta-banner-actions">
+        <a href="#" class="btn-banner-primary">Deploy your first engine</a>
+        <a href="#" class="btn-banner-ghost">Book a demo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. SITE FOOTER -->
+  <footer class="site-footer">
+    <div>
+      © 2024 RAIZEN Engine. Built with Asian Paints Curated Architecture.
+    </div>
+    <div>
+      Designed & Traind by <a href="https://shawaz.vercel.app/" target="_blank" class="footer-author-link">SHAWAZ</a>
+    </div>
+  </footer>
+
+  <!-- 8. FLOATING STYLE SWITCHER BAR -->
+  <div class="style-switcher-bar">
+    <a href="#" class="style-pill">Swiss editorial</a>
+    <a href="#" class="style-pill">Deep emerald craft</a>
+    <a href="#" class="style-pill">Cinematic depth</a>
+    <a href="#" class="style-pill active">Asian Paints Palette</a>
+  </div>
+
+  <script>
+    let c = 14;
+    function incrementWidget2() {
+      c += 1;
+      document.getElementById('widgetCounter2').innerText = c;
+    }
+    function resetWidget2() {
+      c = 0;
+      document.getElementById('widgetCounter2').innerText = c;
+    }
+  </script>
+</body>
+</html>

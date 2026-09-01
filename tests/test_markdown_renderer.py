@@ -29,7 +29,7 @@ class TestMarkdownRenderer(unittest.TestCase):
             content = f.read()
 
         self.assertIn("hr()", content, "Must customize hr element to render ASCII divider")
-        self.assertIn("text-signal", content, "Links and highlights must use text-signal")
+        self.assertIn("text-swiss-saffron", content, "Links and highlights must use text-swiss-saffron")
 
     def test_chat_message_item_integration(self):
         with open(self.message_item_path, "r", encoding="utf-8") as f:

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAIZEN — Code at the Speed of Thought</title>
+  <!-- Google Fonts: Plus Jakarta Sans / Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /*
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║  EXACT SWISS EDITORIAL PALETTE — 1:1 REPLICATION FROM SCREENSHOTS    ║
+    ╠══════════════════════════════════════════════════════════════════════╣
+    ║  • Background Cream/Canvas    : #FAF8F5                              ║
+    ║  • Primary Brand Orange CTA   : #F26522 (Warm Sunset Orange)        ║
+    ║  • Dark Charcoal Typography   : #111111 (High Contrast Deep Black)  ║
+    ║  • Muted Secondary Text       : #6B7280                              ║
+    ║  • Card Surface               : #FFFFFF / #F3F1ED                    ║
+    ║  • Dark Container/Editor      : #0D0E11                              ║
+    ║  • Badge Background           : #FFF0E8 (Soft Peach Cream)           ║
+    ║  • Border Muted               : #EAE6DF                              ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+    */
+
+    :root {
+      --bg-cream:         #FAF8F5;
+      --bg-card:          #FFFFFF;
+      --bg-card-subtle:   #F3F1ED;
+      --orange-primary:   #F26522;
+      --orange-hover:     #D95316;
+      --orange-soft:      #FFF0E8;
+      --text-black:       #111111;
+      --text-muted:       #666666;
+      --text-light:       #888888;
+      --border-light:     #EAE6DF;
+      --border-card:      #E5E0D8;
+      --editor-black:     #0D0E11;
+      --editor-header:    #16181D;
+      --banner-dark:      #121316;
+      --radius-sm:        8px;
+      --radius-md:        16px;
+      --radius-lg:        24px;
+      --radius-pill:      9999px;
+      --shadow-sm:        0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md:        0 12px 32px rgba(0, 0, 0, 0.06);
+      --shadow-lg:        0 20px 48px rgba(0, 0, 0, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-cream);
+      color: var(--text-black);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* ═══════════ 1. TOP TELEMETRY BAR ═══════════ */
+    .top-telemetry-bar {
+      background-color: #0D0E11;
+      color: #9CA3AF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 7px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #1C1E24;
+    }
+
+    .telemetry-group {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .telemetry-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #F26522;
+      box-shadow: 0 0 6px #F26522;
+    }
+
+    .telemetry-author-link {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .telemetry-author-link:hover {
+      color: var(--orange-primary);
+      text-decoration: underline;
+    }
+
+    /* ═══════════ 2. MAIN NAVBAR ═══════════ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(250, 248, 245, 0.94);
+      backdrop-filter: blur(12px);
+      padding: 18px 48px;
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .brand-logo {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      text-decoration: none;
+      color: var(--text-black);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-link-item {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #4B5563;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .nav-link-item:hover {
+      color: var(--text-black);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-signin {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #4B5563;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      transition: color 0.15s;
+    }
+
+    .btn-signin:hover {
+      color: var(--text-black);
+    }
+
+    .btn-start-building {
+      background-color: var(--orange-primary);
+      color: #FFFFFF;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 9px 20px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(242, 101, 34, 0.28);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-start-building:hover {
+      background-color: var(--orange-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(242, 101, 34, 0.38);
+    }
+
+    /* ═══════════ 3. HERO SECTION ═══════════ */
+    .hero-section {
+      max-width: 1200px;
+      margin: 40px auto 80px auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background-color: var(--orange-soft);
+      color: var(--orange-primary);
+      border: 1px solid rgba(242, 101, 34, 0.25);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hero-badge .badge-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--orange-primary);
+    }
+
+    .hero-headline {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--text-black);
+    }
+
+    .hero-headline .orange-accent {
+      color: var(--orange-primary);
+    }
+
+    .hero-subtext {
+      font-size: 16.5px;
+      line-height: 1.65;
+      color: #4B5563;
+      max-width: 520px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .btn-get-started {
+      background-color: var(--orange-primary);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(242, 101, 34, 0.3);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-get-started:hover {
+      background-color: var(--orange-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-view-examples {
+      background-color: #FFFFFF;
+      color: var(--text-black);
+      border: 1px solid #D1D5DB;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 22px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-view-examples:hover {
+      background-color: #F9FAFB;
+      border-color: #9CA3AF;
+    }
+
+    /* Hero Right Visual Identity Mockup Card */
+    .hero-mockup-card {
+      background-color: #F4F2EE;
+      border: 1px solid #E5E0D8;
+      border-radius: var(--radius-lg);
+      aspect-ratio: 1.02 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .mockup-inner-text {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9CA3AF;
+    }
+
+    /* ═══════════ 4. DUAL-SPLIT ENGINE SECTION ═══════════ */
+    .split-engine-section {
+      max-width: 1200px;
+      margin: 40px auto 90px auto;
+      padding: 0 48px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text-black);
+    }
+
+    .section-subtitle {
+      font-size: 15.5px;
+      color: #6B7280;
+      max-width: 600px;
+      margin: 10px auto 40px auto;
+      line-height: 1.5;
+    }
+
+    .dual-split-window {
+      background: #FFFFFF;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      text-align: left;
+    }
+
+    /* Left Editor Window */
+    .split-editor {
+      background-color: #0D0E11;
+      border-right: 1px solid #1C1E24;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .split-editor-top {
+      background-color: #14161B;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1C1E24;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: #9CA3AF;
+    }
+
+    .editor-window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot-gray {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: #2D3139;
+    }
+
+    .editor-code-body {
+      padding: 24px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #F3F4F6;
+      flex: 1;
+    }
+
+    .line-number {
+      color: #4B5563;
+      margin-right: 16px;
+      user-select: none;
+    }
+
+    .code-orange-kw { color: #F26522; font-weight: 600; }
+    .code-tag { color: #F26522; }
+    .code-attr-name { color: #FBBF24; }
+    .code-str-val { color: #A7F3D0; }
+
+    .editor-prompt-dock {
+      padding: 12px 16px;
+      background-color: #14161B;
+      border-top: 1px solid #1C1E24;
+    }
+
+    .editor-prompt-input {
+      width: 100%;
+      background-color: #0A0A0C;
+      border: 1px solid #242831;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      color: #E5E7EB;
+      font-family: inherit;
+      font-size: 12px;
+      outline: none;
+    }
+
+    /* Right Preview Window */
+    .split-preview {
+      background-color: #FFFFFF;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preview-header-meta {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #9CA3AF;
+    }
+
+    .preview-center-card {
+      width: 100%;
+      max-width: 380px;
+      background-color: #FAF8F5;
+      border: 1px solid #EAE6DF;
+      border-radius: var(--radius-md);
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .center-orange-orb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: var(--orange-primary);
+      box-shadow: 0 0 16px rgba(242, 101, 34, 0.4);
+    }
+
+    .center-skeleton-line {
+      width: 120px;
+      height: 8px;
+      background-color: #E5E0D8;
+      border-radius: 4px;
+    }
+
+    .preview-pagination-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .page-circle-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid #D1D5DB;
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #6B7280;
+    }
+
+    /* ═══════════ 5. THREE FEATURE CARDS ═══════════ */
+    .features-row {
+      max-width: 1200px;
+      margin: 0 auto 90px auto;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-box {
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-icon-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .f-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-black);
+      letter-spacing: -0.3px;
+    }
+
+    .f-desc {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #6B7280;
+    }
+
+    /* ═══════════ 6. BIG BOTTOM CTA BANNER ═══════════ */
+    .bottom-cta-wrap {
+      max-width: 1200px;
+      margin: 0 auto 80px auto;
+      padding: 0 48px;
+    }
+
+    .cta-dark-card {
+      background-color: #121316;
+      border-radius: var(--radius-lg);
+      padding: 68px 48px;
+      text-align: center;
+      color: #FFFFFF;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .cta-dark-headline {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      margin-bottom: 12px;
+    }
+
+    .cta-dark-sub {
+      font-size: 15.5px;
+      color: #9CA3AF;
+      max-width: 540px;
+      margin: 0 auto 36px auto;
+      line-height: 1.5;
+    }
+
+    .cta-button-deck {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .btn-deploy-engine {
+      background-color: var(--orange-primary);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px 28px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      box-shadow: 0 6px 18px rgba(242, 101, 34, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-deploy-engine:hover {
+      background-color: var(--orange-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-book-demo {
+      background-color: #23252B;
+      color: #FFFFFF;
+      border: 1px solid #373B44;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-book-demo:hover {
+      background-color: #2E323A;
+    }
+
+    /* ═══════════ 7. FLOATING STYLE SWITCHER ═══════════ */
+    .style-pill-dock {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(18, 19, 22, 0.95);
+      backdrop-filter: blur(14px);
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #2D3139;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+      z-index: 200;
+    }
+
+    .pill-opt {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9CA3AF;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-opt:hover {
+      color: #FFFFFF;
+    }
+
+    .pill-opt.active {
+      background-color: #FFFFFF;
+      color: #111111;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Footer Attribution */
+    .page-footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px 100px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: #9CA3AF;
+      border-top: 1px solid var(--border-light);
+      padding-top: 24px;
+    }
+
+    .footer-link {
+      color: var(--text-black);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      color: var(--orange-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TOP TELEMETRY BAR -->
+  <div class="top-telemetry-bar">
+    <div class="telemetry-group">
+      <div class="telemetry-item">
+        <span class="status-dot"></span>
+        <span>ONLINE 845MS</span>
+      </div>
+      <div class="telemetry-item">
+        <span>COLAB GPU: TESLA T4</span>
+      </div>
+    </div>
+    <div class="telemetry-group">
+      <div class="telemetry-item">
+        <span>MODEL: RAIZEN-7B</span>
+      </div>
+      <div class="telemetry-item">
+        <span>MEMORY: 5.2GB / 15GB</span>
+      </div>
+      <div class="telemetry-item">
+        <span>7.61B QLORA CONFIG</span>
+      </div>
+      <div class="telemetry-item">
+        <span>CREATOR: <a href="https://shawaz.vercel.app/" target="_blank" class="telemetry-author-link">SHAWAZ</a></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="nav-left">
+        <a href="#" class="brand-logo">RAIZEN</a>
+        <ul class="nav-links">
+          <li><a href="#" class="nav-link-item">Engine</a></li>
+          <li><a href="#" class="nav-link-item">Studio</a></li>
+          <li><a href="#" class="nav-link-item">Docs</a></li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="btn-signin">Sign in</a>
+        <a href="#" class="btn-start-building">Start Building</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 3. HERO SECTION -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>v2.4 Now Live</span>
+      </div>
+
+      <h1 class="hero-headline">
+        Code at the<br>speed of <span class="orange-accent">thought.</span>
+      </h1>
+
+      <p class="hero-subtext">
+        The studio for crafting React components with a high-performance AI engine. Real-time sandboxing, zero-latency previews, and precision code generation.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#" class="btn-get-started">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <span>Get Started Free</span>
+        </a>
+        <a href="#" class="btn-view-examples">View Examples</a>
+      </div>
+    </div>
+
+    <div class="hero-mockup-card">
+      <span class="mockup-inner-text">VISUAL IDENTITY</span>
+    </div>
+  </header>
+
+  <!-- 4. DUAL-SPLIT ENGINE SECTION -->
+  <section class="split-engine-section">
+    <h2 class="section-title">The Dual-Split Engine</h2>
+    <p class="section-subtitle">
+      Seamless transition from high-level natural language to production-ready React code with instant preview feedback.
+    </p>
+
+    <div class="dual-split-window">
+      
+      <!-- Left Code Editor -->
+      <div class="split-editor">
+        <div class="split-editor-top">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="editor-window-dots">
+              <div class="dot-gray"></div>
+              <div class="dot-gray"></div>
+              <div class="dot-gray"></div>
+            </div>
+            <span style="color: #9CA3AF; margin-left: 6px;">Component.tsx</span>
+          </div>
+        </div>
+
+        <div class="editor-code-body">
+          <div><span class="line-number">01</span><span class="code-orange-kw">export default function</span> RaizenCard() {</div>
+          <div><span class="line-number">02</span>&nbsp;&nbsp;<span class="code-orange-kw">return</span> (</div>
+          <div><span class="line-number">03</span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-tag">div</span> <span class="code-attr-name">className</span>=<span class="code-str-val">"p-6 rounded-xl"</span>&gt;</div>
+          <div><span class="line-number">04</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-tag">h3</span>&gt;Interactive Element&lt;/<span class="code-tag">h3</span>&gt;</div>
+          <div><span class="line-number">05</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="code-tag">p</span>&gt;Generated by Raizen-7B&lt;/<span class="code-tag">p</span>&gt;</div>
+          <div><span class="line-number">06</span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="code-tag">div</span>&gt;</div>
+          <div><span class="line-number">07</span>&nbsp;&nbsp;)</div>
+          <div><span class="line-number">08</span>}</div>
+        </div>
+
+        <div class="editor-prompt-dock">
+          <input type="text" class="editor-prompt-input" value="Describe a change..." readonly />
+        </div>
+      </div>
+
+      <!-- Right Component Preview -->
+      <div class="split-preview">
+        <div class="preview-header-meta">
+          <span>PREVIEW 0800</span>
+        </div>
+
+        <div class="preview-center-card">
+          <div class="center-orange-orb"></div>
+          <div class="center-skeleton-line"></div>
+        </div>
+
+        <div class="preview-pagination-dots">
+          <div class="page-circle-btn">‹</div>
+          <div class="page-circle-btn">›</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 5. THREE FEATURE CARDS -->
+  <section class="features-row">
+    
+    <!-- Card 1: Ultra-Low Latency -->
+    <div class="feature-box">
+      <div class="feature-icon-badge" style="background-color: #FFF0E8; color: #F26522;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+        </svg>
+      </div>
+      <h3 class="f-title">Ultra-Low Latency</h3>
+      <p class="f-desc">
+        Optimized for rapid iteration cycles. See your changes reflect in under 200ms with our custom QLoRA engine.
+      </p>
+    </div>
+
+    <!-- Card 2: Sandboxed Runtime -->
+    <div class="feature-box">
+      <div class="feature-icon-badge" style="background-color: #ECFDF5; color: #10B981;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <h3 class="f-title">Sandboxed Runtime</h3>
+      <p class="f-desc">
+        Execute AI-generated components safely in a secure container environment with full dependency isolation.
+      </p>
+    </div>
+
+    <!-- Card 3: Modern Stack -->
+    <div class="feature-box">
+      <div class="feature-icon-badge" style="background-color: #EFF6FF; color: #3B82F6;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+      </div>
+      <h3 class="f-title">Modern Stack</h3>
+      <p class="f-desc">
+        Direct export to Next.js, Remix, or Vite. Clean code that follows your brand guidelines and system rules.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- 6. BIG BOTTOM CTA BANNER -->
+  <section class="bottom-cta-wrap">
+    <div class="cta-dark-card">
+      <h2 class="cta-dark-headline">Start building with Raizen today</h2>
+      <p class="cta-dark-sub">
+        Join thousands of developers using our AI engine to accelerate their React workflow.
+      </p>
+      <div class="cta-button-deck">
+        <a href="#" class="btn-deploy-engine">Deploy your first engine</a>
+        <a href="#" class="btn-book-demo">Book a demo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. SITE FOOTER -->
+  <footer class="page-footer">
+    <div>
+      © 2024 RAIZEN Engine. All rights reserved.
+    </div>
+    <div>
+      Developed & Fine-Tuned by <a href="https://shawaz.vercel.app/" target="_blank" class="footer-link">SHAWAZ</a>
+    </div>
+  </footer>
+
+  <!-- 8. FLOATING STYLE SWITCHER BAR -->
+  <div class="style-pill-dock">
+    <a href="#" class="pill-opt active">Swiss editorial</a>
+    <a href="#" class="pill-opt">Deep emerald craft</a>
+    <a href="#" class="pill-opt">Cinematic depth</a>
+  </div>
+
+</body>
+</html>

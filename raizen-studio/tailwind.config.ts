@@ -12,7 +12,32 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        // Terminal Brutalism Palette ("Acid Lime" #CCFF00 on OLED Black #050505)
+
+        // 🏛️ Timeless Swiss Editorial & Architectural Palette
+        swiss: {
+          canvas: "#FAF8F5",       // Warm Ivory Paper
+          sidebar: "#F3EFEB",      // Warm Sandstone Linen
+          card: "#FFFFFF",         // Pure Matte White
+          "card-subtle": "#F7F5F0",// Sandstone Tile
+          saffron: {
+            DEFAULT: "#EA580C",    // Burnt Saffron / Terracotta
+            hover: "#C2410C",      // Deep Terracotta
+            tint: "#FFF2EB",       // Peach Milk
+            text: "#9A3412",       // Dark Terracotta Text
+          },
+          ink: "#121316",          // Swiss Charcoal Ink
+          body: "#374151",         // Neutral Slate Body
+          muted: "#6B7280",        // Muted Slate
+          subtle: "#9CA3AF",       // Hairline Grey
+          border: {
+            DEFAULT: "#E6E1D8",    // 1px Hairline Border
+            card: "#E5DFD5",       // Card Border
+            focus: "#EA580C",      // Focus Border
+          },
+          telemetry: "#111215",    // Top Obsidian Status Bar
+        },
+
+        // Terminal Brutalism Tokens & Aliases for backwards compatibility
         void: "#050505",
         surface: {
           DEFAULT: "#0A0A0A",
@@ -25,39 +50,52 @@ const config: Config = {
           dark: "#141414",
         },
         signal: {
-          DEFAULT: "#CCFF00",
-          hover: "#B3E600",
-          dim: "#99CC00",
-          glow: "rgba(204, 255, 0, 0.15)",
+          DEFAULT: "#EA580C",
+          hover: "#C2410C",
+          dim: "#9A3412",
+          glow: "rgba(234, 88, 12, 0.15)",
         },
         terminal: {
-          error: "#FF4444",
-          success: "#33FF99",
-          warn: "#FFAA00",
-          info: "#00E5FF",
+          error: "#EF4444",
+          success: "#10B981",
+          warn: "#F59E0B",
+          info: "#3B82F6",
         },
         text: {
-          primary: "#E5E5E5",
-          secondary: "#888888",
-          muted: "#666666",
+          primary: "#121316",
+          secondary: "#374151",
+          muted: "#6B7280",
         },
       },
       fontFamily: {
-        mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
-        display: ["var(--font-display)", "Space Grotesk", "sans-serif"],
-        fodax: ["var(--font-fodax)", "sans-serif"],
-        peachtea: ["var(--font-peachtea)", "cursive"],
+        frozen: ["var(--font-frozen)", "var(--font-display)", "sans-serif"],
+        sans: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"],
+        mono: [
+          "var(--font-mono)",
+          "JetBrains Mono",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "'Liberation Mono'",
+          "'Courier New'",
+          "monospace",
+        ],
+        display: ["var(--font-frozen)", "var(--font-display)", "Space Grotesk", "sans-serif"],
+        fodax: ["var(--font-frozen)", "sans-serif"],
       },
       borderRadius: {
+        pill: "9999px",
+        card: "14px",
+        soft: "4px",
         brutal: "0px",
-        soft: "2px",
       },
       boxShadow: {
-        hard: "4px 4px 0px #ffffff",
-        "hard-signal": "4px 4px 0px #CCFF00",
-        "hard-dark": "4px 4px 0px #333333",
-        "hard-edge": "2px 2px 0px #1F1F1F",
-        "hard-sm": "2px 2px 0px #ffffff",
+        swiss: "0 1px 3px rgba(0, 0, 0, 0.04)",
+        "swiss-md": "0 6px 16px rgba(0, 0, 0, 0.04)",
+        "swiss-lg": "0 12px 32px rgba(0, 0, 0, 0.06)",
+        "swiss-saffron": "0 4px 14px rgba(234, 88, 12, 0.2)",
       },
     },
   },

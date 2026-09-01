@@ -3,9 +3,9 @@ import os
 
 class TestSandboxContainer(unittest.TestCase):
     """
-    Automated Audit Suite for Sub-Step 5.5.1:
+    Automated Audit Suite for SandboxContainer Component:
     Verifies SandboxContainer workspace split-pane layout,
-    view mode toggles (chat, split, sandbox), and Terminal Brutalism styling.
+    view mode toggles (chat, split, sandbox), and Swiss styling.
     """
 
     def setUp(self):
@@ -24,14 +24,14 @@ class TestSandboxContainer(unittest.TestCase):
         self.assertIn('"split"', content)
         self.assertIn('"sandbox"', content)
 
-    def test_terminal_brutalism_styling_and_slots(self):
+    def test_swiss_styling_and_slots(self):
         with open(self.container_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("chatSlot", content, "Must render chat slot")
         self.assertIn("sandboxSlot", content, "Must render sandbox slot")
-        self.assertIn("border-edge", content, "Must use border-edge divider")
-        self.assertIn("bg-void", content, "Must use bg-void base")
+        self.assertIn("border-swiss-border", content, "Must use border-swiss-border divider")
+        self.assertIn("bg-swiss-canvas", content, "Must use bg-swiss-canvas base")
 
 if __name__ == "__main__":
     unittest.main()

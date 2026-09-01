@@ -97,22 +97,6 @@ export function ComponentPreview({
           <title>RAIZEN Live Sandbox</title>
           <!-- Tailwind CSS CDN -->
           <script src="https://cdn.tailwindcss.com"></script>
-          <script>
-            tailwind.config = {
-              darkMode: 'class',
-              theme: {
-                extend: {
-                  colors: {
-                    void: '#050505',
-                    surface: '#0A0A0A',
-                    edge: '#1F1F1F',
-                    signal: '#CCFF00',
-                    'signal-hover': '#B8E600',
-                  }
-                }
-              }
-            };
-          </script>
           <!-- React 18 & Babel Standalone (v7.24.4 Stable) -->
           <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
           <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -124,7 +108,7 @@ export function ComponentPreview({
             body {
               margin: 0;
               padding: 16px;
-              background-color: #050505;
+              background-color: #0F1015;
               color: #E5E5E5;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             }
@@ -189,7 +173,7 @@ export function ComponentPreview({
               });
 
               var fallbackIcon = function FallbackIcon(props) {
-                return React.createElement('span', { className: (props && props.className) || 'inline-block text-signal font-mono' }, '✦');
+                return React.createElement('span', { className: (props && props.className) || 'inline-block text-orange-500 font-mono' }, '✦');
               };
 
               [
@@ -263,12 +247,12 @@ export function ComponentPreview({
                       root.render(React.createElement(TargetComponent));
                       window.parent.postMessage({ type: 'RAIZEN_SANDBOX_SUCCESS' }, '*');
                     } else {
-                      document.getElementById('root').innerHTML = '<div style="padding: 20px; font-family: monospace; color: #CCFF00;">⚡ Component evaluated. No React component found to mount.</div>';
+                      document.getElementById('root').innerHTML = '<div style="padding: 20px; font-family: monospace; color: #EA580C;">⚡ Component evaluated. No React component found to mount.</div>';
                       window.parent.postMessage({ type: 'RAIZEN_SANDBOX_SUCCESS' }, '*');
                     }
                   } catch (err) {
                     var errorMsg = err && (err.message || String(err));
-                    document.getElementById('root').innerHTML = '<div style="padding: 16px; font-family: monospace; color: #FF6666; background: #150505; border: 1px solid #FF3333;"><h4 style="margin: 0 0 8px 0; color: #FF3333;">[EXECUTION ERROR]</h4><pre style="margin: 0; white-space: pre-wrap; font-size: 11px;">' + errorMsg + '</pre></div>';
+                    document.getElementById('root').innerHTML = '<div style="padding: 16px; font-family: monospace; color: #DC2626; background: #FEF2F2; border: 1px solid #FECACA;"><h4 style="margin: 0 0 8px 0; color: #DC2626;">[EXECUTION ERROR]</h4><pre style="margin: 0; white-space: pre-wrap; font-size: 11px;">' + errorMsg + '</pre></div>';
                     window.parent.postMessage({
                       type: 'RAIZEN_SANDBOX_ERROR',
                       message: errorMsg
@@ -296,33 +280,33 @@ export function ComponentPreview({
   return (
     <div
       className={cn(
-        "relative w-full h-full flex flex-col bg-void border-t border-edge font-mono select-none overflow-hidden",
+        "relative w-full h-full flex flex-col bg-[#0F1015] border-t border-swiss-border font-mono select-none overflow-hidden",
         className
       )}
     >
       {/* Sandbox Status Bar */}
-      <div className="w-full h-7 bg-[#080808] border-b border-edge flex items-center justify-between px-3 text-[10px] text-text-muted shrink-0">
+      <div className="w-full h-8 bg-white border-b border-swiss-border flex items-center justify-between px-3 text-[10px] text-swiss-muted shrink-0">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             {error ? (
-              <AlertTriangle className="w-3 h-3 text-terminal-error" />
+              <AlertTriangle className="w-3 h-3 text-red-600" />
             ) : isCompiling ? (
-              <span className="w-2 h-2 bg-signal rounded-full animate-ping" />
+              <span className="w-2 h-2 bg-swiss-saffron rounded-full animate-ping" />
             ) : (
-              <CheckCircle2 className="w-3 h-3 text-terminal-success" />
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
             )}
             <span
               className={cn(
-                "font-bold uppercase",
-                error ? "text-terminal-error" : isCompiling ? "text-signal" : "text-text-primary"
+                "font-bold uppercase font-frozen text-[10px]",
+                error ? "text-red-600" : isCompiling ? "text-swiss-saffron" : "text-swiss-ink"
               )}
             >
               {error ? "RUNTIME ERROR" : isCompiling ? "COMPILING..." : "LIVE SANDBOX ACTIVE"}
             </span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1 text-[9px] border-l border-edge pl-2 text-text-muted">
-            <ShieldCheck className="w-2.5 h-2.5 text-signal" />
+          <div className="hidden sm:flex items-center gap-1 text-[9px] border-l border-swiss-border pl-2 text-swiss-muted font-mono">
+            <ShieldCheck className="w-2.5 h-2.5 text-swiss-saffron" />
             <span>SANDBOXED IFRAME</span>
           </div>
         </div>
@@ -330,7 +314,7 @@ export function ComponentPreview({
         <button
           type="button"
           onClick={handleRefresh}
-          className="p-1 hover:bg-surface-elevated border border-transparent hover:border-edge text-text-muted hover:text-text-primary flex items-center gap-1 uppercase transition-colors"
+          className="p-1 px-2 rounded-pill hover:bg-swiss-canvas border border-transparent hover:border-swiss-border text-swiss-muted hover:text-swiss-ink flex items-center gap-1 uppercase transition-colors font-mono font-bold"
           title="Reload Sandbox"
         >
           <RotateCw className="w-2.5 h-2.5" />
@@ -340,13 +324,13 @@ export function ComponentPreview({
 
       {/* Error Overlay if code crashes */}
       {error && (
-        <div className="w-full bg-terminal-error/15 border-b border-terminal-error/40 p-3 text-xs font-mono text-terminal-error flex items-start gap-2 shrink-0">
-          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+        <div className="w-full bg-red-50 border-b border-red-200 p-3 text-xs font-mono text-red-700 flex items-start gap-2 shrink-0">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
           <div className="space-y-1">
-            <div className="font-bold uppercase tracking-wider text-[11px]">
+            <div className="font-bold uppercase tracking-wider text-[11px] font-frozen">
               [SANDBOX COMPILATION / RUNTIME ERROR]
             </div>
-            <div className="text-[11px] text-[#FF8888] whitespace-pre-wrap font-mono">
+            <div className="text-[11px] text-red-800 whitespace-pre-wrap font-mono">
               {error}
             </div>
           </div>
@@ -354,13 +338,13 @@ export function ComponentPreview({
       )}
 
       {/* Sandboxed Iframe Container */}
-      <div className="flex-1 w-full h-full bg-[#050505] relative">
+      <div className="flex-1 w-full h-full bg-[#0F1015] relative">
         <iframe
           key={renderKey}
           ref={iframeRef}
           title="RAIZEN Live Component Sandbox"
           sandbox="allow-scripts allow-modals allow-same-origin"
-          className="w-full h-full border-0 bg-[#050505]"
+          className="w-full h-full border-0 bg-[#0F1015]"
         />
       </div>
     </div>

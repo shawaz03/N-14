@@ -104,7 +104,7 @@ export function useRaizenConnection(): UseRaizenConnectionReturn {
               particleCount: 50,
               spread: 60,
               origin: { y: 0.1 },
-              colors: ["#CCFF00", "#FFFFFF", "#33FF99"],
+              colors: ["#EA580C", "#FAF8F5", "#121316", "#CCFF00"],
             });
           } catch {
             // Ignore confetti errors in non-browser envs

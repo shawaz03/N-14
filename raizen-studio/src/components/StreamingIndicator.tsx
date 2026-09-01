@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Square, Zap, Cpu } from "lucide-react";
-import { TerminalCursor } from "./TerminalCursor";
 import { cn } from "../lib/utils";
 
 interface StreamingIndicatorProps {
@@ -23,24 +22,23 @@ export function StreamingIndicator({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 px-3 py-1.5 bg-void border border-edge font-mono text-xs select-none",
+        "flex items-center justify-between gap-3 px-3.5 py-2 bg-white border border-swiss-border rounded-xl font-frozen text-xs select-none shadow-swiss",
         className
       )}
     >
       {/* Telemetry status & speed */}
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 text-signal">
+      <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 text-swiss-saffron">
           <Cpu className="w-3.5 h-3.5 animate-pulse" />
-          <span className="font-bold tracking-wider uppercase text-[11px]">
+          <span className="font-bold tracking-wider uppercase text-[11px] font-frozen">
             RAIZEN STREAMING
           </span>
-          <TerminalCursor size="sm" />
         </div>
 
         {tokensPerSec !== null && tokensPerSec > 0 && (
-          <div className="flex items-center gap-1 text-text-muted text-[10px] border-l border-edge pl-2">
-            <Zap className="w-3 h-3 text-signal" />
-            <span className="text-text-primary font-bold">
+          <div className="flex items-center gap-1 text-swiss-muted text-[10.5px] border-l border-swiss-border pl-2.5">
+            <Zap className="w-3 h-3 text-swiss-saffron" />
+            <span className="text-swiss-ink font-bold">
               {tokensPerSec.toFixed(1)}
             </span>
             <span>tok/s</span>
@@ -53,7 +51,7 @@ export function StreamingIndicator({
         <button
           type="button"
           onClick={onStop}
-          className="flex items-center gap-1 px-2 py-0.5 bg-terminal-error/20 hover:bg-terminal-error text-terminal-error hover:text-void border border-terminal-error/40 font-mono text-[10px] font-bold uppercase transition-colors shrink-0 active:translate-y-0.5"
+          className="flex items-center gap-1 px-2.5 py-1 bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 rounded-pill font-frozen text-[10px] font-bold uppercase transition-all shrink-0 active:scale-95"
           title="Halt Generation"
         >
           <Square className="w-2.5 h-2.5 fill-current" />

@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Square, Trash2, Sliders, CornerDownLeft } from "lucide-react";
-import { QuickActions } from "./QuickActions";
+import { Send, Square, Trash2, Sliders, Paperclip, Mic } from "lucide-react";
 import { cn } from "../lib/utils";
 
 interface ChatInputProps {
@@ -64,17 +63,14 @@ export function ChatInput({
   };
 
   return (
-    <div className={cn("w-full flex flex-col gap-1.5 font-mono", className)}>
-      {/* Quick Action Preset Prompt Chips */}
-      <QuickActions onSelectPrompt={handleSelectQuickPrompt} />
-
-      {/* Main Command Input Box */}
-      <div className="relative w-full bg-surface border border-edge hover:border-edge-light focus-within:border-signal transition-colors shadow-hard-dark">
+    <div className={cn("w-full flex flex-col gap-2 select-none", className)}>
+      {/* Main Command Input Capsule */}
+      <div className="relative w-full bg-white rounded-2xl border border-swiss-border hover:border-swiss-border-card focus-within:border-swiss-saffron transition-all shadow-swiss">
         {/* Settings Bar if toggled */}
         {showSettings && (
-          <div className="flex items-center justify-between px-3 py-1.5 bg-void border-b border-edge text-[11px] select-none">
+          <div className="flex items-center justify-between px-4 py-2 bg-swiss-canvas border-b border-swiss-border rounded-t-2xl text-[11px] font-frozen">
             <div className="flex items-center gap-2">
-              <span className="text-text-muted">TEMPERATURE:</span>
+              <span className="text-swiss-muted font-bold">SAMPLING TEMPERATURE:</span>
               <input
                 type="range"
                 min="0.0"
@@ -82,24 +78,37 @@ export function ChatInput({
                 step="0.05"
                 value={temperature}
                 onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                className="w-24 accent-signal h-1 bg-edge cursor-pointer"
+                className="w-24 accent-swiss-saffron h-1.5 bg-swiss-border rounded-pill cursor-pointer"
               />
-              <span className="text-signal font-bold">{temperature.toFixed(2)}</span>
+              <span className="text-swiss-saffron font-bold">{temperature.toFixed(2)}</span>
             </div>
 
-            <span className="text-[10px] text-text-muted">
-              (0.2 = Deterministic Code, 0.7 = Creative)
+            <span className="text-[10px] text-swiss-muted">
+              (0.2 = Deterministic React, 0.7 = Creative)
             </span>
           </div>
         )}
 
-        <div className="flex items-start p-2.5 gap-2">
-          {/* Command Prompt Prefix */}
-          <div className="flex items-center text-signal font-bold select-none pt-1">
-            <span className="text-sm">&gt;</span>
+        <div className="flex items-end p-2.5 sm:p-3 gap-2">
+          {/* Accessory Buttons: Attach & Voice */}
+          <div className="flex items-center gap-1 pb-1">
+            <button
+              type="button"
+              className="p-1.5 rounded-full hover:bg-swiss-canvas text-swiss-muted hover:text-swiss-ink transition-colors"
+              title="Attach File or Context"
+            >
+              <Paperclip className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              className="p-1.5 rounded-full hover:bg-swiss-canvas text-swiss-muted hover:text-swiss-ink transition-colors"
+              title="Voice Input"
+            >
+              <Mic className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* Monospace Auto-grow Textarea */}
+          {/* Auto-grow Textarea in Plus Jakarta Sans */}
           <textarea
             ref={textareaRef}
             rows={1}
@@ -110,19 +119,19 @@ export function ChatInput({
             placeholder={
               disabled
                 ? "Connect Colab GPU in header to start prompting..."
-                : "Enter code command or prompt... (Enter to send, Shift+Enter for new line)"
+                : "Ask RAIZEN to design a component, write logic, or refactor... (Enter to send)"
             }
-            className="w-full bg-transparent resize-none outline-none font-mono text-xs text-text-primary placeholder:text-text-muted/60 leading-relaxed py-1 min-h-[24px] max-h-[200px]"
+            className="w-full bg-transparent resize-none outline-none font-sans text-sm sm:text-[15px] text-swiss-ink placeholder:text-swiss-muted/60 leading-relaxed py-1 min-h-[28px] max-h-[200px]"
           />
 
           {/* Right Action Controls */}
-          <div className="flex items-center gap-1.5 shrink-0 select-none pt-0.5">
+          <div className="flex items-center gap-1.5 shrink-0 select-none pb-0.5">
             {/* Clear Screen */}
             <button
               type="button"
               onClick={onClearChat}
-              className="p-1.5 bg-void hover:bg-surface-elevated border border-edge text-text-muted hover:text-terminal-error transition-colors"
-              title="Clear Terminal Screen (Ctrl+L)"
+              className="p-2 rounded-full hover:bg-red-50 text-swiss-muted hover:text-red-600 transition-colors"
+              title="Clear Conversation"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -132,17 +141,14 @@ export function ChatInput({
               type="button"
               onClick={() => setShowSettings(!showSettings)}
               className={cn(
-                "p-1.5 border transition-colors text-[11px] flex items-center gap-1 font-mono",
+                "p-2 rounded-full transition-colors text-[11px] flex items-center gap-1 font-mono",
                 showSettings
-                  ? "bg-signal text-void border-signal font-bold"
-                  : "bg-void hover:bg-surface-elevated border-edge text-text-muted hover:text-text-primary"
+                  ? "bg-swiss-saffron text-white font-bold"
+                  : "hover:bg-swiss-canvas text-swiss-muted hover:text-swiss-ink"
               )}
               title="Model Sampling Temperature"
             >
               <Sliders className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-[10px]">
-                {temperature.toFixed(1)}
-              </span>
             </button>
 
             {/* Send or Stop Button */}
@@ -150,27 +156,50 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={onStopStreaming}
-                className="flex items-center gap-1 px-3 py-1.5 bg-terminal-error hover:bg-terminal-error/90 text-void font-bold text-xs uppercase transition-transform active:translate-y-0.5 shadow-hard-sm"
-                title="Halt Generation (Esc)"
+                className="flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen"
+                title="Stop generation (ESC)"
               >
                 <Square className="w-3 h-3 fill-current" />
-                <span className="hidden sm:inline">STOP</span>
+                <span>STOP</span>
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleSend}
-                disabled={!input.trim() || disabled}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-signal hover:bg-signal-hover disabled:bg-edge disabled:text-text-muted disabled:cursor-not-allowed text-void font-bold text-xs uppercase transition-transform active:translate-y-0.5 shadow-hard-sm"
-                title="Send Command (Enter)"
+                disabled={disabled || !input.trim()}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-pill font-bold text-xs uppercase tracking-wider transition-all shadow-swiss-saffron active:scale-95 font-frozen",
+                  input.trim() && !disabled
+                    ? "bg-swiss-saffron hover:bg-swiss-saffron-hover text-white shadow-md cursor-pointer"
+                    : "bg-swiss-border text-swiss-muted cursor-not-allowed opacity-60"
+                )}
+                title="Send Message (Enter)"
               >
-                <span className="hidden sm:inline">SEND</span>
-                <Send className="w-3 h-3 hidden sm:inline" />
-                <CornerDownLeft className="w-3 h-3 sm:hidden" />
+                <span>SEND</span>
+                <Send className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Micro-Attribution & Keyboard Hint */}
+      <div className="flex items-center justify-between px-3 text-[10.5px] text-swiss-muted font-mono select-none">
+        <span className="font-frozen tracking-wider">
+          MODEL: <strong className="text-swiss-ink font-frozen">RAIZEN 7B</strong> · DEVELOPED BY{" "}
+          <a
+            href="https://shawaz.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-swiss-saffron hover:underline font-bold font-frozen"
+          >
+            SHAWAZ
+          </a>
+        </span>
+        <span className="hidden sm:inline text-swiss-muted">
+          Press <kbd className="px-1.5 py-0.5 bg-swiss-canvas border border-swiss-border rounded text-[9.5px]">Enter</kbd> to send ·{" "}
+          <kbd className="px-1.5 py-0.5 bg-swiss-canvas border border-swiss-border rounded text-[9.5px]">Shift+Enter</kbd> for newline
+        </span>
       </div>
     </div>
   );

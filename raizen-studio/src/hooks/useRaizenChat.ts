@@ -3,6 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChatMessage, MessageRole } from "../types/chat";
 import { streamRaizenChat } from "../lib/api";
+import { RaizenPersona } from "../types/model";
+import {
+  RAIZEN_PERSONAS,
+  getActivePersona,
+  PERSONA_STORAGE_KEY,
+} from "../lib/personaManager";
 
 const CHAT_STORAGE_KEY = "raizen_chat_history";
 
@@ -22,6 +28,9 @@ export interface UseRaizenChatReturn {
   totalTokens: number;
   tokensPerSec: number | null;
   error: string | null;
+  activePersona: RaizenPersona;
+  setActivePersona: (persona: RaizenPersona) => void;
+  switchPersona: (personaId: string) => void;
   sendMessage: (
     prompt: string,
     backendUrl: string,
@@ -33,9 +42,7 @@ export interface UseRaizenChatReturn {
 }
 
 export function useRaizenChat(): UseRaizenChatReturn {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    INITIAL_ASSISTANT_MESSAGE,
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
@@ -43,10 +50,11 @@ export function useRaizenChat(): UseRaizenChatReturn {
   const [totalTokens, setTotalTokens] = useState<number>(0);
   const [tokensPerSec, setTokensPerSec] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activePersona, setActivePersonaState] = useState<RaizenPersona>(RAIZEN_PERSONAS[0]);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Load chat history from localStorage on initial mount
+  // Load chat history & active persona from localStorage on initial mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(CHAT_STORAGE_KEY);
@@ -54,14 +62,41 @@ export function useRaizenChat(): UseRaizenChatReturn {
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setMessages(parsed);
+            const cleanMessages = parsed.filter(
+              (m: ChatMessage) =>
+                m.id !== "initial-welcome" &&
+                !m.content.includes("I am **RAIZEN**, an enterprise")
+            );
+            setMessages(cleanMessages);
+            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(cleanMessages));
           }
         } catch {
-          // Fallback to initial welcome message if JSON corrupted
+          // Ignore
         }
+      }
+
+      // Load persona
+      const savedPersonaId = localStorage.getItem(PERSONA_STORAGE_KEY);
+      if (savedPersonaId) {
+        setActivePersonaState(getActivePersona(savedPersonaId));
       }
     }
   }, []);
+
+  const setActivePersona = useCallback((persona: RaizenPersona) => {
+    setActivePersonaState(persona);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(PERSONA_STORAGE_KEY, persona.id);
+    }
+  }, []);
+
+  const switchPersona = useCallback(
+    (personaId: string) => {
+      const target = getActivePersona(personaId);
+      setActivePersona(target);
+    },
+    [setActivePersona]
+  );
 
   // Save chat history to localStorage whenever messages change (if not actively streaming)
   const saveMessagesToStorage = useCallback((msgs: ChatMessage[]) => {
@@ -75,7 +110,7 @@ export function useRaizenChat(): UseRaizenChatReturn {
     async (
       prompt: string,
       backendUrl: string,
-      temperature = 0.2
+      temperature?: number
     ): Promise<void> => {
       const trimmed = prompt.trim();
       if (!trimmed || isStreaming) return;
@@ -116,13 +151,24 @@ export function useRaizenChat(): UseRaizenChatReturn {
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
-      // Prepare multi-turn payload for RAIZEN
-      const payloadMessages = updatedMessages
+      // Prepare multi-turn payload for RAIZEN with active persona system prompt
+      const rawUserAssistantTurns = updatedMessages
         .filter((m) => m.id !== assistantMessageId && m.content)
         .map((m) => ({
           role: m.role as MessageRole,
           content: m.content,
         }));
+
+      const payloadMessages = [
+        {
+          role: "system" as MessageRole,
+          content: activePersona.systemPrompt,
+        },
+        ...rawUserAssistantTurns,
+      ];
+
+      const effectiveTemperature =
+        temperature !== undefined ? temperature : activePersona.defaultTemperature;
 
       let accumulatedContent = "";
       let tokenCounter = 0;
@@ -132,7 +178,7 @@ export function useRaizenChat(): UseRaizenChatReturn {
         await streamRaizenChat({
           backendUrl,
           messages: payloadMessages,
-          temperature,
+          temperature: effectiveTemperature,
           signal: abortController.signal,
           onToken: (token: string) => {
             accumulatedContent += token;
@@ -146,19 +192,25 @@ export function useRaizenChat(): UseRaizenChatReturn {
             setMessages((prev) =>
               prev.map((msg) =>
                 msg.id === assistantMessageId
-                  ? { ...msg, content: accumulatedContent, isStreaming: true }
+                  ? {
+                      ...msg,
+                      content: accumulatedContent,
+                      tokensCount: tokenCounter,
+                    }
                   : msg
               )
             );
           },
           onError: (err: Error) => {
-            if (!abortController.signal.aborted) {
-              setError(`Generation Error: ${err.message}`);
+            if (err.name === "AbortError") {
+              // Gracefully handle user abort
+              return;
             }
+            console.error("Stream error in useRaizenChat:", err);
+            setError(err.message || "Failed to generate stream response");
           },
           onComplete: (fullContent: string, count: number) => {
-            setTotalTokens((prev) => prev + count);
-            const finalizedMessages = updatedMessages.map((msg) =>
+            const finalMessages = updatedMessages.map((msg) =>
               msg.id === assistantMessageId
                 ? {
                     ...msg,
@@ -168,25 +220,31 @@ export function useRaizenChat(): UseRaizenChatReturn {
                   }
                 : msg
             );
-            setMessages(finalizedMessages);
-            saveMessagesToStorage(finalizedMessages);
+            setMessages(finalMessages);
+            saveMessagesToStorage(finalMessages);
+            setTotalTokens((prev) => prev + count);
           },
         });
       } catch (err: unknown) {
-        if (!abortController.signal.aborted) {
-          const msg = err instanceof Error ? err.message : String(err);
-          setError(`Stream Failed: ${msg}`);
+        if (err instanceof Error && err.name === "AbortError") {
+          // Normal abort
+        } else {
+          console.error("Unexpected error in sendMessage:", err);
+          setError(
+            err instanceof Error ? err.message : "Unexpected connection error"
+          );
         }
       } finally {
         setIsStreaming(false);
         setStreamingMessageId(null);
+        setTokensPerSec(null);
         abortControllerRef.current = null;
       }
     },
-    [messages, isStreaming, saveMessagesToStorage]
+    [isStreaming, messages, activePersona, saveMessagesToStorage]
   );
 
-  // Stop active generation
+  // Stop current in-flight stream
   const stopStreaming = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -194,27 +252,22 @@ export function useRaizenChat(): UseRaizenChatReturn {
     }
     setIsStreaming(false);
     setStreamingMessageId(null);
-
-    setMessages((prev) => {
-      const finalized = prev.map((msg) =>
-        msg.isStreaming ? { ...msg, isStreaming: false } : msg
-      );
-      saveMessagesToStorage(finalized);
-      return finalized;
-    });
-  }, [saveMessagesToStorage]);
-
-  // Clear chat conversation
-  const clearMessages = useCallback(() => {
-    const freshMessages = [INITIAL_ASSISTANT_MESSAGE];
-    setMessages(freshMessages);
-    setError(null);
     setTokensPerSec(null);
+
+    // Finalize assistant message
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.isStreaming ? { ...msg, isStreaming: false } : msg
+      )
+    );
+  }, []);
+
+  // Clear messages completely
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    setError(null);
     if (typeof window !== "undefined") {
-      localStorage.setItem(
-        CHAT_STORAGE_KEY,
-        JSON.stringify(freshMessages)
-      );
+      localStorage.removeItem(CHAT_STORAGE_KEY);
     }
   }, []);
 
@@ -225,6 +278,9 @@ export function useRaizenChat(): UseRaizenChatReturn {
     totalTokens,
     tokensPerSec,
     error,
+    activePersona,
+    setActivePersona,
+    switchPersona,
     sendMessage,
     stopStreaming,
     clearMessages,
