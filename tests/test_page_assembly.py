@@ -30,6 +30,7 @@ class TestPageAssembly(unittest.TestCase):
         self.assertIn("<ChatMessageItem", content, "Must render ChatMessageItem in stream")
         self.assertIn("<ClaudeLoadingEffect", content, "Must render ClaudeLoadingEffect")
         self.assertIn("<ChatInput", content, "Must render floating ChatInput")
+        self.assertIn("<LiveSandboxModal", content, "Must render LiveSandboxModal")
 
     def test_sandbox_redirection_handler(self):
         with open(self.page_path, "r", encoding="utf-8") as f:

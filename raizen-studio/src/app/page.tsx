@@ -7,6 +7,7 @@ import { ChatMessageItem } from "../components/ChatMessageItem";
 import { ChatInput } from "../components/ChatInput";
 import { ClaudeLoadingEffect } from "../components/ClaudeLoadingEffect";
 import { ColabModal } from "../components/ColabModal";
+import { LiveSandboxModal } from "../components/LiveSandboxModal";
 import { HistoryView } from "../components/HistoryView";
 import { SavedSnippetsView } from "../components/SavedSnippetsView";
 import { ModelExplorerView } from "../components/ModelExplorerView";
@@ -28,6 +29,10 @@ export type WorkspaceTab = "chat" | "explore" | "history" | "saved" | "tools";
 export default function RaizenStudioPage() {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>("chat");
   const [isColabModalOpen, setIsColabModalOpen] = useState(false);
+  const [isLiveSandboxOpen, setIsLiveSandboxOpen] = useState(false);
+  const [activeSandboxCode, setActiveSandboxCode] = useState("");
+  const [activeSandboxLanguage, setActiveSandboxLanguage] = useState("tsx");
+  const [activeSandboxFilename, setActiveSandboxFilename] = useState<string | undefined>(undefined);
   const { toasts, showToast, dismissToast } = useToast();
 
   const connection = useRaizenConnection();
@@ -55,7 +60,7 @@ export default function RaizenStudioPage() {
     if (messages.length > 0 && !isStreaming) {
       history.updateActiveSessionMessages(messages, totalTokens);
     }
-  }, [messages, isStreaming, totalTokens, history.updateActiveSessionMessages]);
+  }, [messages, isStreaming, totalTokens, history]);
 
   // Auto-scroll to bottom of chat feed when new messages or tokens arrive
   useEffect(() => {
@@ -85,10 +90,16 @@ export default function RaizenStudioPage() {
     sendMessage(promptText, connection.tunnelUrl, temperature);
   };
 
-  const handleRunInSandbox = (code: string, language: string) => {
-    // Sandbox is already launched directly by CodeBlock in the click gesture stack.
-    // This callback is only for UI toast notification feedback.
-    showToast("Launching component in Open-Source Sandbox...", "success", "SANDBOX RUNNER");
+  const handleRunInSandbox = (code: string, language: string, filename?: string) => {
+    setActiveSandboxCode(code);
+    setActiveSandboxLanguage(language);
+    setActiveSandboxFilename(filename);
+    setIsLiveSandboxOpen(true);
+    showToast(
+      `Opening ${filename || language.toUpperCase()} in Live Sandbox...`,
+      "info",
+      "LIVE PREVIEW"
+    );
   };
 
   const handleSaveSnippet = (code: string, language: string, filename?: string) => {
@@ -263,6 +274,15 @@ export default function RaizenStudioPage() {
         isOpen={isColabModalOpen}
         onClose={() => setIsColabModalOpen(false)}
         connection={connection}
+      />
+
+      {/* In-App Live Sandbox Modal (Zero Popup Risk) */}
+      <LiveSandboxModal
+        isOpen={isLiveSandboxOpen}
+        onClose={() => setIsLiveSandboxOpen(false)}
+        code={activeSandboxCode}
+        language={activeSandboxLanguage}
+        filename={activeSandboxFilename}
       />
 
       {/* Toast Notifications */}

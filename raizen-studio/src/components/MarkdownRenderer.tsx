@@ -10,7 +10,7 @@ import { cn } from "../lib/utils";
 
 interface MarkdownRendererProps {
   content: string;
-  onRunInSandbox?: (code: string, language: string) => void;
+  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onSaveSnippet?: (code: string, language: string, filename?: string) => void;
   className?: string;
 }

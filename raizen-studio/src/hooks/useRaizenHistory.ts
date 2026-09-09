@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   ChatSession,
   HistoryFilterState,
-  HistoryTimeBucket,
   HistoryTimelineGroup,
 } from "../types/session";
 import { ChatMessage } from "../types/chat";

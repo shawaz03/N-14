@@ -65,6 +65,14 @@ export function StatusBar({
           <span>MEMORY:</span>
           <span className="text-white font-bold">5.2GB / 15GB</span>
         </div>
+
+        {/* Token Count */}
+        {tokenCount > 0 && (
+          <div className="hidden lg:flex items-center gap-1.5 shrink-0 text-[#9CA3AF] font-frozen">
+            <span>TOKENS:</span>
+            <span className="text-white font-bold">{tokenCount}</span>
+          </div>
+        )}
       </div>
 
       {/* Right Telemetry Cluster */}

@@ -7,7 +7,7 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
-  onRunInSandbox?: (code: string, language: string) => void;
+  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onSaveSnippet?: (code: string, language: string, filename?: string) => void;
 }
 

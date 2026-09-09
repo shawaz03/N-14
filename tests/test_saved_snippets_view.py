@@ -40,6 +40,7 @@ class TestSavedSnippetsView(unittest.TestCase):
             content = f.read()
 
         self.assertIn("handleRun", content, "Must implement 1-click sandbox execution")
+        self.assertIn("onRunInSandbox(snippet.code, snippet.language, snippet.filename)", content)
         self.assertIn("handleCopyCode", content, "Must implement copy code")
         self.assertIn("handleDownload", content, "Must implement download code file")
         self.assertIn("toggleFavorite", content, "Must support favoriting snippets")

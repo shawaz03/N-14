@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from "react";
-import { Copy, Check, Play, FileCode, Code2, Bookmark, BookmarkCheck } from "lucide-react";
+import { Copy, Check, Play, FileCode, Code2, Bookmark, BookmarkCheck, Zap } from "lucide-react";
 import { cn } from "../lib/utils";
 import { launchInOpenSourceSandbox } from "../lib/sandboxLauncher";
 
@@ -9,7 +9,7 @@ interface CodeBlockProps {
   code: string;
   language?: string;
   filename?: string;
-  onRunInSandbox?: (code: string, language: string) => void;
+  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onSaveSnippet?: (code: string, language: string, filename?: string) => void;
   className?: string;
 }
@@ -141,12 +141,11 @@ export function CodeBlock({
   const handleRun = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Always launch sandbox directly in the synchronous click gesture stack
-    // to prevent browser popup blockers from intercepting window.open
-    launchInOpenSourceSandbox(cleanCode, displayLang, "standalone");
-    // Notify parent for toast/UI feedback (non-blocking)
+    // Route directly to in-app LiveSandboxModal via parent callback
     if (onRunInSandbox) {
-      onRunInSandbox(cleanCode, displayLang);
+      onRunInSandbox(cleanCode, displayLang, displayFilename);
+    } else {
+      launchInOpenSourceSandbox(cleanCode, displayLang, "standalone");
     }
   };
 
@@ -154,6 +153,12 @@ export function CodeBlock({
     e.preventDefault();
     e.stopPropagation();
     launchInOpenSourceSandbox(cleanCode, displayLang, "codesandbox");
+  };
+
+  const handleLaunchStackBlitz = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    launchInOpenSourceSandbox(cleanCode, displayLang, "stackblitz");
   };
 
   const lines = cleanCode.split("\n");
@@ -180,13 +185,13 @@ export function CodeBlock({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1.5 shrink-0">
-          {/* Run in Open-Source Sandbox Button */}
+          {/* Run in In-App Sandbox Button */}
           {isRunnable && (
             <button
               type="button"
               onClick={handleRun}
               className="flex items-center gap-1.5 px-3 py-1 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-[10.5px] font-bold rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen tracking-wider cursor-pointer relative z-20"
-              title="Open and run in Open-Source Browser Sandbox"
+              title="Open and run in In-App Live Sandbox"
             >
               <Play className="w-2.5 h-2.5 fill-current" />
               <span>RUN IN SANDBOX</span>
@@ -203,6 +208,19 @@ export function CodeBlock({
             >
               <Code2 className="w-3 h-3 text-swiss-saffron" />
               <span>CodeSandbox</span>
+            </button>
+          )}
+
+          {/* Direct StackBlitz Link */}
+          {isRunnable && (
+            <button
+              type="button"
+              onClick={handleLaunchStackBlitz}
+              className="hidden md:flex items-center gap-1 px-2.5 py-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-[10px] font-bold rounded-pill uppercase transition-colors font-mono cursor-pointer relative z-20"
+              title="Export to StackBlitz"
+            >
+              <Zap className="w-3 h-3 text-amber-400" />
+              <span>StackBlitz</span>
             </button>
           )}
 

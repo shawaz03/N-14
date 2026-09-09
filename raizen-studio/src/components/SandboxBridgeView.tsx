@@ -256,7 +256,7 @@ export default function Storefront() {
 ];
 
 interface SandboxBridgeViewProps {
-  onRunInSandbox?: (code: string, language: string) => void;
+  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   className?: string;
 }
 
@@ -283,16 +283,18 @@ export default function App() {
   );
 };`;
 
-    launchInOpenSourceSandbox(blankStarter, "tsx", type);
-    if (onRunInSandbox) {
-      onRunInSandbox(blankStarter, "tsx");
+    if (type === "standalone" && onRunInSandbox) {
+      onRunInSandbox(blankStarter, "tsx", "BlankStarter.tsx");
+    } else {
+      launchInOpenSourceSandbox(blankStarter, "tsx", type);
     }
   };
 
   const handleRunTemplate = (template: StarterTemplate) => {
-    launchInOpenSourceSandbox(template.code, template.language, "standalone");
     if (onRunInSandbox) {
-      onRunInSandbox(template.code, template.language);
+      onRunInSandbox(template.code, template.language, `${template.id}.tsx`);
+    } else {
+      launchInOpenSourceSandbox(template.code, template.language, "standalone");
     }
   };
 

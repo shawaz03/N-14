@@ -28,6 +28,8 @@ class TestCodeBlockComponent(unittest.TestCase):
 
         self.assertIn("RUN IN SANDBOX", content, "CodeBlock must provide RUN IN SANDBOX action button")
         self.assertIn("COPY", content, "CodeBlock must provide COPY action button")
+        self.assertIn("CodeSandbox", content, "CodeBlock must provide CodeSandbox export button")
+        self.assertIn("StackBlitz", content, "CodeBlock must provide StackBlitz export button")
         self.assertIn("launchInOpenSourceSandbox", content, "CodeBlock must trigger launchInOpenSourceSandbox")
 
     def test_line_numbers(self):

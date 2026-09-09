@@ -55,13 +55,6 @@ export function ChatInput({
     }
   };
 
-  const handleSelectQuickPrompt = (promptText: string) => {
-    setInput(promptText);
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  };
-
   return (
     <div className={cn("w-full flex flex-col gap-2 select-none", className)}>
       {/* Main Command Input Capsule */}

@@ -21,7 +21,7 @@ export type SandboxProvider = "standalone" | "codesandbox" | "stackblitz";
  * Sanitizes multi-export code into a single mounted React component
  */
 function sanitizeComponentSource(code: string): string {
-  let cleaned = code
+  const cleaned = code
     .replace(/^import\s+.*?;\s*$/gm, "")
     .replace(/export\s+default\s+function/g, "function")
     .replace(/export\s+function/g, "function")
@@ -205,12 +205,41 @@ export function launchStandaloneSandbox(code: string, language: string = "tsx"):
 }
 
 /**
+ * Safe UTF-8 to Base64 encoder using TextEncoder (replaces deprecated unescape)
+ */
+export function safeBase64Encode(str: string): string {
+  if (typeof TextEncoder !== "undefined") {
+    const bytes = new TextEncoder().encode(str);
+    let binary = "";
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+  return btoa(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
+      String.fromCharCode(parseInt(p1, 16))
+    )
+  );
+}
+
+/**
  * Packages project files for CodeSandbox API
  */
 export function launchCodeSandbox(code: string): void {
+  if (typeof document === "undefined") return;
+
   const isPureHtml =
     code.trim().toLowerCase().startsWith("<!doctype html") ||
     code.trim().toLowerCase().startsWith("<html");
+
+  let htmlContent = code;
+  if (isPureHtml && !htmlContent.includes("cdn.tailwindcss.com") && !htmlContent.includes("tailwind")) {
+    if (htmlContent.includes("</head>")) {
+      htmlContent = htmlContent.replace("</head>", '<script src="https://cdn.tailwindcss.com"></script></head>');
+    }
+  }
 
   const files: Record<string, { content: string }> = isPureHtml
     ? {
@@ -223,7 +252,7 @@ export function launchCodeSandbox(code: string): void {
           }),
         },
         "index.html": {
-          content: code,
+          content: htmlContent,
         },
       }
     : {
@@ -267,10 +296,94 @@ root.render(<App />);`,
   const input = document.createElement("input");
   input.type = "hidden";
   input.name = "parameters";
-  // Convert object to base64 JSON payload
-  input.value = btoa(unescape(encodeURIComponent(JSON.stringify(parameters))));
+  // Safe UTF-8 Base64 Encoding
+  input.value = safeBase64Encode(JSON.stringify(parameters));
 
   form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
+/**
+ * Packages project files for StackBlitz POST API (https://stackblitz.com/run)
+ * Zero-config 1-click cloud IDE launching.
+ */
+export function launchStackBlitzProject(code: string, language: string = "tsx"): void {
+  if (typeof document === "undefined") return;
+
+  const isPureHtml =
+    language.toLowerCase() === "html" ||
+    code.trim().toLowerCase().startsWith("<!doctype html") ||
+    code.trim().toLowerCase().startsWith("<html");
+
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "https://stackblitz.com/run";
+  form.target = "_blank";
+
+  function addField(name: string, value: string) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  if (isPureHtml) {
+    let fullHtml = code;
+    if (!fullHtml.toLowerCase().includes("<!doctype html") && !fullHtml.toLowerCase().includes("<html")) {
+      fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAIZEN Live Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#FAF8F5] p-6 text-[#121316]">
+  ${code}
+</body>
+</html>`;
+    } else if (!fullHtml.includes("cdn.tailwindcss.com") && !fullHtml.includes("tailwind")) {
+      if (fullHtml.includes("</head>")) {
+        fullHtml = fullHtml.replace("</head>", '<script src="https://cdn.tailwindcss.com"></script></head>');
+      }
+    }
+
+    addField("project[title]", "RAIZEN HTML & Tailwind Sandbox");
+    addField("project[description]", "Exported from RAIZEN Studio by SHAWAZ (https://shawaz.vercel.app/)");
+    addField("project[template]", "html");
+    addField("project[files][index.html]", fullHtml);
+  } else {
+    addField("project[title]", "RAIZEN React Component Sandbox");
+    addField("project[description]", "Exported from RAIZEN Studio by SHAWAZ (https://shawaz.vercel.app/)");
+    addField("project[template]", "create-react-app");
+    addField("project[files][public/index.html]", '<div id="root"></div>');
+    addField("project[files][src/App.tsx]", code);
+    addField(
+      "project[files][src/index.tsx]",
+      `import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport App from './App';\n\nconst root = ReactDOM.createRoot(document.getElementById('root')!);\nroot.render(<App />);`
+    );
+    addField(
+      "project[files][package.json]",
+      JSON.stringify(
+        {
+          name: "raizen-react-sandbox",
+          version: "1.0.0",
+          dependencies: {
+            react: "^18.2.0",
+            "react-dom": "^18.2.0",
+            "lucide-react": "^0.344.0",
+            tailwindcss: "^3.4.1",
+          },
+        },
+        null,
+        2
+      )
+    );
+  }
+
   document.body.appendChild(form);
   form.submit();
   document.body.removeChild(form);
@@ -286,6 +399,8 @@ export function launchInOpenSourceSandbox(
 ): void {
   if (provider === "codesandbox") {
     launchCodeSandbox(code);
+  } else if (provider === "stackblitz") {
+    launchStackBlitzProject(code, language);
   } else {
     launchStandaloneSandbox(code, language);
   }

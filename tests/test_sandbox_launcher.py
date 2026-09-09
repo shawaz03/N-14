@@ -20,6 +20,8 @@ class TestSandboxLauncher(unittest.TestCase):
 
         self.assertIn("export function launchStandaloneSandbox", content)
         self.assertIn("export function launchCodeSandbox", content)
+        self.assertIn("export function launchStackBlitzProject", content)
+        self.assertIn("export function safeBase64Encode", content)
         self.assertIn("export function launchInOpenSourceSandbox", content)
 
     def test_bundling_dependencies(self):

@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import {
   SavedSnippet,
   SnippetFilterState,
-  SnippetLanguageFilter,
 } from "../types/snippet";
 
 export const SNIPPETS_STORAGE_KEY = "raizen_saved_snippets";
@@ -43,7 +42,7 @@ function deriveSnippetTitle(code: string, language: string, fallback = "Saved Co
   if (matchClass && matchClass[1]) return `${matchClass[1]} Class`;
 
   const firstLine = code.trim().split("\n")[0].slice(0, 30);
-  return firstLine.replace(/[^a-zA-Z0-9_\s]/g, "").trim() || `${language.toUpperCase()} Snippet`;
+  return firstLine.replace(/[^a-zA-Z0-9_\s]/g, "").trim() || fallback || `${language.toUpperCase()} Snippet`;
 }
 
 /**

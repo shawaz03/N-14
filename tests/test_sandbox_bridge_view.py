@@ -42,6 +42,7 @@ class TestSandboxBridgeView(unittest.TestCase):
         self.assertIn("Precision Telemetry Analytics HUD", content)
         self.assertIn("E-Commerce Storefront", content)
         self.assertIn("handleRunTemplate", content)
+        self.assertIn("onRunInSandbox(template.code, template.language", content)
 
 if __name__ == "__main__":
     unittest.main()

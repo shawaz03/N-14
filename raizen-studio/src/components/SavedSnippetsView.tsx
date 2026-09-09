@@ -20,7 +20,7 @@ import { cn } from "../lib/utils";
 
 interface SavedSnippetsViewProps {
   snippetsVault: UseSavedSnippetsReturn;
-  onRunInSandbox?: (code: string, language: string) => void;
+  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onExportCode?: (code: string, filename: string) => void;
   className?: string;
 }
@@ -55,9 +55,10 @@ export function SavedSnippetsView({
   };
 
   const handleRun = (snippet: SavedSnippet) => {
-    launchInOpenSourceSandbox(snippet.code, snippet.language, "standalone");
     if (onRunInSandbox) {
-      onRunInSandbox(snippet.code, snippet.language);
+      onRunInSandbox(snippet.code, snippet.language, snippet.filename);
+    } else {
+      launchInOpenSourceSandbox(snippet.code, snippet.language, "standalone");
     }
   };
 
