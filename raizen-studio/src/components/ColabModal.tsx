@@ -151,7 +151,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                       href={COLAB_NOTEBOOK_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-xs font-bold rounded-pill transition-all shadow-swiss-saffron active:scale-95 font-frozen tracking-wider"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 btn-glass-dark btn-glass-shine text-white text-xs font-bold rounded-pill transition-all active:scale-95 font-frozen tracking-wider"
                     >
                       <Zap className="w-3.5 h-3.5" />
                       <span>OPEN COLAB</span>
@@ -160,7 +160,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                     <button
                       type="button"
                       onClick={handleCopyNotebookLink}
-                      className="p-2 bg-white hover:bg-swiss-canvas border border-swiss-border rounded-pill text-swiss-muted hover:text-swiss-ink transition-colors"
+                      className="p-2 btn-glass-light btn-glass-shine rounded-pill text-swiss-muted hover:text-swiss-ink transition-colors"
                       title={copied ? "Copied!" : "Copy Notebook URL"}
                     >
                       {copied ? (
@@ -222,7 +222,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                         disabled={
                           connection.status === "connecting" || !modalUrl.trim()
                         }
-                        className="px-5 py-2 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-xs font-bold rounded-pill uppercase tracking-wider shrink-0 transition-all shadow-swiss-saffron active:scale-95 disabled:opacity-50 font-frozen"
+                        className="px-5 py-2 btn-glass-dark btn-glass-shine text-white text-xs font-bold rounded-pill uppercase tracking-wider shrink-0 transition-all active:scale-95 disabled:opacity-50 font-frozen"
                       >
                         {connection.status === "connecting"
                           ? "VERIFYING..."

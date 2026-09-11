@@ -33,7 +33,7 @@ export function ChatMessageItem({
         </div>
 
         {/* User Message Body: Solid Obsidian Monolith Pill Card */}
-        <div className="max-w-[85%] sm:max-w-[75%] p-3.5 px-4 bg-swiss-saffron text-white text-sm sm:text-[15px] leading-relaxed rounded-2xl rounded-tr-sm shadow-swiss-saffron border border-black/10">
+        <div className="max-w-[85%] sm:max-w-[75%] p-3.5 px-4 bg-swiss-saffron text-white text-sm sm:text-[15px] leading-relaxed rounded-2xl rounded-tr-sm shadow-swiss border border-black/10">
           <p className="whitespace-pre-wrap break-words font-sans font-medium text-white">
             {message.content}
           </p>
@@ -74,7 +74,7 @@ export function ChatMessageItem({
             <button
               type="button"
               onClick={handleCopy}
-              className="p-1 px-2 rounded-pill hover:bg-swiss-canvas border border-transparent hover:border-swiss-border text-swiss-muted hover:text-swiss-ink text-[10.5px] flex items-center gap-1 transition-colors font-mono"
+              className="p-1 px-2.5 rounded-pill btn-glass-light btn-glass-shine text-swiss-muted hover:text-swiss-ink text-[10.5px] flex items-center gap-1 transition-all font-mono"
               title={copied ? "Copied to Clipboard" : "Copy Message"}
             >
               {copied ? (

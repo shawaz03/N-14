@@ -74,8 +74,8 @@ export function ModelExplorerView({
           className={cn(
             "px-4 py-1.5 rounded-pill text-xs font-bold font-frozen tracking-wide transition-all",
             activeTab === "personas"
-              ? "bg-swiss-saffron text-white shadow-swiss-saffron"
-              : "bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink"
+              ? "btn-glass-dark text-white"
+              : "btn-glass-light text-swiss-muted hover:text-swiss-ink"
           )}
         >
           AI Personas & Specialists
@@ -87,8 +87,8 @@ export function ModelExplorerView({
           className={cn(
             "px-4 py-1.5 rounded-pill text-xs font-bold font-frozen tracking-wide transition-all",
             activeTab === "architecture"
-              ? "bg-swiss-saffron text-white shadow-swiss-saffron"
-              : "bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink"
+              ? "btn-glass-dark text-white"
+              : "btn-glass-light text-swiss-muted hover:text-swiss-ink"
           )}
         >
           Model Architecture Matrix
@@ -100,8 +100,8 @@ export function ModelExplorerView({
           className={cn(
             "px-4 py-1.5 rounded-pill text-xs font-bold font-frozen tracking-wide transition-all",
             activeTab === "tokenizer"
-              ? "bg-swiss-saffron text-white shadow-swiss-saffron"
-              : "bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink"
+              ? "btn-glass-dark text-white"
+              : "btn-glass-light text-swiss-muted hover:text-swiss-ink"
           )}
         >
           Tokenizer & Context Window
@@ -137,7 +137,7 @@ export function ModelExplorerView({
                     className={cn(
                       "p-5 rounded-2xl border transition-all cursor-pointer shadow-swiss flex flex-col justify-between gap-4 text-left group",
                       isSelected
-                        ? "bg-white border-swiss-saffron shadow-swiss-saffron ring-1 ring-swiss-saffron"
+                        ? "bg-white border-swiss-saffron shadow-swiss-md ring-1 ring-swiss-saffron/10"
                         : "bg-white hover:bg-white/95 border-swiss-border hover:border-swiss-border-card"
                     )}
                   >
@@ -238,7 +238,7 @@ export function ModelExplorerView({
                 <button
                   type="button"
                   onClick={handleCopyHfLink}
-                  className="flex-1 sm:flex-none px-3 py-1.5 bg-swiss-canvas hover:bg-white border border-swiss-border rounded-pill text-xs font-bold text-swiss-ink transition-colors font-mono flex items-center justify-center gap-1.5"
+                  className="flex-1 sm:flex-none px-3 py-1.5 btn-glass-light btn-glass-shine rounded-pill text-xs font-bold text-swiss-ink transition-all font-mono flex items-center justify-center gap-1.5"
                 >
                   {copiedLink ? (
                     <>
@@ -256,7 +256,7 @@ export function ModelExplorerView({
                   href={huggingFaceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 sm:flex-none px-4 py-1.5 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white rounded-pill text-xs font-bold transition-all font-frozen tracking-wide flex items-center justify-center gap-1 shadow-swiss-saffron"
+                  className="flex-1 sm:flex-none px-4 py-1.5 btn-glass-dark btn-glass-shine text-white rounded-pill text-xs font-bold transition-all font-frozen tracking-wide flex items-center justify-center gap-1"
                 >
                   <span>Explore Model</span>
                   <ExternalLink className="w-3 h-3" />

@@ -78,7 +78,7 @@ export function Sidebar({
           type="button"
           onClick={onNewChat}
           className={cn(
-            "w-full bg-swiss-saffron hover:bg-swiss-saffron-hover text-white font-bold rounded-pill text-xs py-2.5 px-3 flex items-center justify-center gap-2 shadow-swiss transition-all active:scale-[0.98] font-frozen tracking-wide",
+            "w-full btn-glass-dark btn-glass-shine text-white font-bold rounded-pill text-xs py-2.5 px-3 flex items-center justify-center gap-2 transition-all font-frozen tracking-wide",
             collapsed && "px-0"
           )}
           title="Start New Chat (⌘N)"

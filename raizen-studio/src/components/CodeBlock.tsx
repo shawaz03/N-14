@@ -147,7 +147,7 @@ export function CodeBlock({
           <button
             type="button"
             onClick={handleSave}
-            className="flex items-center gap-1 px-2.5 py-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-[10px] rounded-pill uppercase transition-colors font-mono cursor-pointer relative z-20"
+            className="flex items-center gap-1 px-2.5 py-1 btn-glass-dark btn-glass-shine text-white/90 hover:text-white text-[10px] rounded-pill uppercase transition-all font-mono cursor-pointer relative z-20"
             title={saved ? "Saved to Snippets Vault!" : "Save to Snippets Vault"}
           >
             {saved ? (
@@ -167,7 +167,7 @@ export function CodeBlock({
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2.5 py-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-[10px] rounded-pill uppercase transition-colors font-mono cursor-pointer relative z-20"
+            className="flex items-center gap-1 px-2.5 py-1 btn-glass-dark btn-glass-shine text-white/90 hover:text-white text-[10px] rounded-pill uppercase transition-all font-mono cursor-pointer relative z-20"
             title={copied ? "Copied to clipboard" : "Copy Code"}
           >
             {copied ? (

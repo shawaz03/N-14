@@ -286,7 +286,7 @@ export function SavedSnippetsView({
                     <button
                       type="button"
                       onClick={() => handleCopyCode(snippet)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-[10.5px] font-bold rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen tracking-wider"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 btn-glass-dark btn-glass-shine text-white text-[10.5px] font-bold rounded-pill uppercase transition-all active:scale-95 font-frozen tracking-wider"
                       title="Copy code to clipboard"
                     >
                       {isCopied ? (
@@ -305,7 +305,7 @@ export function SavedSnippetsView({
                     <button
                       type="button"
                       onClick={() => handleDownload(snippet)}
-                      className="p-1.5 px-2 bg-swiss-canvas hover:bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink rounded-pill transition-colors flex items-center gap-1 text-[10px] font-mono"
+                      className="p-1.5 px-2.5 btn-glass-light btn-glass-shine text-swiss-muted hover:text-swiss-ink rounded-pill transition-all flex items-center gap-1 text-[10px] font-mono"
                       title="Download file"
                     >
                       <Download className="w-3 h-3" />

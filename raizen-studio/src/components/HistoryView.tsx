@@ -88,7 +88,7 @@ export function HistoryView({
         <button
           type="button"
           onClick={onNewSession}
-          className="flex items-center gap-1.5 px-4 py-2 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-xs font-bold rounded-pill transition-all shadow-swiss-saffron active:scale-95 font-frozen tracking-wide"
+          className="flex items-center gap-1.5 px-4 py-2 btn-glass-dark btn-glass-shine text-white text-xs font-bold rounded-pill transition-all active:scale-95 font-frozen tracking-wide"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>New Session</span>
@@ -126,8 +126,8 @@ export function HistoryView({
             className={cn(
               "px-3 py-1 rounded-pill text-[11px] font-bold transition-all flex items-center gap-1 font-frozen",
               pinnedOnly
-                ? "bg-swiss-saffron text-white shadow-swiss-saffron"
-                : "bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink"
+                ? "btn-glass-dark text-white"
+                : "btn-glass-light text-swiss-muted hover:text-swiss-ink"
             )}
           >
             <Pin className="w-3 h-3" />
@@ -172,7 +172,7 @@ export function HistoryView({
             <button
               type="button"
               onClick={onNewSession}
-              className="mt-2 px-4 py-2 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-xs font-bold rounded-pill transition-all font-frozen tracking-wide shadow-swiss-saffron"
+              className="mt-2 px-4 py-2 btn-glass-dark btn-glass-shine text-white text-xs font-bold rounded-pill transition-all font-frozen tracking-wide"
             >
               Start First Session
             </button>
@@ -205,7 +205,7 @@ export function HistoryView({
                       className={cn(
                         "group relative p-4 rounded-xl border transition-all cursor-pointer shadow-swiss flex flex-col justify-between gap-3 text-left",
                         isActive
-                          ? "bg-white border-swiss-saffron shadow-swiss-saffron"
+                          ? "bg-white border-swiss-saffron shadow-swiss-md ring-1 ring-swiss-saffron/10"
                           : "bg-white hover:bg-white/95 border-swiss-border hover:border-swiss-border-card"
                       )}
                     >

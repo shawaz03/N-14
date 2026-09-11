@@ -162,3 +162,138 @@ body {
 .hairline-border-r {
   border-right: 1px solid #E6E1D8;
 }
+
+/* ==========================================================================
+   🏛️ ARCHITECTURAL GLASS BUTTON ENGINE (Tactile Glass & Specular Shine)
+   ========================================================================== */
+
+/* Base Glass Button */
+.btn-glass-base {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  cursor: pointer;
+}
+
+.btn-glass-base:active {
+  transform: scale(0.98);
+}
+
+/* 1. Frosted Obsidian Glass Button (Primary Actions) */
+.btn-glass-dark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(28, 29, 34, 0.94) 0%, rgba(18, 19, 22, 0.98) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 2px 5px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  color: #FFFFFF;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-glass-dark:hover {
+  background: linear-gradient(180deg, rgba(39, 41, 48, 0.96) 0%, rgba(24, 25, 30, 0.99) 100%);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-glass-dark:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* 2. Frosted Canvas Glass Button (Secondary & Card Actions) */
+.btn-glass-light {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(247, 245, 240, 0.88) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(230, 225, 216, 0.95);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+  color: #121316;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-glass-light:hover {
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(250, 248, 245, 0.95) 100%);
+  border-color: rgba(200, 195, 185, 1);
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 #FFFFFF,
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+.btn-glass-light:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* 3. Glass Shining Reflection Sweep (Zero Hover Glow) */
+.btn-glass-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glass-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 75%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.38) 50%,
+    rgba(255, 255, 255, 0.05) 80%,
+    transparent 100%
+  );
+  transform: skewX(-24deg);
+  transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.btn-glass-shine:hover::after {
+  transform: translateX(380%) skewX(-24deg);
+}
+
+/* Light button specular shine adaptation */
+.btn-glass-light.btn-glass-shine::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.2) 80%,
+    transparent 100%
+  );
+}

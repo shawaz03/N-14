@@ -82,7 +82,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
                 type="button"
                 onClick={() => connection.checkHealth()}
                 title="Refresh connection status"
-                className="px-2.5 py-1 bg-white hover:bg-swiss-canvas text-swiss-body hover:text-swiss-ink font-mono text-[10px] border border-swiss-border rounded-pill flex items-center gap-1 shrink-0 transition-colors"
+                className="px-2.5 py-1 btn-glass-light btn-glass-shine text-swiss-body hover:text-swiss-ink font-mono text-[10px] rounded-pill flex items-center gap-1 shrink-0 transition-all"
               >
                 <RotateCw className="w-3 h-3" />
                 <span>PING</span>
@@ -91,7 +91,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
               <button
                 type="submit"
                 disabled={connection.status === "connecting" || !inputUrl.trim()}
-                className="px-4 py-1 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white font-frozen font-bold text-xs rounded-pill shrink-0 transition-transform active:scale-95 disabled:opacity-50 shadow-swiss-saffron"
+                className="px-4 py-1 btn-glass-dark btn-glass-shine text-white font-frozen font-bold text-xs rounded-pill shrink-0 transition-all active:scale-95 disabled:opacity-50"
               >
                 {connection.status === "connecting" ? "LINKING..." : "CONNECT"}
               </button>
@@ -131,7 +131,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
           {onOpenColabModal && (
             <button
               onClick={onOpenColabModal}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-swiss-canvas hover:bg-white border border-swiss-border hover:border-swiss-border-card text-swiss-ink text-xs font-frozen font-bold rounded-pill transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 btn-glass-light btn-glass-shine text-swiss-ink text-xs font-frozen font-bold rounded-pill transition-all"
             >
               <Zap className="w-3.5 h-3.5 text-swiss-saffron" />
               <span>COLAB GPU</span>
