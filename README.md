@@ -80,7 +80,7 @@
 │           └── Live Hardware Telemetry & Token Velocity      │
 │                                                             │
 │  Phase 6: Integration Testing & Vercel Deployment           │
-│           └── 113 Unit Tests Passing / Zero-Config Deploy   │
+│           └── 171 Unit Tests Passing / Zero-Config Deploy   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -127,7 +127,7 @@ The entire repository is covered by automated unit tests validating model schema
 
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v
-# Output: Ran 113 tests in 1.1s (OK - 100% Passing)
+# Output: Ran 171 tests in 2.5s (OK - 100% Passing)
 ```
 
 ---
