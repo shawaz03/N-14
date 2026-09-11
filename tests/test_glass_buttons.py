@@ -41,5 +41,23 @@ class TestGlassButtons(unittest.TestCase):
         self.assertNotIn('rgba(234, 88, 12', dark_hover_block)
         self.assertNotIn('rgba(204, 255, 0', dark_hover_block)
 
+    def test_codeblock_action_buttons_reliability(self):
+        codeblock_path = os.path.abspath('raizen-studio/src/components/CodeBlock.tsx')
+        self.assertTrue(os.path.exists(codeblock_path))
+        with open(codeblock_path, 'r', encoding='utf-8') as f:
+            codeblock_content = f.read()
+
+        # Verify async clipboard API + fallback execCommand
+        self.assertIn('navigator.clipboard.writeText(cleanCode)', codeblock_content)
+        self.assertIn('document.execCommand("copy")', codeblock_content)
+        self.assertIn('textArea.select()', codeblock_content)
+
+        # Verify high contrast feedback color (emerald, not obsidian saffron)
+        self.assertIn('text-emerald-400', codeblock_content)
+        self.assertNotIn('<span className="text-swiss-saffron font-bold">SAVED</span>', codeblock_content)
+
+        # Verify glass styling on action buttons
+        self.assertIn('btn-glass-dark btn-glass-shine', codeblock_content)
+
 if __name__ == '__main__':
     unittest.main()

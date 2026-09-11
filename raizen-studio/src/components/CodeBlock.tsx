@@ -68,37 +68,39 @@ export function CodeBlock({
       ? "styles.css"
       : `snippet.${displayLang}`);
 
-  const handleCopy = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleCopy = async () => {
     try {
       if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(cleanCode);
+        await navigator.clipboard.writeText(cleanCode);
       } else {
+        throw new Error("Clipboard API unavailable");
+      }
+    } catch {
+      // Fallback for restricted clipboard contexts
+      try {
         const textArea = document.createElement("textarea");
         textArea.value = cleanCode;
         textArea.style.position = "fixed";
-        textArea.style.opacity = "0";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "-9999px";
+        textArea.setAttribute("readonly", "");
         document.body.appendChild(textArea);
-        textArea.focus();
         textArea.select();
         document.execCommand("copy");
         document.body.removeChild(textArea);
+      } catch (err) {
+        console.error("Copy failed:", err);
       }
-    } catch {
-      // Fallback
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSave = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onSaveSnippet) {
-      onSaveSnippet(cleanCode, displayLang, displayFilename);
-    } else if (typeof window !== "undefined") {
-      try {
+  const handleSave = () => {
+    try {
+      if (onSaveSnippet) {
+        onSaveSnippet(cleanCode, displayLang, displayFilename);
+      } else if (typeof window !== "undefined") {
         const existing = JSON.parse(localStorage.getItem("raizen_saved_snippets") || "[]");
         const newSnippet = {
           id: `snippet-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -111,9 +113,9 @@ export function CodeBlock({
           updatedAt: Date.now(),
         };
         localStorage.setItem("raizen_saved_snippets", JSON.stringify([newSnippet, ...existing]));
-      } catch (err) {
-        console.error("Failed to save snippet:", err);
       }
+    } catch (err) {
+      console.error("Failed to save snippet:", err);
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -152,8 +154,8 @@ export function CodeBlock({
           >
             {saved ? (
               <>
-                <BookmarkCheck className="w-3 h-3 text-swiss-saffron" />
-                <span className="text-swiss-saffron font-bold">SAVED</span>
+                <BookmarkCheck className="w-3 h-3 text-emerald-400" />
+                <span className="text-emerald-400 font-bold">SAVED</span>
               </>
             ) : (
               <>
