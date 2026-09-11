@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Square, Trash2, Sliders, Paperclip, Mic } from "lucide-react";
+import { Send, Square, Trash2, Sliders } from "lucide-react";
 import { cn } from "../lib/utils";
 
 interface ChatInputProps {
@@ -56,7 +56,7 @@ export function ChatInput({
   };
 
   return (
-    <div className={cn("w-full flex flex-col gap-2 select-none", className)}>
+    <div className={cn("w-full flex flex-col select-none", className)}>
       {/* Main Command Input Capsule */}
       <div className="relative w-full bg-white rounded-2xl border border-swiss-border hover:border-swiss-border-card focus-within:border-swiss-saffron transition-all shadow-swiss">
         {/* Settings Bar if toggled */}
@@ -83,24 +83,6 @@ export function ChatInput({
         )}
 
         <div className="flex items-end p-2.5 sm:p-3 gap-2">
-          {/* Accessory Buttons: Attach & Voice */}
-          <div className="flex items-center gap-1 pb-1">
-            <button
-              type="button"
-              className="p-1.5 rounded-full hover:bg-swiss-canvas text-swiss-muted hover:text-swiss-ink transition-colors"
-              title="Attach File or Context"
-            >
-              <Paperclip className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              className="p-1.5 rounded-full hover:bg-swiss-canvas text-swiss-muted hover:text-swiss-ink transition-colors"
-              title="Voice Input"
-            >
-              <Mic className="w-4 h-4" />
-            </button>
-          </div>
-
           {/* Auto-grow Textarea in Plus Jakarta Sans */}
           <textarea
             ref={textareaRef}
@@ -174,25 +156,6 @@ export function ChatInput({
             )}
           </div>
         </div>
-      </div>
-
-      {/* Micro-Attribution & Keyboard Hint */}
-      <div className="flex items-center justify-between px-3 text-[10.5px] text-swiss-muted font-mono select-none">
-        <span className="font-frozen tracking-wider">
-          MODEL: <strong className="text-swiss-ink font-frozen">RAIZEN 7B</strong> · DEVELOPED BY{" "}
-          <a
-            href="https://shawaz.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-swiss-saffron hover:underline font-bold font-frozen"
-          >
-            SHAWAZ
-          </a>
-        </span>
-        <span className="hidden sm:inline text-swiss-muted">
-          Press <kbd className="px-1.5 py-0.5 bg-swiss-canvas border border-swiss-border rounded text-[9.5px]">Enter</kbd> to send ·{" "}
-          <kbd className="px-1.5 py-0.5 bg-swiss-canvas border border-swiss-border rounded text-[9.5px]">Shift+Enter</kbd> for newline
-        </span>
       </div>
     </div>
   );
