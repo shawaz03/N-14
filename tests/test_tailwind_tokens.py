@@ -15,11 +15,11 @@ class TestTailwindTokens(unittest.TestCase):
         with open(self.tailwind_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Swiss Editorial Warm Alabaster, Sandstone, Saffron
+        # Swiss Editorial Warm Alabaster, Sandstone, Obsidian Monolith
         self.assertIn('"#FAF8F5"', content, "swiss.canvas #FAF8F5 must be defined")
         self.assertIn('"#F3EFEB"', content, "swiss.sidebar #F3EFEB must be defined")
-        self.assertIn('"#EA580C"', content, "swiss.saffron #EA580C must be defined")
-        self.assertIn('"#121316"', content, "swiss.ink #121316 must be defined")
+        self.assertIn('"#121316"', content, "swiss.saffron #121316 must be defined")
+        self.assertIn('"#EAE6DF"', content, "swiss.saffron.tint #EAE6DF must be defined")
         self.assertIn('"#E6E1D8"', content, "swiss.border #E6E1D8 must be defined")
         self.assertIn('"#111215"', content, "swiss.telemetry #111215 must be defined")
 

@@ -24,9 +24,9 @@
   --swiss-canvas: #FAF8F5;
   --swiss-sidebar: #F3EFEB;
   --swiss-card: #FFFFFF;
-  --swiss-saffron: #EA580C;
-  --swiss-saffron-hover: #C2410C;
-  --swiss-saffron-tint: #FFF2EB;
+  --swiss-saffron: #121316;
+  --swiss-saffron-hover: #27272A;
+  --swiss-saffron-tint: #EAE6DF;
   --swiss-ink: #121316;
   --swiss-body: #374151;
   --swiss-muted: #6B7280;
@@ -65,15 +65,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Warm Peach & Saffron Text Selection */
+/* Architectural Warm Linen Text Selection */
 ::selection {
-  background-color: #FFF2EB;
-  color: #EA580C;
+  background-color: #EAE6DF;
+  color: #121316;
 }
 
 ::-moz-selection {
-  background-color: #FFF2EB;
-  color: #EA580C;
+  background-color: #EAE6DF;
+  color: #121316;
 }
 
 /* Precision Swiss Minimalist Scrollbars */

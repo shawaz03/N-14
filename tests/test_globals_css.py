@@ -17,15 +17,15 @@ class TestGlobalsCss(unittest.TestCase):
 
         self.assertIn("scroll-behavior: smooth", content, "globals.css must specify smooth scroll behavior")
         self.assertIn("--swiss-canvas: #FAF8F5", content, "globals.css must set canvas to Warm Alabaster (#FAF8F5)")
-        self.assertIn("--swiss-saffron: #EA580C", content, "globals.css must define Swiss Saffron (#EA580C)")
+        self.assertIn("--swiss-saffron: #121316", content, "globals.css must define Swiss Saffron as Obsidian Ink (#121316)")
 
     def test_selection_rules(self):
         with open(self.css_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         self.assertIn("::selection", content, "globals.css must define ::selection")
-        self.assertIn("#fff2eb", content.lower(), "selection highlight must be Peach Tint (#FFF2EB)")
-        self.assertIn("#ea580c", content.lower(), "selection text must be Burnt Saffron (#EA580C)")
+        self.assertIn("#eae6df", content.lower(), "selection highlight must be Warm Linen Tint (#EAE6DF)")
+        self.assertIn("#121316", content.lower(), "selection text must be Obsidian Ink (#121316)")
 
     def test_scrollbar_styling(self):
         with open(self.css_path, "r", encoding="utf-8") as f:

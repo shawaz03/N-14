@@ -34,8 +34,8 @@ export function ChatMessageItem({
           <span className="text-swiss-muted">{message.timestamp}</span>
         </div>
 
-        {/* User Message Body: Solid Burnt Saffron Pill Card */}
-        <div className="max-w-[85%] sm:max-w-[75%] p-3.5 px-4 bg-swiss-saffron text-white text-sm sm:text-[15px] leading-relaxed rounded-2xl rounded-tr-sm shadow-swiss-saffron">
+        {/* User Message Body: Solid Obsidian Monolith Pill Card */}
+        <div className="max-w-[85%] sm:max-w-[75%] p-3.5 px-4 bg-swiss-saffron text-white text-sm sm:text-[15px] leading-relaxed rounded-2xl rounded-tr-sm shadow-swiss-saffron border border-black/10">
           <p className="whitespace-pre-wrap break-words font-sans font-medium text-white">
             {message.content}
           </p>

@@ -20,10 +20,10 @@ const config: Config = {
           card: "#FFFFFF",         // Pure Matte White
           "card-subtle": "#F7F5F0",// Sandstone Tile
           saffron: {
-            DEFAULT: "#EA580C",    // Burnt Saffron / Terracotta
-            hover: "#C2410C",      // Deep Terracotta
-            tint: "#FFF2EB",       // Peach Milk
-            text: "#9A3412",       // Dark Terracotta Text
+            DEFAULT: "#121316",    // Option 1: Deep Obsidian Ink
+            hover: "#27272A",      // Charcoal Slate
+            tint: "#EAE6DF",       // Warm Stone Linen
+            text: "#121316",       // Deep Obsidian Text
           },
           ink: "#121316",          // Swiss Charcoal Ink
           body: "#374151",         // Neutral Slate Body
@@ -32,7 +32,7 @@ const config: Config = {
           border: {
             DEFAULT: "#E6E1D8",    // 1px Hairline Border
             card: "#E5DFD5",       // Card Border
-            focus: "#EA580C",      // Focus Border
+            focus: "#121316",      // Focus Border
           },
           telemetry: "#111215",    // Top Obsidian Status Bar
         },
@@ -50,10 +50,10 @@ const config: Config = {
           dark: "#141414",
         },
         signal: {
-          DEFAULT: "#EA580C",
-          hover: "#C2410C",
-          dim: "#9A3412",
-          glow: "rgba(234, 88, 12, 0.15)",
+          DEFAULT: "#121316",
+          hover: "#27272A",
+          dim: "#27272A",
+          glow: "rgba(18, 19, 22, 0.08)",
         },
         terminal: {
           error: "#EF4444",
@@ -95,7 +95,7 @@ const config: Config = {
         swiss: "0 1px 3px rgba(0, 0, 0, 0.04)",
         "swiss-md": "0 6px 16px rgba(0, 0, 0, 0.04)",
         "swiss-lg": "0 12px 32px rgba(0, 0, 0, 0.06)",
-        "swiss-saffron": "0 4px 14px rgba(234, 88, 12, 0.2)",
+        "swiss-saffron": "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)",
       },
     },
   },

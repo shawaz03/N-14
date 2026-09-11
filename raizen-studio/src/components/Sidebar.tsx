@@ -55,7 +55,7 @@ export function Sidebar({
             <span className="font-frozen text-xl font-bold tracking-wider text-swiss-ink uppercase">
               RAIZEN
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text border border-swiss-saffron/20 font-frozen tracking-wide">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text border border-swiss-border font-frozen tracking-wide">
               v2.4
             </span>
           </div>

@@ -93,7 +93,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                 <span className="font-extrabold text-sm sm:text-base text-swiss-ink tracking-wider font-frozen uppercase">
                   LAUNCH RAIZEN GPU ENGINE
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text border border-swiss-saffron/20 font-frozen tracking-wide">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text border border-swiss-border font-frozen tracking-wide">
                   $0 / MONTH
                 </span>
               </div>
