@@ -10,7 +10,7 @@ class TestCodeExport(unittest.TestCase):
 
     def setUp(self):
         self.export_path = os.path.abspath("raizen-studio/src/hooks/useCodeExport.ts")
-        self.header_path = os.path.abspath("raizen-studio/src/components/SandboxHeader.tsx")
+        self.snippets_path = os.path.abspath("raizen-studio/src/components/SavedSnippetsView.tsx")
         self.page_path = os.path.abspath("raizen-studio/src/app/page.tsx")
 
     def test_export_file_exists(self):
@@ -27,11 +27,11 @@ class TestCodeExport(unittest.TestCase):
         self.assertIn("https://shawaz.vercel.app/", content, "Exported HTML must link to creator portfolio")
         self.assertIn("react@18", content, "Exported HTML must bundle React 18")
 
-    def test_sandbox_header_and_page_integration(self):
-        with open(self.header_path, "r", encoding="utf-8") as f:
-            header_content = f.read()
-        self.assertIn("onExport", header_content, "SandboxHeader must accept onExport")
-        self.assertIn("EXPORT", header_content, "SandboxHeader must render EXPORT button")
+    def test_export_integration_in_snippets_and_page(self):
+        with open(self.snippets_path, "r", encoding="utf-8") as f:
+            snippets_content = f.read()
+        self.assertIn("onExportCode", snippets_content, "SavedSnippetsView must accept onExportCode")
+        self.assertIn("Export", snippets_content, "SavedSnippetsView must render Export button")
 
         with open(self.page_path, "r", encoding="utf-8") as f:
             page_content = f.read()

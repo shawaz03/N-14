@@ -7,7 +7,6 @@ interface KeyboardShortcutsOptions {
   onStopStreaming?: () => void;
   onClearChat?: () => void;
   onFocusInput?: () => void;
-  onToggleSandbox?: () => void;
 }
 
 export function useKeyboardShortcuts({
@@ -15,7 +14,6 @@ export function useKeyboardShortcuts({
   onStopStreaming,
   onClearChat,
   onFocusInput,
-  onToggleSandbox,
 }: KeyboardShortcutsOptions) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -41,13 +39,6 @@ export function useKeyboardShortcuts({
         onFocusInput?.();
         return;
       }
-
-      // 4. Ctrl+\ / Cmd+\: Toggle live sandbox panel
-      if (isCtrlOrCmd && e.key === "\\") {
-        e.preventDefault();
-        onToggleSandbox?.();
-        return;
-      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -57,6 +48,5 @@ export function useKeyboardShortcuts({
     onStopStreaming,
     onClearChat,
     onFocusInput,
-    onToggleSandbox,
   ]);
 }

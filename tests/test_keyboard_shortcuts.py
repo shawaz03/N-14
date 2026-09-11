@@ -22,7 +22,7 @@ class TestKeyboardShortcuts(unittest.TestCase):
         self.assertIn('"Escape"', content, "Must listen for Escape key to stop stream")
         self.assertIn('"l"', content.lower(), "Must listen for Ctrl+L to clear screen")
         self.assertIn('"k"', content.lower(), "Must listen for Ctrl+K to focus input")
-        self.assertIn('"\\\\"', content, "Must listen for Ctrl+\\ to toggle sandbox")
+        self.assertNotIn('"\\\\"', content, "Must not listen for Ctrl+\\ sandbox shortcut")
 
 if __name__ == "__main__":
     unittest.main()

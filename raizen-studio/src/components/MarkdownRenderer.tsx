@@ -10,14 +10,12 @@ import { cn } from "../lib/utils";
 
 interface MarkdownRendererProps {
   content: string;
-  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onSaveSnippet?: (code: string, language: string, filename?: string) => void;
   className?: string;
 }
 
 export function MarkdownRenderer({
   content,
-  onRunInSandbox,
   onSaveSnippet,
   className,
 }: MarkdownRendererProps) {
@@ -73,7 +71,6 @@ export function MarkdownRenderer({
                 <CodeBlock
                   code={codeString}
                   language={language}
-                  onRunInSandbox={onRunInSandbox}
                   onSaveSnippet={onSaveSnippet}
                 />
               );

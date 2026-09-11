@@ -4,7 +4,6 @@ import React, { useState, useMemo } from "react";
 import {
   Search,
   Star,
-  Play,
   Copy,
   Download,
   Trash2,
@@ -15,19 +14,16 @@ import {
 } from "lucide-react";
 import { UseSavedSnippetsReturn } from "../hooks/useSavedSnippets";
 import { SavedSnippet, SnippetLanguageFilter } from "../types/snippet";
-import { launchInOpenSourceSandbox } from "../lib/sandboxLauncher";
 import { cn } from "../lib/utils";
 
 interface SavedSnippetsViewProps {
   snippetsVault: UseSavedSnippetsReturn;
-  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onExportCode?: (code: string, filename: string) => void;
   className?: string;
 }
 
 export function SavedSnippetsView({
   snippetsVault,
-  onRunInSandbox,
   onExportCode,
   className,
 }: SavedSnippetsViewProps) {
@@ -52,14 +48,6 @@ export function SavedSnippetsView({
     navigator.clipboard.writeText(snippet.code);
     setCopiedId(snippet.id);
     setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const handleRun = (snippet: SavedSnippet) => {
-    if (onRunInSandbox) {
-      onRunInSandbox(snippet.code, snippet.language, snippet.filename);
-    } else {
-      launchInOpenSourceSandbox(snippet.code, snippet.language, "standalone");
-    }
   };
 
   const handleDownload = (snippet: SavedSnippet) => {
@@ -297,29 +285,19 @@ export function SavedSnippetsView({
                   <div className="flex items-center justify-between pt-2 border-t border-swiss-border/60 gap-1.5">
                     <button
                       type="button"
-                      onClick={() => handleRun(snippet)}
-                      className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-[10.5px] font-bold rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen tracking-wider"
-                      title="Run in live sandbox"
-                    >
-                      <Play className="w-2.5 h-2.5 fill-current" />
-                      <span>Run</span>
-                    </button>
-
-                    <button
-                      type="button"
                       onClick={() => handleCopyCode(snippet)}
-                      className="px-2.5 py-1.5 bg-swiss-canvas hover:bg-white border border-swiss-border text-swiss-ink text-[10px] font-bold rounded-pill uppercase transition-colors font-frozen flex items-center gap-1"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-swiss-saffron hover:bg-swiss-saffron-hover text-white text-[10.5px] font-bold rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen tracking-wider"
                       title="Copy code to clipboard"
                     >
                       {isCopied ? (
                         <>
-                          <Check className="w-3 h-3 text-emerald-600" />
-                          <span className="text-emerald-600">Copied</span>
+                          <Check className="w-3 h-3 text-white" />
+                          <span>Copied</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3 h-3 text-swiss-muted" />
-                          <span>Copy</span>
+                          <Copy className="w-3 h-3" />
+                          <span>Copy Code</span>
                         </>
                       )}
                     </button>
@@ -327,10 +305,11 @@ export function SavedSnippetsView({
                     <button
                       type="button"
                       onClick={() => handleDownload(snippet)}
-                      className="p-1.5 bg-swiss-canvas hover:bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink rounded-pill transition-colors"
+                      className="p-1.5 px-2 bg-swiss-canvas hover:bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink rounded-pill transition-colors flex items-center gap-1 text-[10px] font-mono"
                       title="Download file"
                     >
                       <Download className="w-3 h-3" />
+                      <span className="hidden sm:inline">Export</span>
                     </button>
                   </div>
                 </div>

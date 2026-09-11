@@ -7,13 +7,11 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessageItemProps {
   message: ChatMessage;
-  onRunInSandbox?: (code: string, language: string, filename?: string) => void;
   onSaveSnippet?: (code: string, language: string, filename?: string) => void;
 }
 
 export function ChatMessageItem({
   message,
-  onRunInSandbox,
   onSaveSnippet,
 }: ChatMessageItemProps) {
   const [copied, setCopied] = useState(false);
@@ -98,7 +96,6 @@ export function ChatMessageItem({
         <div className="text-sm sm:text-[15px] text-swiss-ink leading-relaxed font-sans">
           <MarkdownRenderer
             content={message.content}
-            onRunInSandbox={onRunInSandbox}
             onSaveSnippet={onSaveSnippet}
           />
         </div>

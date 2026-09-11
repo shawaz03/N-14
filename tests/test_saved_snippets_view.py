@@ -21,8 +21,8 @@ class TestSavedSnippetsView(unittest.TestCase):
 
         self.assertIn("export function SavedSnippetsView", content)
         self.assertIn("snippetsVault", content)
-        self.assertIn("onRunInSandbox", content)
         self.assertIn("onExportCode", content)
+        self.assertNotIn("onRunInSandbox", content)
 
     def test_filters_and_search_present(self):
         with open(self.view_path, "r", encoding="utf-8") as f:
@@ -39,12 +39,12 @@ class TestSavedSnippetsView(unittest.TestCase):
         with open(self.view_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        self.assertIn("handleRun", content, "Must implement 1-click sandbox execution")
-        self.assertIn("onRunInSandbox(snippet.code, snippet.language, snippet.filename)", content)
         self.assertIn("handleCopyCode", content, "Must implement copy code")
         self.assertIn("handleDownload", content, "Must implement download code file")
         self.assertIn("toggleFavorite", content, "Must support favoriting snippets")
         self.assertIn("font-mono", content, "Must render code preview in Monospace")
+        self.assertNotIn("handleRun", content, "Must not contain sandbox handleRun")
+        self.assertNotIn("launchInOpenSourceSandbox", content, "Must not import sandbox launcher")
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,7 +19,7 @@
 
 <p align="center">
   <b>RAIZEN</b> is a state-of-the-art <b>7.61B parameter coding foundation model</b> fine-tuned from <code>Qwen2.5-Coder-7B-Instruct</code> over a curated 15,000 multi-turn dataset on 4× NVIDIA A10G GPUs.<br>
-  Paired with an industrial <b>Terminal Brutalism Developer Studio</b> featuring a dual-engine live code sandbox (Monaco + React Live Preview).
+  Paired with an architectural <b>Swiss Precision Developer Studio</b> featuring real-time SSE token streaming, persona specialists, and a local Snippet Vault.
 </p>
 
 ---
@@ -49,7 +49,7 @@
 - 🚀 **Distributed Training**: Distributed across **4× NVIDIA A10G GPUs** (`g5.12xlarge`) using PyTorch DDP, FlashAttention-2, and QLoRA across 3 full epochs (1,338 steps).
 - 📦 **Hugging Face Model Release**: [shawaz03/RAIZEN](https://huggingface.co/shawaz03/RAIZEN) (Self-contained, merged weights ready for Hugging Face Transformers & vLLM).
 - ⚡ **1-Click Google Colab Backend**: High-throughput vLLM PagedAttention streaming engine (8–15 tok/s) running on free T4/A100 GPUs with Cloudflare Quick Tunnels and keep-alive watchdog.
-- 🖤 **Terminal Brutalism Next.js Studio**: High-contrast OLED Black (`#050505`) and Acid Lime (`#CCFF00`) developer interface with Monaco Editor and live React component preview runner.
+- 🖤 **Swiss Precision Next.js Studio**: Architectural Monolith (`#121316` Obsidian Ink, `#FAF8F5` Warm Ivory Canvas) with real-time SSE streaming, syntax-highlighted code pods, and Snippet Vault.
 
 ---
 
@@ -74,13 +74,13 @@
 │           ├── FastAPI SSE /v1/chat/completions              │
 │           └── Cloudflare Quick Tunnel + Watchdog Thread     │
 │                                                             │
-│  Phase 5: Next.js Terminal Brutalism Chat Studio            │
-│           ├── Monaco Code Editor (raizen-dark theme)        │
-│           ├── Sandboxed React 18 / Babel Preview Runner     │
+│  Phase 5: Next.js Architectural Developer Studio            │
+│           ├── Real-Time SSE Streaming & Claude-Style Shimmer│
+│           ├── Snippets Vault & Multi-Language Filtering     │
 │           └── Live Hardware Telemetry & Token Velocity      │
 │                                                             │
 │  Phase 6: Integration Testing & Vercel Deployment           │
-│           └── 171 Unit Tests Passing / Zero-Config Deploy   │
+│           └── Comprehensive Automated Unit Test Suite       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -94,7 +94,7 @@
 3. Run all cells (`Ctrl+F9`).
 4. Copy the generated **Cloudflare Quick Tunnel URL** (e.g. `https://xxxx.trycloudflare.com`).
 
-### 2. Run the Next.js Terminal Brutalism Studio Locally
+### 2. Run the Next.js Architectural Studio Locally
 ```bash
 # Clone the repository
 git clone https://github.com/shawaz03/N-14.git
@@ -116,18 +116,17 @@ Open [http://localhost:3000](http://localhost:3000), paste your Cloudflare Tunne
 | :--- | :--- | :--- |
 | `Escape` | **Abort Stream** | Immediately stops the active token generation stream. |
 | `Ctrl + L` | **Clear Terminal** | Clears chat conversation history and resets screen. |
-| `Ctrl + \` | **Toggle View** | Switches between Chat Terminal and Dual Split Sandbox. |
+| `Ctrl + K` | **Focus Input** | Focuses the chat input bar. |
 | `Ctrl + Enter` | **Send Prompt** | Submits command from the multiline input prompt. |
 
 ---
 
 ## 🧪 Verification & Test Suite
 
-The entire repository is covered by automated unit tests validating model schemas, SSE chunking, CORS headers, React preview sandboxing, and Vercel builds:
+The entire repository is covered by automated unit tests validating model schemas, SSE chunking, CORS headers, Snippet Vault persistence, and component rendering:
 
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v
-# Output: Ran 171 tests in 2.5s (OK - 100% Passing)
 ```
 
 ---

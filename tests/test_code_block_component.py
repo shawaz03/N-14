@@ -20,17 +20,16 @@ class TestCodeBlockComponent(unittest.TestCase):
 
         self.assertIn("export function CodeBlock", content)
         self.assertIn("font-mono", content, "CodeBlock must use monospace font")
-        self.assertIn("bg-swiss-saffron", content, "CodeBlock must feature Swiss Saffron accent")
+        self.assertIn("text-swiss-saffron", content, "CodeBlock must feature Swiss Saffron accent")
 
     def test_actions_and_sandbox_bridge(self):
         with open(self.component_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        self.assertIn("RUN IN SANDBOX", content, "CodeBlock must provide RUN IN SANDBOX action button")
         self.assertIn("COPY", content, "CodeBlock must provide COPY action button")
-        self.assertIn("CodeSandbox", content, "CodeBlock must provide CodeSandbox export button")
-        self.assertIn("StackBlitz", content, "CodeBlock must provide StackBlitz export button")
-        self.assertIn("launchInOpenSourceSandbox", content, "CodeBlock must trigger launchInOpenSourceSandbox")
+        self.assertIn("Save to Snippets Vault", content, "CodeBlock must provide Vault save button")
+        self.assertNotIn("RUN IN SANDBOX", content, "CodeBlock must not provide sandbox action button")
+        self.assertNotIn("launchInOpenSourceSandbox", content, "CodeBlock must not import sandbox launcher")
 
     def test_line_numbers(self):
         with open(self.component_path, "r", encoding="utf-8") as f:

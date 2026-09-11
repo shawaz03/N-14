@@ -7,11 +7,9 @@ import { ChatMessageItem } from "../components/ChatMessageItem";
 import { ChatInput } from "../components/ChatInput";
 import { ClaudeLoadingEffect } from "../components/ClaudeLoadingEffect";
 import { ColabModal } from "../components/ColabModal";
-import { LiveSandboxModal } from "../components/LiveSandboxModal";
 import { HistoryView } from "../components/HistoryView";
 import { SavedSnippetsView } from "../components/SavedSnippetsView";
 import { ModelExplorerView } from "../components/ModelExplorerView";
-import { SandboxBridgeView } from "../components/SandboxBridgeView";
 import { ToastContainer } from "../components/Toast";
 import { useToast } from "../hooks/useToast";
 import { useRaizenConnection } from "../hooks/useRaizenConnection";
@@ -24,15 +22,11 @@ import { ArrowUpRight } from "lucide-react";
 import { ChatSession } from "../types/session";
 import { RaizenPersona } from "../types/model";
 
-export type WorkspaceTab = "chat" | "explore" | "history" | "saved" | "tools";
+export type WorkspaceTab = "chat" | "explore" | "history" | "saved";
 
 export default function RaizenStudioPage() {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>("chat");
   const [isColabModalOpen, setIsColabModalOpen] = useState(false);
-  const [isLiveSandboxOpen, setIsLiveSandboxOpen] = useState(false);
-  const [activeSandboxCode, setActiveSandboxCode] = useState("");
-  const [activeSandboxLanguage, setActiveSandboxLanguage] = useState("tsx");
-  const [activeSandboxFilename, setActiveSandboxFilename] = useState<string | undefined>(undefined);
   const { toasts, showToast, dismissToast } = useToast();
 
   const connection = useRaizenConnection();
@@ -88,18 +82,6 @@ export default function RaizenStudioPage() {
 
   const handleSendMessage = (promptText: string, temperature: number = 0.2) => {
     sendMessage(promptText, connection.tunnelUrl, temperature);
-  };
-
-  const handleRunInSandbox = (code: string, language: string, filename?: string) => {
-    setActiveSandboxCode(code);
-    setActiveSandboxLanguage(language);
-    setActiveSandboxFilename(filename);
-    setIsLiveSandboxOpen(true);
-    showToast(
-      `Opening ${filename || language.toUpperCase()} in Live Sandbox...`,
-      "info",
-      "LIVE PREVIEW"
-    );
   };
 
   const handleSaveSnippet = (code: string, language: string, filename?: string) => {
@@ -203,20 +185,12 @@ export default function RaizenStudioPage() {
             <div className="flex-1 overflow-hidden animate-in fade-in duration-150">
               <SavedSnippetsView
                 snippetsVault={snippetsVault}
-                onRunInSandbox={handleRunInSandbox}
                 onExportCode={handleExportCode}
               />
             </div>
           )}
 
-          {/* VIEW D: Sandbox Bridge View */}
-          {activeTab === "tools" && (
-            <div className="flex-1 overflow-hidden animate-in fade-in duration-150">
-              <SandboxBridgeView onRunInSandbox={handleRunInSandbox} />
-            </div>
-          )}
-
-          {/* VIEW E: Chat Studio Conversation View */}
+          {/* VIEW D: Chat Studio Conversation View */}
           {activeTab === "chat" && (
             <>
               {/* Single-Column Chat Stream: Full-width scroll container for edge-to-edge scrolling */}
@@ -236,7 +210,6 @@ export default function RaizenStudioPage() {
                       <ChatMessageItem
                         key={msg.id}
                         message={msg}
-                        onRunInSandbox={handleRunInSandbox}
                         onSaveSnippet={handleSaveSnippet}
                       />
                     ))}
@@ -274,15 +247,6 @@ export default function RaizenStudioPage() {
         isOpen={isColabModalOpen}
         onClose={() => setIsColabModalOpen(false)}
         connection={connection}
-      />
-
-      {/* In-App Live Sandbox Modal (Zero Popup Risk) */}
-      <LiveSandboxModal
-        isOpen={isLiveSandboxOpen}
-        onClose={() => setIsLiveSandboxOpen(false)}
-        code={activeSandboxCode}
-        language={activeSandboxLanguage}
-        filename={activeSandboxFilename}
       />
 
       {/* Toast Notifications */}

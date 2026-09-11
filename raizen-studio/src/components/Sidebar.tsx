@@ -6,7 +6,6 @@ import {
   Compass,
   History,
   Bookmark,
-  Wrench,
   Plus,
   ChevronLeft,
   ChevronRight,
@@ -37,7 +36,6 @@ export function Sidebar({
     { id: "explore", label: "Model Explorer", icon: Compass },
     { id: "history", label: "History", icon: History },
     { id: "saved", label: "Saved Snippets", icon: Bookmark },
-    { id: "tools", label: "Sandbox Bridge", icon: Wrench },
   ];
 
   return (

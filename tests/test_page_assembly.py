@@ -30,13 +30,16 @@ class TestPageAssembly(unittest.TestCase):
         self.assertIn("<ChatMessageItem", content, "Must render ChatMessageItem in stream")
         self.assertIn("<ClaudeLoadingEffect", content, "Must render ClaudeLoadingEffect")
         self.assertIn("<ChatInput", content, "Must render floating ChatInput")
-        self.assertIn("<LiveSandboxModal", content, "Must render LiveSandboxModal")
+        self.assertIn("<SavedSnippetsView", content, "Must render SavedSnippetsView")
+        self.assertIn("<ModelExplorerView", content, "Must render ModelExplorerView")
+        self.assertIn("<HistoryView", content, "Must render HistoryView")
 
-    def test_sandbox_redirection_handler(self):
+    def test_clean_architecture_no_sandbox(self):
         with open(self.page_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        self.assertIn("handleRunInSandbox", content, "Must define handleRunInSandbox redirection handler")
+        self.assertNotIn("<LiveSandboxModal", content, "Must not mount LiveSandboxModal")
+        self.assertNotIn("<SandboxBridgeView", content, "Must not mount SandboxBridgeView")
 
 if __name__ == "__main__":
     unittest.main()

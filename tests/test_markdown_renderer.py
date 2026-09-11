@@ -36,7 +36,8 @@ class TestMarkdownRenderer(unittest.TestCase):
             content = f.read()
 
         self.assertIn("MarkdownRenderer", content, "ChatMessageItem must import and render MarkdownRenderer")
-        self.assertIn("onRunInSandbox", content, "ChatMessageItem must pass onRunInSandbox to MarkdownRenderer")
+        self.assertIn("onSaveSnippet", content, "ChatMessageItem must pass onSaveSnippet to MarkdownRenderer")
+        self.assertNotIn("onRunInSandbox", content, "ChatMessageItem must not have onRunInSandbox prop")
 
 if __name__ == "__main__":
     unittest.main()
