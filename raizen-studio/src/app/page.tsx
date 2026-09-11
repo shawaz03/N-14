@@ -54,7 +54,8 @@ export default function RaizenStudioPage() {
     if (messages.length > 0 && !isStreaming) {
       history.updateActiveSessionMessages(messages, totalTokens);
     }
-  }, [messages, isStreaming, totalTokens, history]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, isStreaming, totalTokens]);
 
   // Auto-scroll to bottom of chat feed when new messages or tokens arrive
   useEffect(() => {

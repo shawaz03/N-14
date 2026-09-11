@@ -43,7 +43,6 @@ export function CodeBlock({
           getComputedStyle(parent).overflowY !== 'hidden' &&
           getComputedStyle(parent).overflowY !== 'visible') {
         parent.scrollTop += e.deltaY;
-        e.preventDefault();
         return;
       }
       parent = parent.parentElement;

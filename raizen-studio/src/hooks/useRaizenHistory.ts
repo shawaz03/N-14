@@ -285,7 +285,7 @@ export function useRaizenHistory(): UseRaizenHistoryReturn {
     [sessions]
   );
 
-  return {
+  return useMemo(() => ({
     sessions,
     activeSessionId,
     activeSession,
@@ -297,5 +297,17 @@ export function useRaizenHistory(): UseRaizenHistoryReturn {
     togglePinSession,
     clearAllSessions,
     getTimelineGroups,
-  };
+  }), [
+    sessions,
+    activeSessionId,
+    activeSession,
+    createSession,
+    switchSession,
+    updateActiveSessionMessages,
+    deleteSession,
+    renameSession,
+    togglePinSession,
+    clearAllSessions,
+    getTimelineGroups,
+  ]);
 }
