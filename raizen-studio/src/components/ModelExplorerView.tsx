@@ -2,12 +2,16 @@
 
 import React, { useState } from "react";
 import {
-  ExternalLink,
-  Sparkles,
-  Sliders,
-  Share2,
+  Sparkle,
+  ArrowSquareOut,
+  SlidersHorizontal,
+  ShareNetwork,
   Check,
-} from "lucide-react";
+  Cpu,
+  Folder,
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
+import { SpecialistBadge } from "./ui/SpecialistBadge";
 import { RAIZEN_MODEL_SPEC, RAIZEN_PERSONAS } from "../lib/personaManager";
 import { RaizenPersona } from "../types/model";
 import { cn } from "../lib/utils";
@@ -40,8 +44,8 @@ export function ModelExplorerView({
       {/* 1. Header Bar */}
       <div className="px-6 py-5 bg-white border-b border-swiss-border flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-xs">
-            ✦
+          <div className="w-8 h-8 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen">
+            <MotionIcon icon={Cpu} size={18} weight="duotone" animation="pulse" />
           </div>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-swiss-ink font-frozen uppercase tracking-wider">
@@ -61,7 +65,7 @@ export function ModelExplorerView({
             className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-swiss-canvas border border-swiss-border rounded-pill text-xs font-bold text-swiss-ink transition-colors font-frozen shadow-sm"
           >
             <span>Hugging Face Hub</span>
-            <ExternalLink className="w-3 h-3 text-swiss-saffron" />
+            <MotionIcon icon={ArrowSquareOut} size={14} weight="duotone" animation="glance" className="text-swiss-saffron" />
           </a>
         </div>
       </div>
@@ -116,7 +120,7 @@ export function ModelExplorerView({
           <div className="space-y-5 animate-in fade-in duration-150">
             <div className="p-4 bg-white border border-swiss-border rounded-2xl shadow-swiss space-y-1">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-swiss-saffron" />
+                <MotionIcon icon={Sparkle} size={18} weight="duotone" animation="spin" className="text-swiss-saffron" />
                 <h2 className="text-xs sm:text-sm font-bold text-swiss-ink font-frozen uppercase tracking-wider">
                   Select Active AI Specialist Persona
                 </h2>
@@ -145,15 +149,12 @@ export function ModelExplorerView({
                       {/* Persona Header */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2.5">
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs"
-                            style={{
-                              backgroundColor: `${persona.accentColor}18`,
-                              color: persona.accentColor,
-                            }}
-                          >
-                            ✦
-                          </div>
+                          <SpecialistBadge
+                            personaId={persona.id}
+                            accentColor={persona.accentColor}
+                            isSelected={isSelected}
+                            size="md"
+                          />
                           <div>
                             <h3 className="font-bold text-sm text-swiss-ink font-frozen tracking-wide">
                               {persona.name}
@@ -216,8 +217,8 @@ export function ModelExplorerView({
             {/* Hugging Face Hub Hero Banner */}
             <div className="p-5 bg-white border border-swiss-border rounded-2xl shadow-swiss flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-lg font-bold shrink-0">
-                  ✦
+                <div className="w-12 h-12 rounded-xl bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center shrink-0">
+                  <MotionIcon icon={Folder} size={24} weight="duotone" animation="bounce" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -242,12 +243,12 @@ export function ModelExplorerView({
                 >
                   {copiedLink ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <MotionIcon icon={Check} size={14} weight="bold" className="text-emerald-600" />
                       <span>Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Share2 className="w-3.5 h-3.5 text-swiss-muted" />
+                      <MotionIcon icon={ShareNetwork} size={14} weight="duotone" animation="bounce" className="text-swiss-muted" />
                       <span>Copy Repo URL</span>
                     </>
                   )}
@@ -259,7 +260,7 @@ export function ModelExplorerView({
                   className="flex-1 sm:flex-none px-4 py-1.5 btn-glass-dark btn-glass-shine text-white rounded-pill text-xs font-bold transition-all font-frozen tracking-wide flex items-center justify-center gap-1"
                 >
                   <span>Explore Model</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <MotionIcon icon={ArrowSquareOut} size={14} weight="duotone" animation="glance" />
                 </a>
               </div>
             </div>
@@ -322,7 +323,7 @@ export function ModelExplorerView({
                   className="text-sm font-bold text-swiss-saffron hover:underline font-frozen flex items-center gap-1"
                 >
                   <span>{spec.creator}</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <MotionIcon icon={ArrowSquareOut} size={13} weight="duotone" animation="glance" />
                 </a>
               </div>
             </div>
@@ -334,7 +335,7 @@ export function ModelExplorerView({
           <div className="space-y-5 animate-in fade-in duration-150">
             <div className="p-5 bg-white border border-swiss-border rounded-2xl shadow-swiss space-y-3">
               <div className="flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-swiss-saffron" />
+                <MotionIcon icon={SlidersHorizontal} size={18} weight="duotone" animation="tilt" className="text-swiss-saffron" />
                 <h2 className="text-sm font-bold text-swiss-ink font-frozen uppercase tracking-wider">
                   32K Context Window Allocation
                 </h2>

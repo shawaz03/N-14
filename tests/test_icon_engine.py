@@ -51,5 +51,17 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn("algorithm-optimizer", content, "Must support Algorithm logic graph")
         self.assertIn("whileHover", content, "Must feature spring hover feedback")
 
+    def test_model_explorer_icons_and_badges(self):
+        explorer_path = os.path.abspath('raizen-studio/src/components/ModelExplorerView.tsx')
+        self.assertTrue(os.path.exists(explorer_path), "ModelExplorerView.tsx must exist")
+        with open(explorer_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn('@phosphor-icons/react', content, "Must import duotone icons from Phosphor")
+        self.assertIn('SpecialistBadge', content, "Must use SpecialistBadge for persona cards")
+        self.assertIn('MotionIcon', content, "Must wrap interactive icons with MotionIcon")
+        self.assertIn('personaId={persona.id}', content, "Must pass personaId to SpecialistBadge")
+        self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in ModelExplorerView")
+
 if __name__ == '__main__':
     unittest.main()
