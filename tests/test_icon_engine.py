@@ -38,5 +38,18 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn("glance", content)
         self.assertIn("float", content)
 
+    def test_specialist_badge_component(self):
+        badge_path = os.path.abspath('raizen-studio/src/components/ui/SpecialistBadge.tsx')
+        self.assertTrue(os.path.exists(badge_path), "SpecialistBadge.tsx must exist")
+        with open(badge_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn("export function SpecialistBadge", content)
+        self.assertIn("frontend-architect", content, "Must support React Architect orbital rings")
+        self.assertIn("fullstack-nextjs", content, "Must support Next.js tiered layers")
+        self.assertIn("python-ai-systems", content, "Must support Python/AI neural core")
+        self.assertIn("algorithm-optimizer", content, "Must support Algorithm logic graph")
+        self.assertIn("whileHover", content, "Must feature spring hover feedback")
+
 if __name__ == '__main__':
     unittest.main()
