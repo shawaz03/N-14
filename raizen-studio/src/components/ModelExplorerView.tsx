@@ -167,13 +167,16 @@ export function ModelExplorerView({
 
                         <span
                           className={cn(
-                            "text-[10px] font-bold px-2 py-0.5 rounded-pill font-frozen",
+                            "text-[10px] font-bold px-2 py-0.5 rounded-pill font-frozen flex items-center gap-1",
                             isSelected
                               ? "bg-swiss-saffron text-white shadow-sm"
                               : "bg-swiss-canvas border border-swiss-border text-swiss-muted"
                           )}
                         >
-                          {isSelected ? "Active Persona" : persona.badge}
+                          {isSelected && (
+                            <MotionIcon icon={Check} size={10} weight="bold" className="text-emerald-400" />
+                          )}
+                          <span>{isSelected ? "Active Persona" : persona.badge}</span>
                         </span>
                       </div>
 

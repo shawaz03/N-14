@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Sparkle } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { ChatMessage } from "../types/chat";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 
@@ -51,7 +52,7 @@ export function ChatMessageItem({
         <div className="flex items-center justify-between border-b border-swiss-border/60 pb-2.5 text-[11px]">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-md bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-[10px] font-bold">
-              ✦
+              <MotionIcon icon={Sparkle} size={11} weight="duotone" animation="pulse" />
             </div>
             <span className="text-swiss-ink font-bold tracking-wider font-frozen text-sm sm:text-base uppercase">
               RAIZEN Engine
@@ -74,17 +75,17 @@ export function ChatMessageItem({
             <button
               type="button"
               onClick={handleCopy}
-              className="p-1 px-2.5 rounded-pill btn-glass-light btn-glass-shine text-swiss-muted hover:text-swiss-ink text-[10.5px] flex items-center gap-1 transition-all font-mono"
+              className="p-1 px-2.5 rounded-pill btn-glass-light btn-glass-shine text-swiss-muted hover:text-swiss-ink text-[10.5px] flex items-center gap-1.5 transition-all font-mono"
               title={copied ? "Copied to Clipboard" : "Copy Message"}
             >
               {copied ? (
                 <>
-                  <Check className="w-3 h-3 text-emerald-600" />
+                  <MotionIcon icon={Check} size={12} weight="bold" className="text-emerald-600" />
                   <span className="text-emerald-600 font-bold">COPIED</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3 h-3" />
+                  <MotionIcon icon={Copy} size={12} weight="duotone" animation="bounce" />
                   <span>COPY</span>
                 </>
               )}

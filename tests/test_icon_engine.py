@@ -63,5 +63,15 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('personaId={persona.id}', content, "Must pass personaId to SpecialistBadge")
         self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in ModelExplorerView")
 
+    def test_chat_message_item_motion_icons(self):
+        msg_item_path = os.path.abspath('raizen-studio/src/components/ChatMessageItem.tsx')
+        self.assertTrue(os.path.exists(msg_item_path), "ChatMessageItem.tsx must exist")
+        with open(msg_item_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn('@phosphor-icons/react', content, "Must import from Phosphor icons")
+        self.assertIn('MotionIcon', content, "Must wrap icons in MotionIcon")
+        self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in ChatMessageItem")
+
 if __name__ == '__main__':
     unittest.main()
