@@ -2,16 +2,17 @@
 
 import React, { useState } from "react";
 import {
-  MessageSquare,
+  ChatCircleDots,
   Compass,
-  History,
-  Bookmark,
+  ClockCounterClockwise,
+  BookmarkSimple,
   Plus,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
+  CaretLeft,
+  CaretRight,
+  ArrowSquareOut,
   Cpu,
-} from "lucide-react";
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 interface SidebarProps {
@@ -32,10 +33,10 @@ export function Sidebar({
   const [collapsed, setCollapsed] = useState(false);
 
   const navItems = [
-    { id: "chat", label: "Chat Studio", icon: MessageSquare, badge: "Active" },
+    { id: "chat", label: "Chat Studio", icon: ChatCircleDots, badge: "Active" },
     { id: "explore", label: "Model Explorer", icon: Compass },
-    { id: "history", label: "History", icon: History },
-    { id: "saved", label: "Saved Snippets", icon: Bookmark },
+    { id: "history", label: "History", icon: ClockCounterClockwise },
+    { id: "saved", label: "Saved Snippets", icon: BookmarkSimple },
   ];
 
   return (
@@ -65,9 +66,9 @@ export function Sidebar({
           title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
           {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
+            <MotionIcon icon={CaretRight} size={16} weight="bold" animation="bounce" />
           ) : (
-            <ChevronLeft className="w-4 h-4" />
+            <MotionIcon icon={CaretLeft} size={16} weight="bold" animation="bounce" />
           )}
         </button>
       </div>
@@ -83,7 +84,7 @@ export function Sidebar({
           )}
           title="Start New Chat (⌘N)"
         >
-          <Plus className="w-4 h-4 shrink-0 stroke-[2.5]" />
+          <MotionIcon icon={Plus} size={15} weight="bold" animation="spin" className="shrink-0" />
           {!collapsed && (
             <div className="flex items-center justify-between w-full pr-1">
               <span className="font-frozen tracking-wide text-xs">New Session</span>
@@ -121,9 +122,13 @@ export function Sidebar({
               title={item.label}
             >
               <div className="flex items-center gap-2.5">
-                <Icon
+                <MotionIcon
+                  icon={Icon}
+                  size={16}
+                  weight="duotone"
+                  animation={isActive ? "bounce" : "tilt"}
                   className={cn(
-                    "w-4 h-4 shrink-0",
+                    "shrink-0 transition-colors",
                     isActive ? "text-swiss-saffron" : "text-swiss-muted"
                   )}
                 />
@@ -150,10 +155,10 @@ export function Sidebar({
               className="w-full flex items-center justify-between px-3 py-2 rounded-md text-xs sm:text-[13px] font-medium text-swiss-body hover:bg-black/5 hover:text-swiss-ink transition-colors font-frozen tracking-wide"
             >
               <div className="flex items-center gap-2.5">
-                <Cpu className="w-4 h-4 text-emerald-600" />
+                <MotionIcon icon={Cpu} size={16} weight="duotone" animation="pulse" className="text-emerald-600" />
                 <span>Google Colab T4</span>
               </div>
-              <ExternalLink className="w-3 h-3 text-swiss-muted" />
+              <MotionIcon icon={ArrowSquareOut} size={13} weight="duotone" animation="glance" className="text-swiss-muted" />
             </button>
           </>
         )}
@@ -181,7 +186,7 @@ export function Sidebar({
                 </div>
               </div>
             </div>
-            <ExternalLink className="w-3.5 h-3.5 text-swiss-muted group-hover:text-swiss-saffron transition-colors" />
+            <MotionIcon icon={ArrowSquareOut} size={14} weight="duotone" animation="glance" className="text-swiss-muted group-hover:text-swiss-saffron transition-colors" />
           </a>
         ) : (
           <div className="flex justify-center">

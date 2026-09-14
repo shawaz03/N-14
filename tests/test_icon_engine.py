@@ -73,5 +73,18 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('MotionIcon', content, "Must wrap icons in MotionIcon")
         self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in ChatMessageItem")
 
+    def test_sidebar_motion_icons(self):
+        sidebar_path = os.path.abspath('raizen-studio/src/components/Sidebar.tsx')
+        self.assertTrue(os.path.exists(sidebar_path), "Sidebar.tsx must exist")
+        with open(sidebar_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn('@phosphor-icons/react', content, "Must import from Phosphor icons")
+        self.assertIn('MotionIcon', content, "Must wrap icons in MotionIcon")
+        self.assertIn('ChatCircleDots', content, "Must use ChatCircleDots for Chat Studio")
+        self.assertIn('ClockCounterClockwise', content, "Must use ClockCounterClockwise for History")
+        self.assertIn('BookmarkSimple', content, "Must use BookmarkSimple for Saved Snippets")
+        self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in Sidebar")
+
 if __name__ == '__main__':
     unittest.main()
