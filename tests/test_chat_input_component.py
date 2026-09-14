@@ -24,7 +24,11 @@ class TestChatInputComponent(unittest.TestCase):
         self.assertIn("Stop", content, "Must have Stop action button")
         self.assertIn("TEMPERATURE", content, "Must have temperature slider")
         self.assertIn("onClearChat", content, "Must support clearing chat")
-        self.assertIn("SHAWAZ", content, "Must attribute creator SHAWAZ")
+        # Footer attribution line was removed from ChatInput per user design request
+        sidebar_path = os.path.abspath("raizen-studio/src/components/Sidebar.tsx")
+        with open(sidebar_path, "r", encoding="utf-8") as sf:
+            sidebar_content = sf.read()
+        self.assertIn("SHAWAZ", sidebar_content, "Must attribute creator SHAWAZ in Sidebar")
 
 if __name__ == "__main__":
     unittest.main()
