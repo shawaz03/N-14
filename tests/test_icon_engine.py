@@ -1,4 +1,4 @@
-﻿import unittest
+import unittest
 import os
 import json
 
@@ -22,6 +22,21 @@ class TestIconEngine(unittest.TestCase):
     def test_framer_motion_installed(self):
         deps = self.pkg_data.get('dependencies', {})
         self.assertIn('framer-motion', deps, "framer-motion must be present for icon micro-interactions")
+
+    def test_motion_icon_component(self):
+        motion_icon_path = os.path.abspath('raizen-studio/src/components/ui/MotionIcon.tsx')
+        self.assertTrue(os.path.exists(motion_icon_path), "MotionIcon.tsx must exist")
+        with open(motion_icon_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn("export function MotionIcon", content)
+        self.assertIn('weight = "duotone"', content, "Must default to duotone weight for visual depth")
+        self.assertIn("bounce", content)
+        self.assertIn("tilt", content)
+        self.assertIn("spin", content)
+        self.assertIn("pulse", content)
+        self.assertIn("glance", content)
+        self.assertIn("float", content)
 
 if __name__ == '__main__':
     unittest.main()
