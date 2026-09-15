@@ -119,5 +119,17 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('MotionIcon', colab_content, "Must use MotionIcon in ColabModal")
         self.assertNotIn('from "lucide-react"', colab_content, "Must no longer use lucide-react in ColabModal")
 
+    def test_codeblock_motion_icons(self):
+        codeblock_path = os.path.abspath('raizen-studio/src/components/CodeBlock.tsx')
+        self.assertTrue(os.path.exists(codeblock_path), "CodeBlock.tsx must exist")
+        with open(codeblock_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn('@phosphor-icons/react', content, "Must import from Phosphor icons")
+        self.assertIn('MotionIcon', content, "Must wrap icons in MotionIcon")
+        self.assertIn('FileCode', content, "Must use FileCode for code block header")
+        self.assertIn('BookmarkSimple', content, "Must use BookmarkSimple for Save")
+        self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in CodeBlock")
+
 if __name__ == '__main__':
     unittest.main()

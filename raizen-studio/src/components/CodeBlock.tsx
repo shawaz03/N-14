@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useCallback } from "react";
-import { Copy, Check, FileCode, Bookmark, BookmarkCheck } from "lucide-react";
+import { Copy, Check, FileCode, BookmarkSimple } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 interface CodeBlockProps {
@@ -133,7 +134,7 @@ export function CodeBlock({
       <div className="flex items-center justify-between px-4 py-2.5 bg-[#18191E] border-b border-[#26282E] select-none relative z-10">
         {/* Left: Language & Filename */}
         <div className="flex items-center gap-2">
-          <FileCode className="w-4 h-4 text-swiss-saffron shrink-0" />
+          <MotionIcon icon={FileCode} size={16} weight="duotone" animation="bounce" className="text-swiss-saffron shrink-0" />
           <span className="text-white text-xs font-bold font-mono tracking-tight">
             {displayFilename}
           </span>
@@ -148,17 +149,17 @@ export function CodeBlock({
           <button
             type="button"
             onClick={handleSave}
-            className="flex items-center gap-1 px-2.5 py-1 btn-glass-dark btn-glass-shine text-white/90 hover:text-white text-[10px] rounded-pill uppercase transition-all font-mono cursor-pointer relative z-20"
+            className="flex items-center gap-1.5 px-2.5 py-1 btn-glass-dark btn-glass-shine text-white/90 hover:text-white text-[10px] rounded-pill uppercase transition-all font-mono cursor-pointer relative z-20"
             title={saved ? "Saved to Snippets Vault!" : "Save to Snippets Vault"}
           >
             {saved ? (
               <>
-                <BookmarkCheck className="w-3 h-3 text-emerald-400" />
+                <MotionIcon icon={Check} size={12} weight="bold" className="text-emerald-400" />
                 <span className="text-emerald-400 font-bold">SAVED</span>
               </>
             ) : (
               <>
-                <Bookmark className="w-3 h-3" />
+                <MotionIcon icon={BookmarkSimple} size={12} weight="duotone" animation="bounce" />
                 <span>SAVE</span>
               </>
             )}
@@ -168,17 +169,17 @@ export function CodeBlock({
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center gap-1 px-2.5 py-1 btn-glass-dark btn-glass-shine text-white/90 hover:text-white text-[10px] rounded-pill uppercase transition-all font-mono cursor-pointer relative z-20"
+            className="flex items-center gap-1.5 px-2.5 py-1 btn-glass-dark btn-glass-shine text-white/90 hover:text-white text-[10px] rounded-pill uppercase transition-all font-mono cursor-pointer relative z-20"
             title={copied ? "Copied to clipboard" : "Copy Code"}
           >
             {copied ? (
               <>
-                <Check className="w-3 h-3 text-emerald-400" />
+                <MotionIcon icon={Check} size={12} weight="bold" className="text-emerald-400" />
                 <span className="text-emerald-400 font-bold">COPIED</span>
               </>
             ) : (
               <>
-                <Copy className="w-3 h-3" />
+                <MotionIcon icon={Copy} size={12} weight="duotone" animation="bounce" />
                 <span>COPY</span>
               </>
             )}
