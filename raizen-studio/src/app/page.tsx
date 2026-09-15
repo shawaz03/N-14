@@ -50,6 +50,13 @@ export default function RaizenStudioPage() {
   const { downloadCode } = useCodeExport();
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
+  // Check if assistant is waiting for first token or actively streaming text
+  const isWaitingForTokens =
+    isStreaming &&
+    !messages.some(
+      (m) => m.role === "assistant" && m.isStreaming && m.content.trim().length > 0
+    );
+
   // Sync active session messages to history whenever conversation updates
   useEffect(() => {
     if (messages.length > 0 && !isStreaming) {
@@ -216,8 +223,8 @@ export default function RaizenStudioPage() {
                       />
                     ))}
 
-                  {/* Claude-Style Searching & Progressive Shimmer Loading Effect */}
-                  {isStreaming && (
+                  {/* Gemini-Inspired Quantum Orbital Triad Flow */}
+                  {isWaitingForTokens && (
                     <ClaudeLoadingEffect
                       isStreaming={isStreaming}
                       onStop={stopStreaming}
