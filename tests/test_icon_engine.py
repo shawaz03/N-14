@@ -213,6 +213,16 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('NeuralConduitBeam', header_content, "Header must integrate NeuralConduitBeam")
         self.assertIn('animate-ping', header_content, "Header must render radar ping beacon")
 
+    def test_colab_modal_connection_beacon(self):
+        modal_path = os.path.abspath('raizen-studio/src/components/ColabModal.tsx')
+        self.assertTrue(os.path.exists(modal_path), "ColabModal.tsx must exist")
+        with open(modal_path, 'r', encoding='utf-8') as f:
+            modal_content = f.read()
+
+        self.assertIn('animate-ping', modal_content, "ColabModal must feature radar ping beacon")
+        self.assertIn('justConnected', modal_content, "ColabModal must react to justConnected state")
+        self.assertIn('cn(', modal_content, "ColabModal must use cn utility for conditional ring/glow")
+
 if __name__ == '__main__':
     unittest.main()
 

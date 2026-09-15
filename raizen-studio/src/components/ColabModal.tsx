@@ -17,6 +17,7 @@ import {
 } from "@phosphor-icons/react";
 import { MotionIcon } from "./ui/MotionIcon";
 import { UseRaizenConnectionReturn } from "../types/connection";
+import { cn } from "../lib/utils";
 
 interface ColabModalProps {
   isOpen: boolean;
@@ -191,8 +192,13 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                   </div>
                 </div>
 
-                {/* Step 3: Connect Input */}
-                <div className="p-4 bg-swiss-canvas border border-swiss-border rounded-xl space-y-3">
+                {/* Step 3 */}
+                <div
+                  className={cn(
+                    "p-4 bg-swiss-canvas border border-swiss-border rounded-xl space-y-3 transition-all",
+                    connection.justConnected && "ring-2 ring-emerald-500/50 shadow-[0_0_24px_rgba(16,185,129,0.2)]"
+                  )}
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded-full bg-swiss-saffron-tint text-swiss-saffron-text flex items-center justify-center text-xs font-bold font-frozen shrink-0">
                       3
@@ -234,15 +240,24 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
 
                     {/* Connection Feedback Message */}
                     {connection.status === "connected" && (
-                      <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between font-frozen tracking-wide">
-                        <div className="flex items-center gap-2">
-                          <MotionIcon icon={CheckCircle} size={16} weight="duotone" className="text-emerald-600" />
+                      <div
+                        className={cn(
+                          "p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between font-frozen tracking-wide transition-all",
+                          connection.justConnected && "ring-2 ring-emerald-500/40 shadow-[0_0_18px_rgba(16,185,129,0.2)]"
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="relative flex items-center justify-center w-3 h-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                            <MotionIcon icon={CheckCircle} size={16} weight="duotone" className="relative text-emerald-600" />
+                          </div>
                           <span>Connected to RAIZEN Engine ({connection.modelInfo?.model || "7.61B"})</span>
                         </div>
                         {connection.latencyMs !== null && (
-                          <span className="text-[10.5px] text-emerald-700 font-mono">
-                            Latency: {connection.latencyMs}ms
-                          </span>
+                          <div className="flex items-center gap-1.5 font-mono text-[10.5px] bg-emerald-100/60 border border-emerald-300/40 px-2 py-0.5 rounded-pill text-emerald-800 font-bold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>{connection.latencyMs}ms</span>
+                          </div>
                         )}
                       </div>
                     )}
