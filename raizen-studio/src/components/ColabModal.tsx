@@ -4,16 +4,18 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
-  ExternalLink,
-  Zap,
-  CheckCircle2,
-  AlertCircle,
+  ArrowSquareOut,
+  Lightning,
+  CheckCircle,
+  WarningCircle,
   Copy,
-  Terminal,
-  HelpCircle,
+  TerminalWindow,
+  Question,
   Cpu,
   ShieldCheck,
-} from "lucide-react";
+  Sparkle,
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { UseRaizenConnectionReturn } from "../types/connection";
 
 interface ColabModalProps {
@@ -87,8 +89,8 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-swiss-border">
               <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-md bg-swiss-saffron-tint text-swiss-saffron-text font-extrabold flex items-center justify-center font-frozen text-xs">
-                  ✦
+                <div className="w-6 h-6 rounded-md bg-swiss-saffron-tint text-swiss-saffron-text font-extrabold flex items-center justify-center font-frozen">
+                  <MotionIcon icon={Sparkle} size={13} weight="duotone" animation="pulse" />
                 </div>
                 <span className="font-extrabold text-sm sm:text-base text-swiss-ink tracking-wider font-frozen uppercase">
                   LAUNCH RAIZEN GPU ENGINE
@@ -99,10 +101,10 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
               </div>
               <button
                 onClick={onClose}
-                className="text-swiss-muted hover:text-swiss-ink p-1.5 rounded-full hover:bg-swiss-canvas transition-colors"
+                className="text-swiss-muted hover:text-swiss-ink p-1.5 rounded-full hover:bg-swiss-canvas transition-colors flex items-center justify-center"
                 title="Close Modal (Esc)"
               >
-                <X className="w-4 h-4" />
+                <MotionIcon icon={X} size={16} weight="bold" animation="bounce" />
               </button>
             </div>
 
@@ -111,7 +113,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
               {/* Architecture Intro */}
               <div className="p-4 bg-swiss-canvas border border-swiss-border rounded-xl flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center shrink-0 mt-0.5">
-                  <Cpu className="w-4 h-4" />
+                  <MotionIcon icon={Cpu} size={18} weight="duotone" animation="pulse" className="text-swiss-saffron" />
                 </div>
                 <div className="text-xs space-y-1">
                   <p className="text-swiss-ink font-bold font-frozen text-xs sm:text-sm">
@@ -153,20 +155,20 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                       rel="noopener noreferrer"
                       className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 btn-glass-dark btn-glass-shine text-white text-xs font-bold rounded-pill transition-all active:scale-95 font-frozen tracking-wider"
                     >
-                      <Zap className="w-3.5 h-3.5" />
+                      <MotionIcon icon={Lightning} size={14} weight="duotone" animation="bounce" />
                       <span>OPEN COLAB</span>
-                      <ExternalLink className="w-3 h-3 ml-0.5" />
+                      <MotionIcon icon={ArrowSquareOut} size={13} weight="duotone" animation="glance" className="ml-0.5" />
                     </a>
                     <button
                       type="button"
                       onClick={handleCopyNotebookLink}
-                      className="p-2 btn-glass-light btn-glass-shine rounded-pill text-swiss-muted hover:text-swiss-ink transition-colors"
+                      className="p-2 btn-glass-light btn-glass-shine rounded-pill text-swiss-muted hover:text-swiss-ink transition-colors flex items-center justify-center"
                       title={copied ? "Copied!" : "Copy Notebook URL"}
                     >
                       {copied ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <MotionIcon icon={CheckCircle} size={16} weight="duotone" className="text-emerald-600" />
                       ) : (
-                        <Copy className="w-4 h-4" />
+                        <MotionIcon icon={Copy} size={16} weight="duotone" animation="bounce" />
                       )}
                     </button>
                   </div>
@@ -209,7 +211,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
 
                   <form onSubmit={handleConnect} className="space-y-2.5">
                     <div className="flex items-center border border-swiss-border bg-white rounded-pill focus-within:border-swiss-saffron p-1 shadow-sm transition-all">
-                      <Terminal className="w-3.5 h-3.5 text-swiss-saffron ml-2.5 mr-1 shrink-0" />
+                      <MotionIcon icon={TerminalWindow} size={15} weight="duotone" className="text-swiss-saffron ml-2.5 mr-1 shrink-0" />
                       <input
                         type="text"
                         value={modalUrl}
@@ -234,7 +236,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                     {connection.status === "connected" && (
                       <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center justify-between font-frozen tracking-wide">
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <MotionIcon icon={CheckCircle} size={16} weight="duotone" className="text-emerald-600" />
                           <span>Connected to RAIZEN Engine ({connection.modelInfo?.model || "7.61B"})</span>
                         </div>
                         {connection.latencyMs !== null && (
@@ -247,7 +249,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
 
                     {connection.status === "error" && connection.errorMessage && (
                       <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2 font-frozen tracking-wide">
-                        <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                        <MotionIcon icon={WarningCircle} size={16} weight="duotone" className="shrink-0 text-red-600" />
                         <span>{connection.errorMessage}</span>
                       </div>
                     )}
@@ -263,7 +265,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
                   className="w-full flex items-center justify-between text-xs text-swiss-muted hover:text-swiss-ink py-1 font-frozen tracking-wide"
                 >
                   <span className="flex items-center gap-1.5">
-                    <HelpCircle className="w-3.5 h-3.5 text-swiss-saffron" />
+                    <MotionIcon icon={Question} size={15} weight="duotone" animation="bounce" className="text-swiss-saffron" />
                     <span>Troubleshooting & FAQ</span>
                   </span>
                   <span className="text-[10px]">{showTroubleshoot ? "▲" : "▼"}</span>
@@ -289,7 +291,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
             {/* Modal Footer */}
             <div className="px-6 py-3.5 bg-swiss-canvas border-t border-swiss-border flex items-center justify-between text-[11px] text-swiss-muted font-frozen">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-swiss-saffron" />
+                <MotionIcon icon={ShieldCheck} size={15} weight="duotone" animation="pulse" className="text-swiss-saffron" />
                 <span>Zero GPU compute charges</span>
               </div>
               <a

@@ -100,5 +100,24 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('SlidersHorizontal', content, "Must use SlidersHorizontal for sampling temp")
         self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in ChatInput")
 
+    def test_header_and_colab_modal_motion_icons(self):
+        header_path = os.path.abspath('raizen-studio/src/components/Header.tsx')
+        self.assertTrue(os.path.exists(header_path), "Header.tsx must exist")
+        with open(header_path, 'r', encoding='utf-8') as f:
+            header_content = f.read()
+
+        self.assertIn('@phosphor-icons/react', header_content, "Must import from Phosphor icons in Header")
+        self.assertIn('MotionIcon', header_content, "Must use MotionIcon in Header")
+        self.assertNotIn('from "lucide-react"', header_content, "Must no longer use lucide-react in Header")
+
+        colab_path = os.path.abspath('raizen-studio/src/components/ColabModal.tsx')
+        self.assertTrue(os.path.exists(colab_path), "ColabModal.tsx must exist")
+        with open(colab_path, 'r', encoding='utf-8') as f:
+            colab_content = f.read()
+
+        self.assertIn('@phosphor-icons/react', colab_content, "Must import from Phosphor icons in ColabModal")
+        self.assertIn('MotionIcon', colab_content, "Must use MotionIcon in ColabModal")
+        self.assertNotIn('from "lucide-react"', colab_content, "Must no longer use lucide-react in ColabModal")
+
 if __name__ == '__main__':
     unittest.main()

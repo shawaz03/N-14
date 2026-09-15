@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import {
-  Terminal,
-  ExternalLink,
-  Zap,
-  Radio,
-  RotateCw,
-} from "lucide-react";
+  TerminalWindow,
+  ArrowSquareOut,
+  Lightning,
+  Broadcast,
+  ArrowClockwise,
+  Sparkle,
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { UseRaizenConnectionReturn } from "../types/connection";
 
 interface HeaderProps {
@@ -38,8 +40,8 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
         {/* Left: RAIZEN Wordmark & Model Metadata */}
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-swiss-saffron-tint rounded-lg flex items-center justify-center text-swiss-saffron font-bold text-lg font-frozen">
-              ✦
+            <div className="w-8 h-8 bg-swiss-saffron-tint rounded-lg flex items-center justify-center font-frozen">
+              <MotionIcon icon={Sparkle} size={18} weight="duotone" animation="pulse" className="text-swiss-saffron" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
@@ -63,8 +65,8 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
             onSubmit={handleConnectSubmit}
             className="w-full flex items-center bg-swiss-canvas border border-swiss-border hover:border-swiss-border-card focus-within:border-swiss-saffron transition-colors rounded-pill p-1 shadow-sm"
           >
-            <div className="px-2 text-swiss-muted flex items-center gap-1 font-mono text-xs shrink-0">
-              <Terminal className="w-3.5 h-3.5 text-swiss-saffron" />
+            <div className="px-2 text-swiss-muted flex items-center gap-1.5 font-mono text-xs shrink-0">
+              <MotionIcon icon={TerminalWindow} size={15} weight="duotone" className="text-swiss-saffron" />
               <span>TUNNEL:</span>
             </div>
             <input
@@ -82,9 +84,9 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
                 type="button"
                 onClick={() => connection.checkHealth()}
                 title="Refresh connection status"
-                className="px-2.5 py-1 btn-glass-light btn-glass-shine text-swiss-body hover:text-swiss-ink font-mono text-[10px] rounded-pill flex items-center gap-1 shrink-0 transition-all"
+                className="px-2.5 py-1 btn-glass-light btn-glass-shine text-swiss-body hover:text-swiss-ink font-mono text-[10px] rounded-pill flex items-center gap-1.5 shrink-0 transition-all"
               >
-                <RotateCw className="w-3 h-3" />
+                <MotionIcon icon={ArrowClockwise} size={13} weight="bold" animation="spin" />
                 <span>PING</span>
               </button>
             ) : (
@@ -114,7 +116,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
               </>
             ) : connection.status === "connecting" ? (
               <>
-                <Radio className="w-3 h-3 text-swiss-saffron animate-spin" />
+                <MotionIcon icon={Broadcast} size={14} weight="duotone" animation="pulse" className="text-swiss-saffron" />
                 <span className="text-swiss-saffron uppercase font-frozen text-[10px]">LINKING...</span>
               </>
             ) : (
@@ -133,7 +135,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
               onClick={onOpenColabModal}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 btn-glass-light btn-glass-shine text-swiss-ink text-xs font-frozen font-bold rounded-pill transition-all"
             >
-              <Zap className="w-3.5 h-3.5 text-swiss-saffron" />
+              <MotionIcon icon={Lightning} size={14} weight="duotone" animation="bounce" className="text-swiss-saffron" />
               <span>COLAB GPU</span>
             </button>
           )}
@@ -159,7 +161,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
             <span className="text-swiss-saffron font-bold group-hover:underline">
               SHAWAZ
             </span>
-            <ExternalLink className="w-3 h-3 text-swiss-muted group-hover:text-swiss-saffron" />
+            <MotionIcon icon={ArrowSquareOut} size={13} weight="duotone" animation="glance" className="text-swiss-muted group-hover:text-swiss-saffron" />
           </a>
         </div>
       </div>
