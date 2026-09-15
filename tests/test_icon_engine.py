@@ -223,6 +223,20 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('justConnected', modal_content, "ColabModal must react to justConnected state")
         self.assertIn('cn(', modal_content, "ColabModal must use cn utility for conditional ring/glow")
 
+    def test_quantum_orbital_triad_component(self):
+        triad_path = os.path.abspath('raizen-studio/src/components/ui/QuantumOrbitalTriad.tsx')
+        self.assertTrue(os.path.exists(triad_path), "QuantumOrbitalTriad.tsx must exist")
+        with open(triad_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        self.assertIn('export function QuantumOrbitalTriad', content)
+        self.assertIn('animate-orbit-triad-1', content)
+        self.assertIn('animate-orbit-triad-2', content)
+        self.assertIn('animate-orbit-triad-3', content)
+        self.assertIn('@phosphor-icons/react', content)
+        self.assertNotIn('from "lucide-react"', content)
+        self.assertNotIn("from 'lucide-react'", content)
+
 if __name__ == '__main__':
     unittest.main()
 
