@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Bug, Layout, Cpu, ShoppingBag } from "lucide-react";
+import { Sparkle, Bug, Browsers, Cpu, ShoppingBag } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 interface QuickActionsProps {
@@ -13,9 +14,9 @@ export const PRESET_PROMPTS = [
   {
     id: "dashboard",
     label: "⚡ React Telemetry HUD",
-    icon: Layout,
+    icon: Browsers,
     prompt:
-      "Create a responsive telemetry dashboard in React with Lucide icons, live metric cards, CPU/GPU utilization bars, and a clean theme ready to preview in sandbox.",
+      "Create a responsive telemetry dashboard in React with Phosphor duotone icons, live metric cards, CPU/GPU utilization bars, and a clean theme ready to preview in sandbox.",
   },
   {
     id: "saas-pricing",
@@ -49,12 +50,11 @@ export function QuickActions({ onSelectPrompt, className }: QuickActionsProps) {
       )}
     >
       <div className="flex items-center gap-1 text-swiss-muted shrink-0 pr-1">
-        <Sparkles className="w-3.5 h-3.5 text-swiss-saffron" />
+        <MotionIcon icon={Sparkle} size={13} weight="duotone" animation="spin" className="text-swiss-saffron" />
         <span className="font-bold uppercase tracking-wider text-[10px] font-frozen">QUICK:</span>
       </div>
 
       {PRESET_PROMPTS.map((preset) => {
-        const Icon = preset.icon;
         return (
           <button
             key={preset.id}
@@ -62,7 +62,7 @@ export function QuickActions({ onSelectPrompt, className }: QuickActionsProps) {
             onClick={() => onSelectPrompt(preset.prompt)}
             className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-swiss-saffron-tint/60 border border-swiss-border hover:border-swiss-saffron/40 text-swiss-body hover:text-swiss-saffron rounded-pill text-[11px] font-medium transition-all shrink-0 shadow-swiss active:scale-95"
           >
-            <Icon className="w-3 h-3 text-swiss-saffron" />
+            <MotionIcon icon={preset.icon} size={14} weight="duotone" animation="bounce" className="text-swiss-saffron" />
             <span>{preset.label}</span>
           </button>
         );

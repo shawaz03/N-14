@@ -18,7 +18,8 @@ import { useRaizenHistory } from "../hooks/useRaizenHistory";
 import { useSavedSnippets } from "../hooks/useSavedSnippets";
 import { useCodeExport } from "../hooks/useCodeExport";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
+import { MotionIcon } from "../components/ui/MotionIcon";
 import { ChatSession } from "../types/session";
 import { RaizenPersona } from "../types/model";
 
@@ -148,7 +149,7 @@ export default function RaizenStudioPage() {
                 className="underline font-bold text-[11px] hover:text-red-900 flex items-center gap-1 font-frozen tracking-wide"
               >
                 <span>Launch Google Colab GPU</span>
-                <ArrowUpRight className="w-3 h-3" />
+                <MotionIcon icon={ArrowSquareOut} size={13} weight="duotone" />
               </button>
             </div>
           )}

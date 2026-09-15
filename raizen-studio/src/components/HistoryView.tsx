@@ -2,16 +2,18 @@
 
 import React, { useState, useMemo } from "react";
 import {
-  Search,
+  MagnifyingGlass,
   Clock,
-  Pin,
-  Trash2,
-  Edit3,
-  MessageSquare,
+  ClockCounterClockwise,
+  PushPin,
+  Trash,
+  PencilSimple,
+  ChatCircleDots,
   Plus,
-  ArrowUpRight,
+  ArrowSquareOut,
   X,
-} from "lucide-react";
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { UseRaizenHistoryReturn } from "../hooks/useRaizenHistory";
 import { ChatSession, HistoryTimeBucket } from "../types/session";
 import { cn } from "../lib/utils";
@@ -73,7 +75,7 @@ export function HistoryView({
       <div className="px-6 py-5 bg-white border-b border-swiss-border flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-xs">
-            ✦
+            <MotionIcon icon={ClockCounterClockwise} size={18} weight="duotone" animation="float" className="text-swiss-saffron" />
           </div>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-swiss-ink font-frozen uppercase tracking-wider">
@@ -90,7 +92,7 @@ export function HistoryView({
           onClick={onNewSession}
           className="flex items-center gap-1.5 px-4 py-2 btn-glass-dark btn-glass-shine text-white text-xs font-bold rounded-pill transition-all active:scale-95 font-frozen tracking-wide"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <MotionIcon icon={Plus} size={14} weight="bold" animation="spin" />
           <span>New Session</span>
         </button>
       </div>
@@ -99,7 +101,7 @@ export function HistoryView({
       <div className="p-4 sm:px-6 bg-white/70 border-b border-swiss-border flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
         {/* Search Bar */}
         <div className="relative w-full sm:w-96 flex items-center">
-          <Search className="w-4 h-4 text-swiss-muted absolute left-3 pointer-events-none" />
+          <MotionIcon icon={MagnifyingGlass} size={16} weight="duotone" className="text-swiss-muted absolute left-3 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
@@ -113,7 +115,7 @@ export function HistoryView({
               onClick={() => setSearchQuery("")}
               className="absolute right-2.5 text-swiss-muted hover:text-swiss-ink p-0.5 rounded-full"
             >
-              <X className="w-3.5 h-3.5" />
+              <MotionIcon icon={X} size={13} weight="bold" />
             </button>
           )}
         </div>
@@ -124,13 +126,18 @@ export function HistoryView({
             type="button"
             onClick={() => setPinnedOnly(!pinnedOnly)}
             className={cn(
-              "px-3 py-1 rounded-pill text-[11px] font-bold transition-all flex items-center gap-1 font-frozen",
+              "px-3 py-1 rounded-pill text-[11px] font-bold transition-all flex items-center gap-1.5 font-frozen",
               pinnedOnly
                 ? "btn-glass-dark text-white"
                 : "btn-glass-light text-swiss-muted hover:text-swiss-ink"
             )}
           >
-            <Pin className="w-3 h-3" />
+            <MotionIcon
+              icon={PushPin}
+              size={13}
+              weight={pinnedOnly ? "fill" : "duotone"}
+              className={pinnedOnly ? "text-white" : "text-swiss-saffron"}
+            />
             <span>Pinned</span>
           </button>
 
@@ -159,7 +166,7 @@ export function HistoryView({
           /* Empty Search State */
           <div className="my-16 flex flex-col items-center justify-center text-center p-8 bg-white border border-swiss-border rounded-2xl shadow-swiss max-w-md mx-auto space-y-3 animate-in fade-in">
             <div className="w-12 h-12 rounded-full bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-lg">
-              ✦
+              <MotionIcon icon={ClockCounterClockwise} size={24} weight="duotone" animation="float" className="text-swiss-saffron" />
             </div>
             <h3 className="text-sm sm:text-base font-bold text-swiss-ink font-frozen uppercase tracking-wider">
               {searchQuery ? "No Matching Sessions Found" : "No Past Sessions Yet"}
@@ -183,7 +190,7 @@ export function HistoryView({
             <div key={group.bucket} className="space-y-3 animate-in fade-in duration-200">
               {/* Group Section Header */}
               <div className="flex items-center gap-2 px-1">
-                <Clock className="w-3.5 h-3.5 text-swiss-saffron" />
+                <MotionIcon icon={Clock} size={15} weight="duotone" className="text-swiss-saffron" />
                 <h2 className="text-xs font-bold text-swiss-muted uppercase tracking-widest font-frozen">
                   {group.label}
                 </h2>
@@ -213,7 +220,7 @@ export function HistoryView({
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           {session.isPinned && (
-                            <Pin className="w-3 h-3 text-swiss-saffron fill-swiss-saffron shrink-0" />
+                            <MotionIcon icon={PushPin} size={13} weight="fill" className="text-swiss-saffron shrink-0" />
                           )}
                           {isEditing ? (
                             <form
@@ -253,7 +260,12 @@ export function HistoryView({
                             )}
                             title={session.isPinned ? "Unpin session" : "Pin session"}
                           >
-                            <Pin className="w-3.5 h-3.5" />
+                            <MotionIcon
+                              icon={PushPin}
+                              size={14}
+                              weight={session.isPinned ? "fill" : "duotone"}
+                              animation="bounce"
+                            />
                           </button>
 
                           <button
@@ -262,7 +274,7 @@ export function HistoryView({
                             className="p-1 rounded-full text-swiss-muted hover:text-swiss-ink hover:bg-swiss-canvas transition-colors"
                             title="Rename session"
                           >
-                            <Edit3 className="w-3.5 h-3.5" />
+                            <MotionIcon icon={PencilSimple} size={14} weight="duotone" animation="tilt" />
                           </button>
 
                           <button
@@ -271,7 +283,7 @@ export function HistoryView({
                             className="p-1 rounded-full text-swiss-muted hover:text-red-600 hover:bg-red-50 transition-colors"
                             title="Delete session"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <MotionIcon icon={Trash} size={14} weight="duotone" animation="bounce" />
                           </button>
                         </div>
                       </div>
@@ -287,7 +299,7 @@ export function HistoryView({
                       <div className="flex items-center justify-between pt-2 border-t border-swiss-border/60 text-[10.5px] text-swiss-muted font-mono">
                         <div className="flex items-center gap-2">
                           <span className="flex items-center gap-1">
-                            <MessageSquare className="w-3 h-3 text-swiss-saffron" />
+                            <MotionIcon icon={ChatCircleDots} size={13} weight="duotone" className="text-swiss-saffron" />
                             <span>{session.messageCount} {session.messageCount === 1 ? "turn" : "turns"}</span>
                           </span>
                           <span>•</span>
@@ -296,7 +308,7 @@ export function HistoryView({
 
                         <div className="flex items-center gap-1 font-frozen text-swiss-saffron font-bold group-hover:translate-x-0.5 transition-transform text-[11px]">
                           <span>Resume</span>
-                          <ArrowUpRight className="w-3 h-3" />
+                          <MotionIcon icon={ArrowSquareOut} size={13} weight="duotone" />
                         </div>
                       </div>
                     </div>

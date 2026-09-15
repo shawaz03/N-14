@@ -166,6 +166,35 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('Lightning', stream_content)
         self.assertNotIn('from "lucide-react"', stream_content)
 
+    def test_toast_quick_actions_history_and_snippets(self):
+        toast_path = os.path.abspath('raizen-studio/src/components/Toast.tsx')
+        quick_path = os.path.abspath('raizen-studio/src/components/QuickActions.tsx')
+        snippets_path = os.path.abspath('raizen-studio/src/components/SavedSnippetsView.tsx')
+        history_path = os.path.abspath('raizen-studio/src/components/HistoryView.tsx')
+        page_path = os.path.abspath('raizen-studio/src/app/page.tsx')
+
+        for p in [toast_path, quick_path, snippets_path, history_path, page_path]:
+            self.assertTrue(os.path.exists(p), f"{p} must exist")
+            with open(p, 'r', encoding='utf-8') as f:
+                content = f.read()
+            self.assertIn('@phosphor-icons/react', content, f"{p} must use @phosphor-icons/react")
+            self.assertIn('MotionIcon', content, f"{p} must use MotionIcon")
+            self.assertNotIn('from "lucide-react"', content, f"{p} must NOT use lucide-react")
+
+    def test_complete_zero_lucide_in_src(self):
+        src_dir = os.path.abspath('raizen-studio/src')
+        violations = []
+        for root, _, files in os.walk(src_dir):
+            for file in files:
+                if file.endswith(('.tsx', '.ts')):
+                    filepath = os.path.join(root, file)
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        text = f.read()
+                    if 'from "lucide-react"' in text or "from 'lucide-react'" in text:
+                        violations.append(filepath)
+        self.assertEqual(violations, [], f"Found lingering lucide-react imports: {violations}")
+
 if __name__ == '__main__':
     unittest.main()
+
 

@@ -2,7 +2,8 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, AlertTriangle, Info, X } from "lucide-react";
+import { CheckCircle, WarningCircle, Info, X } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { ToastMessage } from "../types/toast";
 import { cn } from "../lib/utils";
 
@@ -44,19 +45,19 @@ export function ToastContainer({ toasts, onDismiss, className }: ToastProps) {
             <div className="shrink-0 mt-0.5">
               {t.type === "error" ? (
                 <div className="w-5 h-5 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
-                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <MotionIcon icon={WarningCircle} size={15} weight="duotone" animation="bounce" />
                 </div>
               ) : t.type === "warning" ? (
                 <div className="w-5 h-5 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
-                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <MotionIcon icon={WarningCircle} size={15} weight="duotone" animation="pulse" />
                 </div>
               ) : t.type === "info" ? (
                 <div className="w-5 h-5 rounded-full bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center">
-                  <Info className="w-3.5 h-3.5" />
+                  <MotionIcon icon={Info} size={15} weight="duotone" animation="pulse" />
                 </div>
               ) : (
                 <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <MotionIcon icon={CheckCircle} size={15} weight="duotone" animation="bounce" />
                 </div>
               )}
             </div>
@@ -80,7 +81,7 @@ export function ToastContainer({ toasts, onDismiss, className }: ToastProps) {
               className="p-1 rounded-md text-swiss-muted hover:text-swiss-ink hover:bg-swiss-canvas transition-colors shrink-0"
               title="Dismiss notification"
             >
-              <X className="w-3.5 h-3.5" />
+              <MotionIcon icon={X} size={13} weight="bold" />
             </button>
           </motion.div>
         ))}

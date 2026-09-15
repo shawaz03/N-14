@@ -2,16 +2,18 @@
 
 import React, { useState, useMemo } from "react";
 import {
-  Search,
+  MagnifyingGlass,
   Star,
   Copy,
-  Download,
-  Trash2,
+  DownloadSimple,
+  Trash,
   Tag,
   FileCode,
   Check,
   X,
-} from "lucide-react";
+  Sparkle,
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { UseSavedSnippetsReturn } from "../hooks/useSavedSnippets";
 import { SavedSnippet, SnippetLanguageFilter } from "../types/snippet";
 import { cn } from "../lib/utils";
@@ -71,7 +73,7 @@ export function SavedSnippetsView({
       <div className="px-6 py-5 bg-white border-b border-swiss-border flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-xs">
-            ✦
+            <MotionIcon icon={Sparkle} size={18} weight="duotone" animation="spin" className="text-swiss-saffron" />
           </div>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-swiss-ink font-frozen uppercase tracking-wider">
@@ -95,7 +97,7 @@ export function SavedSnippetsView({
         {/* Row A: Search Input + Language Tabs */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative w-full sm:w-80 flex items-center">
-            <Search className="w-4 h-4 text-swiss-muted absolute left-3 pointer-events-none" />
+            <MotionIcon icon={MagnifyingGlass} size={16} weight="duotone" className="text-swiss-muted absolute left-3 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
@@ -109,7 +111,7 @@ export function SavedSnippetsView({
                 onClick={() => setSearchQuery("")}
                 className="absolute right-2.5 text-swiss-muted hover:text-swiss-ink p-0.5 rounded-full"
               >
-                <X className="w-3.5 h-3.5" />
+                <MotionIcon icon={X} size={13} weight="bold" />
               </button>
             )}
           </div>
@@ -120,13 +122,18 @@ export function SavedSnippetsView({
               type="button"
               onClick={() => setFavoritesOnly(!favoritesOnly)}
               className={cn(
-                "px-3 py-1 rounded-pill text-[11px] font-bold transition-all flex items-center gap-1 font-frozen",
+                "px-3 py-1 rounded-pill text-[11px] font-bold transition-all flex items-center gap-1.5 font-frozen",
                 favoritesOnly
                   ? "bg-amber-500 text-white shadow-sm"
                   : "bg-white border border-swiss-border text-swiss-muted hover:text-swiss-ink"
               )}
             >
-              <Star className="w-3 h-3 fill-current" />
+              <MotionIcon
+                icon={Star}
+                size={13}
+                weight={favoritesOnly ? "fill" : "duotone"}
+                className={favoritesOnly ? "text-white" : "text-amber-500"}
+              />
               <span>Favorites</span>
             </button>
 
@@ -151,7 +158,7 @@ export function SavedSnippetsView({
         {/* Row B: Tag Pills Filter */}
         {allTags.length > 0 && (
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-            <Tag className="w-3 h-3 text-swiss-muted shrink-0 ml-1" />
+            <MotionIcon icon={Tag} size={14} weight="duotone" className="text-swiss-muted shrink-0 ml-1" />
             <button
               type="button"
               onClick={() => setSelectedTag(undefined)}
@@ -190,7 +197,7 @@ export function SavedSnippetsView({
           /* Empty State */
           <div className="my-16 flex flex-col items-center justify-center text-center p-8 bg-white border border-swiss-border rounded-2xl shadow-swiss max-w-md mx-auto space-y-3 animate-in fade-in">
             <div className="w-12 h-12 rounded-full bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center font-frozen text-lg">
-              ✦
+              <MotionIcon icon={Sparkle} size={24} weight="duotone" animation="spin" className="text-swiss-saffron" />
             </div>
             <h3 className="text-sm sm:text-base font-bold text-swiss-ink font-frozen uppercase tracking-wider">
               {searchQuery || selectedTag ? "No Matching Snippets" : "Snippet Vault is Empty"}
@@ -218,7 +225,7 @@ export function SavedSnippetsView({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <FileCode className="w-3.5 h-3.5 text-swiss-saffron shrink-0" />
+                        <MotionIcon icon={FileCode} size={15} weight="duotone" className="text-swiss-saffron shrink-0" />
                         <span className="text-[10px] font-bold uppercase font-mono px-1.5 py-0.5 rounded bg-swiss-canvas border border-swiss-border text-swiss-ink">
                           {snippet.language}
                         </span>
@@ -237,7 +244,13 @@ export function SavedSnippetsView({
                           )}
                           title={snippet.isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
                         >
-                          <Star className={cn("w-3.5 h-3.5", snippet.isFavorite && "fill-current")} />
+                          <MotionIcon
+                            icon={Star}
+                            size={15}
+                            weight={snippet.isFavorite ? "fill" : "duotone"}
+                            animation="bounce"
+                            className={snippet.isFavorite ? "text-amber-500" : "text-swiss-muted"}
+                          />
                         </button>
                         <button
                           type="button"
@@ -245,7 +258,7 @@ export function SavedSnippetsView({
                           className="p-1 rounded-full text-swiss-muted hover:text-red-600 hover:bg-red-50 transition-colors"
                           title="Delete snippet"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <MotionIcon icon={Trash} size={15} weight="duotone" animation="bounce" />
                         </button>
                       </div>
                     </div>
@@ -291,12 +304,12 @@ export function SavedSnippetsView({
                     >
                       {isCopied ? (
                         <>
-                          <Check className="w-3 h-3 text-white" />
+                          <MotionIcon icon={Check} size={13} weight="bold" className="text-white" />
                           <span>Copied</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="w-3 h-3" />
+                          <MotionIcon icon={Copy} size={13} weight="duotone" />
                           <span>Copy Code</span>
                         </>
                       )}
@@ -308,7 +321,7 @@ export function SavedSnippetsView({
                       className="p-1.5 px-2.5 btn-glass-light btn-glass-shine text-swiss-muted hover:text-swiss-ink rounded-pill transition-all flex items-center gap-1 text-[10px] font-mono"
                       title="Download file"
                     >
-                      <Download className="w-3 h-3" />
+                      <MotionIcon icon={DownloadSimple} size={13} weight="duotone" animation="bounce" />
                       <span className="hidden sm:inline">Export</span>
                     </button>
                   </div>
