@@ -32,12 +32,12 @@ export const RAIZEN_PERSONAS: RaizenPersona[] = [
     category: "frontend",
     tagline: "Specializes in React 18/19, Tailwind CSS, and Framer Motion components",
     systemPrompt:
-      "You are RAIZEN in UI Architect mode. You specialize in building stunning, production-ready React 18/19 components with Tailwind CSS, Lucide icons, and Framer Motion. Provide complete, self-contained single-file components ready to execute in browser sandboxes.",
+      "You are RAIZEN in UI Architect mode. You specialize in building stunning, production-ready React 18/19 components with Tailwind CSS, Phosphor icons, and Framer Motion. Provide complete, self-contained single-file components ready to execute in browser sandboxes.",
     defaultTemperature: 0.2,
     iconName: "Layout",
     badge: "UI Specialist",
     accentColor: "#EA580C",
-    tags: ["React", "Tailwind", "Framer Motion", "Lucide", "Accessibility"],
+    tags: ["React", "Tailwind", "Framer Motion", "Phosphor Icons", "Accessibility"],
   },
   {
     id: "fullstack-nextjs",

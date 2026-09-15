@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import {
-  Sparkle,
   ArrowSquareOut,
   SlidersHorizontal,
   ShareNetwork,
   Check,
   Cpu,
   Folder,
+  UserSwitch,
 } from "@phosphor-icons/react";
 import { MotionIcon } from "./ui/MotionIcon";
 import { SpecialistBadge } from "./ui/SpecialistBadge";
@@ -119,8 +119,10 @@ export function ModelExplorerView({
         {activeTab === "personas" && (
           <div className="space-y-5 animate-in fade-in duration-150">
             <div className="p-4 bg-white border border-swiss-border rounded-2xl shadow-swiss space-y-1">
-              <div className="flex items-center gap-2">
-                <MotionIcon icon={Sparkle} size={18} weight="duotone" animation="spin" className="text-swiss-saffron" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center shrink-0 border border-swiss-saffron/20 shadow-xs">
+                  <MotionIcon icon={UserSwitch} size={15} weight="duotone" animation="bounce" className="text-swiss-saffron" />
+                </div>
                 <h2 className="text-xs sm:text-sm font-bold text-swiss-ink font-frozen uppercase tracking-wider">
                   Select Active AI Specialist Persona
                 </h2>
