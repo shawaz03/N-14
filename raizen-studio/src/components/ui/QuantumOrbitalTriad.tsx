@@ -60,7 +60,7 @@ export function QuantumOrbitalTriad({
         {/* Shimmering Dynamic Stage Typography */}
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="animate-claude-shimmer font-mono font-semibold text-[12.5px] truncate">
+            <span className="animate-claude-shimmer font-frozen tracking-wide font-bold text-[13px] truncate">
               {stageText}
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-swiss-saffron/60 animate-ping shrink-0" />

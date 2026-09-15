@@ -156,7 +156,8 @@ class TestIconEngine(unittest.TestCase):
         # ClaudeLoadingEffect checks
         self.assertIn('@phosphor-icons/react', claude_content)
         self.assertIn('MotionIcon', claude_content)
-        self.assertIn('MagnifyingGlass', claude_content)
+        self.assertIn('Stop', claude_content)
+        self.assertIn('font-frozen', claude_content)
         self.assertNotIn('from "lucide-react"', claude_content)
 
         # StreamingIndicator checks

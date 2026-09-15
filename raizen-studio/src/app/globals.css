@@ -112,14 +112,16 @@ body {
 .animate-claude-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(107, 114, 128, 0.7) 0%,
-    rgba(234, 88, 12, 1) 50%,
-    rgba(107, 114, 128, 0.7) 100%
+    #4B5563 0%,
+    #D97706 25%,
+    #F59E0B 50%,
+    #B45309 75%,
+    #4B5563 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: claude-shimmer 2.5s infinite linear;
+  animation: claude-shimmer 2.4s infinite linear;
 }
 
 @keyframes thought-pulse {

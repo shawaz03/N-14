@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkle, Brain, MagnifyingGlass, Stop } from "@phosphor-icons/react";
+import { Stop } from "@phosphor-icons/react";
 import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
@@ -65,7 +65,7 @@ export function ClaudeLoadingEffect({
       )}
     >
       {/* Unboxed Gemini-Inspired Quantum Orbital Triad Flow */}
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center gap-3.5 min-w-0">
         {/* Orbital 3-Dot Cluster */}
         <div
           className="relative w-6 h-6 flex items-center justify-center shrink-0"
@@ -76,29 +76,10 @@ export function ClaudeLoadingEffect({
           <span className="animate-orbit-triad-3 absolute w-2 h-2 rounded-full bg-slate-700 dark:bg-cyan-400" />
         </div>
 
-        {/* Stage Indicator Icon Badge (Subtle Micro-Glyph) */}
-        <div className="hidden sm:flex items-center justify-center shrink-0">
-          {stage === "searching" && (
-            <div className="w-5 h-5 rounded-full bg-blue-50/80 text-blue-600 flex items-center justify-center">
-              <MotionIcon icon={MagnifyingGlass} size={11} weight="duotone" animation="bounce" />
-            </div>
-          )}
-          {stage === "reasoning" && (
-            <div className="w-5 h-5 rounded-full bg-swiss-saffron-tint text-swiss-saffron-text flex items-center justify-center">
-              <MotionIcon icon={Brain} size={11} weight="duotone" animation="pulse" />
-            </div>
-          )}
-          {stage === "synthesizing" && (
-            <div className="w-5 h-5 rounded-full bg-emerald-50/80 text-emerald-600 flex items-center justify-center">
-              <MotionIcon icon={Sparkle} size={11} weight="duotone" animation="spin" className="text-emerald-600" />
-            </div>
-          )}
-        </div>
-
-        {/* Shimmering Dynamic Stage Text */}
+        {/* Shimmering Dynamic Stage Text in Frozen Brand Typography */}
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-sans font-semibold animate-claude-shimmer truncate text-[12.5px]">
+            <span className="font-frozen tracking-wide font-bold animate-claude-shimmer truncate text-[13px]">
               {stageText}
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-swiss-saffron/70 animate-ping shrink-0" />
