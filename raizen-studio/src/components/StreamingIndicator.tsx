@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Square, Zap, Cpu } from "lucide-react";
+import { Stop, Lightning, Cpu } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 interface StreamingIndicatorProps {
@@ -29,7 +30,7 @@ export function StreamingIndicator({
       {/* Telemetry status & speed */}
       <div className="flex items-center gap-2.5">
         <div className="flex items-center gap-1.5 text-swiss-saffron">
-          <Cpu className="w-3.5 h-3.5 animate-pulse" />
+          <MotionIcon icon={Cpu} size={15} weight="duotone" animation="pulse" />
           <span className="font-bold tracking-wider uppercase text-[11px] font-frozen">
             RAIZEN STREAMING
           </span>
@@ -37,7 +38,7 @@ export function StreamingIndicator({
 
         {tokensPerSec !== null && tokensPerSec > 0 && (
           <div className="flex items-center gap-1 text-swiss-muted text-[10.5px] border-l border-swiss-border pl-2.5">
-            <Zap className="w-3 h-3 text-swiss-saffron" />
+            <MotionIcon icon={Lightning} size={14} weight="duotone" animation="bounce" className="text-swiss-saffron" />
             <span className="text-swiss-ink font-bold">
               {tokensPerSec.toFixed(1)}
             </span>
@@ -54,7 +55,7 @@ export function StreamingIndicator({
           className="flex items-center gap-1 px-2.5 py-1 bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 rounded-pill font-frozen text-[10px] font-bold uppercase transition-all shrink-0 active:scale-95"
           title="Halt Generation"
         >
-          <Square className="w-2.5 h-2.5 fill-current" />
+          <MotionIcon icon={Stop} size={11} weight="fill" animation="pulse" />
           <span>STOP (ESC)</span>
         </button>
       )}

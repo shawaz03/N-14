@@ -131,5 +131,41 @@ class TestIconEngine(unittest.TestCase):
         self.assertIn('BookmarkSimple', content, "Must use BookmarkSimple for Save")
         self.assertNotIn('from "lucide-react"', content, "Must no longer use lucide-react in CodeBlock")
 
+    def test_thought_accordion_and_loading_effects(self):
+        accordion_path = os.path.abspath('raizen-studio/src/components/ThoughtAccordion.tsx')
+        claude_path = os.path.abspath('raizen-studio/src/components/ClaudeLoadingEffect.tsx')
+        streaming_path = os.path.abspath('raizen-studio/src/components/StreamingIndicator.tsx')
+
+        self.assertTrue(os.path.exists(accordion_path), "ThoughtAccordion.tsx must exist")
+        self.assertTrue(os.path.exists(claude_path), "ClaudeLoadingEffect.tsx must exist")
+        self.assertTrue(os.path.exists(streaming_path), "StreamingIndicator.tsx must exist")
+
+        with open(accordion_path, 'r', encoding='utf-8') as f:
+            acc_content = f.read()
+        with open(claude_path, 'r', encoding='utf-8') as f:
+            claude_content = f.read()
+        with open(streaming_path, 'r', encoding='utf-8') as f:
+            stream_content = f.read()
+
+        # ThoughtAccordion checks
+        self.assertIn('@phosphor-icons/react', acc_content)
+        self.assertIn('MotionIcon', acc_content)
+        self.assertIn('Brain', acc_content)
+        self.assertNotIn('from "lucide-react"', acc_content)
+
+        # ClaudeLoadingEffect checks
+        self.assertIn('@phosphor-icons/react', claude_content)
+        self.assertIn('MotionIcon', claude_content)
+        self.assertIn('MagnifyingGlass', claude_content)
+        self.assertNotIn('from "lucide-react"', claude_content)
+
+        # StreamingIndicator checks
+        self.assertIn('@phosphor-icons/react', stream_content)
+        self.assertIn('MotionIcon', stream_content)
+        self.assertIn('Cpu', stream_content)
+        self.assertIn('Lightning', stream_content)
+        self.assertNotIn('from "lucide-react"', stream_content)
+
 if __name__ == '__main__':
     unittest.main()
+

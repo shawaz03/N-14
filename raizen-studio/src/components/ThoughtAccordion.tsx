@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronRight, Brain, Sparkles } from "lucide-react";
+import { CaretDown, CaretRight, Brain, Sparkle } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 interface ThoughtAccordionProps {
@@ -38,9 +39,9 @@ export function ThoughtAccordion({
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-full bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center shrink-0">
             {isStreaming ? (
-              <Sparkles className="w-3 h-3 animate-spin text-swiss-saffron" style={{ animationDuration: "3s" }} />
+              <MotionIcon icon={Sparkle} size={13} weight="duotone" animation="spin" className="text-swiss-saffron" />
             ) : (
-              <Brain className="w-3 h-3 text-swiss-saffron" />
+              <MotionIcon icon={Brain} size={13} weight="duotone" animation="pulse" className="text-swiss-saffron" />
             )}
           </div>
           <span className="font-mono font-bold text-[11px] uppercase tracking-wide text-swiss-saffron-text">
@@ -51,9 +52,9 @@ export function ThoughtAccordion({
         <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-swiss-muted">
           <span>{isExpanded ? "Hide reasoning" : "Show reasoning"}</span>
           {isExpanded ? (
-            <ChevronDown className="w-3.5 h-3.5 text-swiss-saffron" />
+            <MotionIcon icon={CaretDown} size={14} weight="bold" className="text-swiss-saffron" />
           ) : (
-            <ChevronRight className="w-3.5 h-3.5" />
+            <MotionIcon icon={CaretRight} size={14} weight="bold" />
           )}
         </div>
       </button>

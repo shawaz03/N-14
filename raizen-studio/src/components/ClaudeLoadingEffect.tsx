@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, Brain, Search, Square } from "lucide-react";
+import { Sparkle, Brain, MagnifyingGlass, Stop } from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 export type LoadingStage = "searching" | "reasoning" | "synthesizing" | "completed";
@@ -33,7 +34,7 @@ export function ClaudeLoadingEffect({
 
     // Phase 1: Search & Index (0 - 800ms)
     setStage("searching");
-    setStageText("Searching React component templates & Lucide iconography...");
+    setStageText("Searching React component templates & Phosphor iconography...");
 
     // Phase 2: Reasoning (800ms - 1800ms)
     const t1 = setTimeout(() => {
@@ -65,20 +66,20 @@ export function ClaudeLoadingEffect({
       {/* Left: Stage Icon & Shimmering Status Text */}
       <div className="flex items-center gap-2.5 overflow-hidden">
         {stage === "searching" && (
-          <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 animate-thought-pulse">
-            <Search className="w-3 h-3 stroke-[2.5]" />
+          <div className="w-5 h-5 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <MotionIcon icon={MagnifyingGlass} size={13} weight="duotone" animation="bounce" />
           </div>
         )}
 
         {stage === "reasoning" && (
-          <div className="w-5 h-5 rounded-full bg-swiss-saffron-tint text-swiss-saffron-text flex items-center justify-center shrink-0 animate-thought-pulse">
-            <Brain className="w-3 h-3 stroke-[2.5]" />
+          <div className="w-5 h-5 rounded-full bg-swiss-saffron-tint text-swiss-saffron-text flex items-center justify-center shrink-0">
+            <MotionIcon icon={Brain} size={13} weight="duotone" animation="pulse" />
           </div>
         )}
 
         {stage === "synthesizing" && (
           <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <Sparkles className="w-3 h-3 text-emerald-600 animate-spin" style={{ animationDuration: "3s" }} />
+            <MotionIcon icon={Sparkle} size={13} weight="duotone" animation="spin" className="text-emerald-600" />
           </div>
         )}
 
@@ -112,7 +113,7 @@ export function ClaudeLoadingEffect({
             className="flex items-center gap-1 px-3 py-1 rounded-pill bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 text-[10px] font-bold uppercase transition-all shadow-sm font-frozen active:scale-95 tracking-wide"
             title="Stop generation (ESC)"
           >
-            <Square className="w-2.5 h-2.5 fill-current" />
+            <MotionIcon icon={Stop} size={11} weight="fill" animation="pulse" />
             <span>Stop</span>
           </button>
         )}
