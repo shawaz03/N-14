@@ -34,5 +34,12 @@ class TestChatMessageItem(unittest.TestCase):
         self.assertIn("COPY", content, "Must provide COPY action button")
         self.assertIn("MarkdownRenderer", content, "Must integrate MarkdownRenderer")
 
+    def test_ghost_card_suppression_on_empty_stream(self):
+        with open(self.component_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        self.assertIn("message.isStreaming", content, "Must check isStreaming to prevent ghost cards")
+        self.assertIn("return null", content, "Must return null when streaming with empty content")
+
 if __name__ == "__main__":
     unittest.main()

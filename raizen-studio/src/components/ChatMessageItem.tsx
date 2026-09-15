@@ -43,6 +43,12 @@ export function ChatMessageItem({
     );
   }
 
+  // If an assistant message is actively streaming but has not yet accumulated any tokens,
+  // suppress rendering the empty "ghost card" so the unboxed Quantum Orbital Triad can breathe.
+  if (message.isStreaming && (!message.content || !message.content.trim())) {
+    return null;
+  }
+
   // AI Assistant Message: Swiss Matte White Card with Hairline Borders
   return (
     <div className="w-full flex flex-col items-start my-4 select-text animate-in fade-in duration-200">
