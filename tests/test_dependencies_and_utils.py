@@ -23,7 +23,7 @@ class TestDependenciesAndUtils(unittest.TestCase):
         dev_deps = pkg.get("devDependencies", {})
 
         required_deps = [
-            "lucide-react",
+            "@phosphor-icons/react",
             "framer-motion",
             "react-markdown",
             "remark-gfm",
