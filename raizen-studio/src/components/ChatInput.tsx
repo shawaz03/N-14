@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Square, Trash2, Sliders } from "lucide-react";
+import {
+  PaperPlaneRight,
+  Stop,
+  Trash,
+  SlidersHorizontal,
+} from "@phosphor-icons/react";
+import { MotionIcon } from "./ui/MotionIcon";
 import { cn } from "../lib/utils";
 
 interface ChatInputProps {
@@ -105,10 +111,10 @@ export function ChatInput({
             <button
               type="button"
               onClick={onClearChat}
-              className="p-2 rounded-full hover:bg-red-50 text-swiss-muted hover:text-red-600 transition-colors"
+              className="p-2 rounded-full hover:bg-red-50 text-swiss-muted hover:text-red-600 transition-colors flex items-center justify-center"
               title="Clear Conversation"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <MotionIcon icon={Trash} size={15} weight="duotone" animation="bounce" />
             </button>
 
             {/* Temperature Settings Toggle */}
@@ -123,7 +129,7 @@ export function ChatInput({
               )}
               title="Model Sampling Temperature"
             >
-              <Sliders className="w-3.5 h-3.5" />
+              <MotionIcon icon={SlidersHorizontal} size={15} weight="duotone" animation="tilt" />
             </button>
 
             {/* Send or Stop Button */}
@@ -131,10 +137,10 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={onStopStreaming}
-                className="flex items-center gap-1 px-3.5 py-1.5 btn-glass-shine bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 btn-glass-shine bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen"
                 title="Stop generation (ESC)"
               >
-                <Square className="w-3 h-3 fill-current" />
+                <MotionIcon icon={Stop} size={13} weight="fill" animation="pulse" />
                 <span>STOP</span>
               </button>
             ) : (
@@ -151,7 +157,7 @@ export function ChatInput({
                 title="Send Message (Enter)"
               >
                 <span>SEND</span>
-                <Send className="w-3.5 h-3.5" />
+                <MotionIcon icon={PaperPlaneRight} size={14} weight="duotone" animation="glance" />
               </button>
             )}
           </div>
