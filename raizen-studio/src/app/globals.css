@@ -150,6 +150,38 @@ body {
   animation: terminal-cursor 1s infinite steps(2, start);
 }
 
+/* Quantum Orbital Triad (Gemini-Inspired Fluid Wave) */
+@keyframes orbit-triad-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  25% { transform: translate(6px, -4px) scale(1.2); opacity: 1; }
+  50% { transform: translate(12px, 0) scale(0.8); opacity: 0.5; }
+  75% { transform: translate(6px, 4px) scale(1.1); opacity: 0.8; }
+}
+
+@keyframes orbit-triad-2 {
+  0%, 100% { transform: translate(0, 0) scale(0.8); opacity: 0.5; }
+  25% { transform: translate(-6px, 4px) scale(1.1); opacity: 0.8; }
+  50% { transform: translate(0, 0) scale(1.2); opacity: 1; }
+  75% { transform: translate(6px, -4px) scale(0.9); opacity: 0.6; }
+}
+
+@keyframes orbit-triad-3 {
+  0%, 100% { transform: translate(0, 0) scale(1.1); opacity: 0.8; }
+  25% { transform: translate(6px, 4px) scale(0.8); opacity: 0.5; }
+  50% { transform: translate(-6px, 0) scale(1); opacity: 0.9; }
+  75% { transform: translate(-12px, -4px) scale(1.2); opacity: 1; }
+}
+
+.animate-orbit-triad-1 {
+  animation: orbit-triad-1 1.6s ease-in-out infinite;
+}
+.animate-orbit-triad-2 {
+  animation: orbit-triad-2 1.6s ease-in-out infinite;
+}
+.animate-orbit-triad-3 {
+  animation: orbit-triad-3 1.6s ease-in-out infinite;
+}
+
 /* Hairline Precision Borders */
 .hairline-border {
   border: 1px solid #E6E1D8;

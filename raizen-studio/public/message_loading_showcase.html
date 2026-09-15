@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAIZEN Studio — Message Loading & Thought Stream Visualizer</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Claude-style continuous kinetic star rotation */
+    @keyframes kineticSpin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.12); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* Claude / Gemini Shimmer text animation */
+    @keyframes textShimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* Gemini Quantum Orbit infinity wave */
+    @keyframes orbitDot1 {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
+      25% { transform: translate(6px, -4px) scale(1.2); opacity: 1; }
+      50% { transform: translate(12px, 0) scale(0.8); opacity: 0.5; }
+      75% { transform: translate(6px, 4px) scale(1.1); opacity: 0.8; }
+    }
+    @keyframes orbitDot2 {
+      0%, 100% { transform: translate(0, 0) scale(0.8); opacity: 0.5; }
+      25% { transform: translate(-6px, 4px) scale(1.1); opacity: 0.8; }
+      50% { transform: translate(0, 0) scale(1.2); opacity: 1; }
+      75% { transform: translate(6px, -4px) scale(0.9); opacity: 0.6; }
+    }
+    @keyframes orbitDot3 {
+      0%, 100% { transform: translate(0, 0) scale(1.1); opacity: 0.8; }
+      25% { transform: translate(6px, 4px) scale(0.8); opacity: 0.5; }
+      50% { transform: translate(-6px, 0) scale(1); opacity: 0.9; }
+      75% { transform: translate(-12px, -4px) scale(1.2); opacity: 1; }
+    }
+
+    /* Heartbeat Pulse for Reasoning Brain */
+    @keyframes heartbeatPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      14% { transform: scale(1.15); opacity: 1; }
+      28% { transform: scale(1); opacity: 0.9; }
+      42% { transform: scale(1.18); opacity: 1; }
+      70% { transform: scale(1); opacity: 0.9; }
+    }
+
+    /* Linear Hairline Laser Sweep */
+    @keyframes laserSweep {
+      0% { transform: translateX(-100%); opacity: 0; }
+      30% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(250%); opacity: 0; }
+    }
+
+    /* Soft aura glow */
+    @keyframes softGlow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.2)); }
+      50% { filter: drop-shadow(0 0 10px rgba(217, 119, 6, 0.6)); }
+    }
+
+    .animate-kinetic-spin {
+      animation: kineticSpin 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    .animate-heartbeat {
+      animation: heartbeatPulse 1.8s ease-in-out infinite;
+    }
+    .animate-laser {
+      animation: laserSweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+    .animate-glow {
+      animation: softGlow 2s ease-in-out infinite;
+    }
+
+    .shimmer-text-light {
+      background: linear-gradient(90deg, #71717A 0%, #D97706 50%, #71717A 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textShimmer 2.2s linear infinite;
+    }
+    .shimmer-text-dark {
+      background: linear-gradient(90deg, #A1A1AA 0%, #F59E0B 50%, #A1A1AA 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textShimmer 2.2s linear infinite;
+    }
+
+    .orbit-1 { animation: orbitDot1 1.6s ease-in-out infinite; }
+    .orbit-2 { animation: orbitDot2 1.6s ease-in-out infinite; }
+    .orbit-3 { animation: orbitDot3 1.6s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-[#0B0C0E] text-[#EDEDEE] font-sans antialiased p-4 sm:p-8 min-h-screen flex flex-col items-center justify-start select-none">
+
+  <!-- Header & Context -->
+  <div class="max-w-4xl w-full mb-6 text-center space-y-2.5">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#18191E] border border-[#2B2D35] text-xs font-mono text-amber-500 font-bold uppercase tracking-wider">
+      <span>✦ UI/UX Design Laboratory</span>
+      <span class="text-gray-600">|</span>
+      <span class="text-gray-400">Claude & Gemini Benchmark</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-mono uppercase">
+      RAIZEN Message Loading & Thought Stream
+    </h1>
+    <p class="text-xs sm:text-sm text-gray-400 max-w-2xl mx-auto leading-relaxed">
+      Interactive comparative showroom benchmarking the current boxy "ghost card" against 4 modern, unboxed, fluid loading animations engineered for Swiss Precision Obsidian & Saffron.
+    </p>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-4xl w-full space-y-6">
+
+    <!-- Concept Tabs Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-[#131418] p-2 rounded-2xl border border-[#252732]">
+      <div class="flex flex-wrap gap-1 text-xs font-mono">
+        <button onclick="switchConcept('current')" id="tab-current" class="tab-btn px-3 py-2 rounded-xl font-bold transition-all text-gray-400 hover:text-white">
+          Current (Before)
+        </button>
+        <button onclick="switchConcept('c1')" id="tab-c1" class="tab-btn px-3.5 py-2 rounded-xl font-bold transition-all bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          ★ 1. Kinetic Saffron Spark (Claude)
+        </button>
+        <button onclick="switchConcept('c2')" id="tab-c2" class="tab-btn px-3.5 py-2 rounded-xl font-bold transition-all text-gray-400 hover:text-white">
+          2. Quantum Orbital Triad (Gemini)
+        </button>
+        <button onclick="switchConcept('c3')" id="tab-c3" class="tab-btn px-3.5 py-2 rounded-xl font-bold transition-all text-gray-400 hover:text-white">
+          3. Morphing Thought Pill (o1)
+        </button>
+        <button onclick="switchConcept('c4')" id="tab-c4" class="tab-btn px-3.5 py-2 rounded-xl font-bold transition-all text-gray-400 hover:text-white">
+          4. Obsidian Shimmer Beam
+        </button>
+      </div>
+
+      <!-- Canvas Theme Toggle -->
+      <div class="flex items-center gap-2 pl-2 text-xs font-mono text-gray-400 border-l border-[#252732]">
+        <span>Canvas:</span>
+        <button onclick="toggleCanvasTheme('light')" id="theme-light-btn" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white text-black">
+          Light Studio
+        </button>
+        <button onclick="toggleCanvasTheme('dark')" id="theme-dark-btn" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-gray-400 hover:text-white">
+          Dark Obsidian
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive Simulator Surface -->
+    <div class="bg-[#15161A] border border-[#242630] rounded-2xl p-6 shadow-2xl space-y-6">
+      
+      <!-- Surface Controls & Action Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#252732] text-xs font-mono">
+        <div class="flex items-center gap-3">
+          <span class="text-gray-400 uppercase font-bold text-[11px]">Simulate User Query:</span>
+          <button onclick="setQuery('hi')" id="q-hi" class="px-3 py-1 rounded-lg bg-[#20222B] text-amber-400 border border-amber-500/30 hover:bg-[#282B36] font-bold transition-all">
+            "hi"
+          </button>
+          <button onclick="setQuery('complex')" id="q-complex" class="px-3 py-1 rounded-lg bg-[#20222B] text-gray-300 border border-transparent hover:bg-[#282B36] transition-all">
+            "Write a resilient useWebSocket hook with auto-reconnect"
+          </button>
+        </div>
+
+        <!-- Simulation State Actions -->
+        <div class="flex items-center gap-2">
+          <button onclick="triggerThinking()" id="btn-think" class="px-4 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase tracking-wider transition-all active:scale-95 shadow-md flex items-center gap-1.5">
+            <span>▶</span>
+            <span>Simulate Send</span>
+          </button>
+          <button onclick="triggerStream()" id="btn-stream" class="px-3.5 py-1.5 rounded-full bg-[#20222B] hover:bg-[#282B36] text-emerald-400 border border-emerald-500/30 font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5">
+            <span>⚡</span>
+            <span>Stream Tokens</span>
+          </button>
+          <button onclick="resetSimulator()" class="px-3 py-1.5 rounded-full bg-transparent hover:bg-[#20222B] text-gray-400 hover:text-white transition-all">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Chat Stage Canvas (Toggles Light/Dark) -->
+      <div id="chatCanvas" class="w-full rounded-xl p-5 sm:p-7 transition-all duration-300 min-h-[340px] flex flex-col justify-start bg-[#F8F9FA] text-[#121316] border border-[#E4E4E7]">
+
+        <!-- Simulated User Bubble -->
+        <div class="w-full flex flex-col items-end mb-5 select-text">
+          <div class="flex items-center gap-2 mb-1 text-[11px] font-mono">
+            <span class="text-amber-600 font-bold">SHAWAZ (You)</span>
+            <span class="text-gray-400">10:48:12 AM</span>
+          </div>
+          <div class="max-w-[80%] p-3.5 px-4 bg-amber-600 text-white text-sm font-medium rounded-2xl rounded-tr-sm shadow-sm">
+            <p id="userMessageContent" class="whitespace-pre-wrap font-sans">hi</p>
+          </div>
+        </div>
+
+        <!-- AI Stage Container (Dynamic according to Concept) -->
+        <div id="aiStageContainer" class="w-full transition-all duration-300">
+          <!-- Injected via JavaScript based on selected tab and state -->
+        </div>
+
+      </div>
+
+      <!-- Concept Architecture & Designer Rationale -->
+      <div id="conceptRationale" class="p-4 bg-[#111216] border border-[#22242D] rounded-xl text-xs font-mono space-y-2">
+        <!-- Injected via JS -->
+      </div>
+
+    </div>
+
+    <!-- Deep-Dive Comparison Matrix -->
+    <div class="bg-[#15161A] border border-[#242630] rounded-2xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center gap-2 text-sm font-mono font-bold text-amber-500 uppercase tracking-wider">
+        <span>⚡</span>
+        <span>Lead Designer Architectural Comparison</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs font-mono border-collapse">
+          <thead>
+            <tr class="border-b border-[#252732] text-gray-400">
+              <th class="py-2.5 px-3">Style Approach</th>
+              <th class="py-2.5 px-3">Visual Clutter</th>
+              <th class="py-2.5 px-3">Layout Continuity</th>
+              <th class="py-2.5 px-3">Brand Alignment</th>
+              <th class="py-2.5 px-3">Designer Rating</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#20222B] text-gray-300">
+            <tr class="bg-red-500/5">
+              <td class="py-3 px-3 font-bold text-red-400">Current (Before)</td>
+              <td class="py-3 px-3 text-red-300">High (Ghost card + double boxes)</td>
+              <td class="py-3 px-3 text-red-300">Jarring 160px layout jumps</td>
+              <td class="py-3 px-3 text-gray-400">Rigid containerization</td>
+              <td class="py-3 px-3 text-red-400 font-bold">2.5 / 10</td>
+            </tr>
+            <tr class="bg-amber-500/5">
+              <td class="py-3 px-3 font-bold text-amber-400">1. Kinetic Saffron Spark (Claude)</td>
+              <td class="py-3 px-3 text-emerald-400">Zero (Unboxed, pure typography)</td>
+              <td class="py-3 px-3 text-emerald-400">100% fluid inline stream</td>
+              <td class="py-3 px-3 text-amber-400">Swiss Saffron + Artisanal craftsmanship</td>
+              <td class="py-3 px-3 text-amber-400 font-bold">9.8 / 10 ★ (Recommended)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-bold text-cyan-400">2. Quantum Orbital Triad (Gemini)</td>
+              <td class="py-3 px-3 text-emerald-400">Zero (Floating harmonic dots)</td>
+              <td class="py-3 px-3 text-emerald-400">Direct inline handover</td>
+              <td class="py-3 px-3 text-gray-300">Whisper-quiet ambient AI</td>
+              <td class="py-3 px-3 text-cyan-400 font-bold">9.4 / 10</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-bold text-emerald-400">3. Morphing Thought Pill (o1)</td>
+              <td class="py-3 px-3 text-emerald-300">Very Low (32px frosted glass pill)</td>
+              <td class="py-3 px-3 text-emerald-400">Physical morph into ThoughtAccordion</td>
+              <td class="py-3 px-3 text-emerald-300">Deep Reasoning & Local QLoRA insight</td>
+              <td class="py-3 px-3 text-emerald-400 font-bold">9.7 / 10 ★ (High-Tech)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-bold text-purple-400">4. Obsidian Shimmer Beam</td>
+              <td class="py-3 px-3 text-gray-300">Low (1.5px laser sweep beam)</td>
+              <td class="py-3 px-3 text-purple-300">Laser morphs into card top border</td>
+              <td class="py-3 px-3 text-purple-300">Cybernetic mission telemetry</td>
+              <td class="py-3 px-3 text-purple-400 font-bold">8.9 / 10</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Inline Simulation Scripts -->
+  <script>
+    let activeConcept = 'c1';
+    let currentTheme = 'light';
+    let currentQuery = 'hi';
+    let currentState = 'thinking'; // 'idle', 'thinking', 'streaming'
+    let thoughtSeconds = 0;
+    let timerInterval = null;
+
+    const rationaleMap = {
+      'current': {
+        title: 'Current Implementation (Why It Fails UI/UX Standards)',
+        points: [
+          '⚠️ GHOST CARD: Prematurely renders an empty assistant card with [COPY] button and 7.61B badge before any text exists.',
+          '⚠️ DOUBLE-BOX FATIGUE: Renders a detached 2nd rectangular card below it with loud red [■ STOP] button.',
+          '⚠️ COGNITIVE LOAD: Over 160px of vertical space consumed by empty frames and repetitive headers for a simple "hi".'
+        ]
+      },
+      'c1': {
+        title: 'Concept 1: The Kinetic Saffron Spark (Claude-Style Artisanal Precision)',
+        points: [
+          '✦ ZERO GHOST CARDS: No empty containers or borders exist while contemplating.',
+          '✦ BESPOKE KINETIC STAR: An 8-point geometric Swiss star in Saffron Gold (#D97706) executing continuous kinetic rotation with spring breathing.',
+          '✦ DYNAMIC SHIMMER: Typography glides from "Contemplating..." to "Synthesizing logic..." with an iridescent saffron gradient shimmer.',
+          '✦ FLUID HANDOVER: The moment tokens arrive, the text seamlessly streams right from the star cursor point.'
+        ]
+      },
+      'c2': {
+        title: 'Concept 2: The Quantum Orbital Triad (Gemini-Style Fluid Wave)',
+        points: [
+          '● HARMONIC ORBIT: Three micro-dots orbit in an infinity wave trajectory with luminous decay trails.',
+          '● AMBIENT INTELLIGENCE: 100% borderless and native to the canvas, matching Google Gemini\'s clean conversational flow.',
+          '● SUBTLETY: Whisper-quiet, distraction-free waiting state with synchronized typography pulse.'
+        ]
+      },
+      'c3': {
+        title: 'Concept 3: Adaptive Morphing Thought Pill (Deep-Reasoning o1 / Claude 3.5 Sonnet)',
+        points: [
+          '🧠 COMPACT FROSTED PILL: A single 32px high tactile pill with duotone Brain heartbeat pulse and live elapsed timer.',
+          '✨ PHYSICAL MORPHING: Watch what happens when you click "Stream Tokens"—the pill physically shrinks and morphs directly into the collapsible ThoughtAccordion ("Thought for 2.4s ▾")!',
+          '⚡ ZERO WASTE: Highlights RAIZEN\'s local QLoRA inference reasoning without taking up full card space.'
+        ]
+      },
+      'c4': {
+        title: 'Concept 4: The Obsidian Shimmer Beam (Linear Swiss Architectural)',
+        points: [
+          '⚡ 1.5PX LASER HAIRLINE: An ultra-thin precision laser sweep pulsing across the text boundary.',
+          '📡 TELEMETRY BADGE: Micro duotone Lightning icon displaying live inference token velocity.',
+          '📐 ARCHITECTURAL CONTINUITY: The laser line physically becomes the top hairline border of the incoming response card.'
+        ]
+      }
+    };
+
+    function switchConcept(concept) {
+      activeConcept = concept;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-3.5 py-2 rounded-xl font-bold transition-all text-gray-400 hover:text-white';
+      });
+      const activeBtn = document.getElementById(`tab-${concept}`);
+      if (activeBtn) {
+        activeBtn.className = 'tab-btn px-3.5 py-2 rounded-xl font-bold transition-all bg-amber-500/20 text-amber-400 border border-amber-500/30';
+      }
+      renderStage();
+      renderRationale();
+    }
+
+    function toggleCanvasTheme(theme) {
+      currentTheme = theme;
+      const canvas = document.getElementById('chatCanvas');
+      const lightBtn = document.getElementById('theme-light-btn');
+      const darkBtn = document.getElementById('theme-dark-btn');
+
+      if (theme === 'light') {
+        canvas.className = 'w-full rounded-xl p-5 sm:p-7 transition-all duration-300 min-h-[340px] flex flex-col justify-start bg-[#F8F9FA] text-[#121316] border border-[#E4E4E7]';
+        lightBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white text-black';
+        darkBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold text-gray-400 hover:text-white';
+      } else {
+        canvas.className = 'w-full rounded-xl p-5 sm:p-7 transition-all duration-300 min-h-[340px] flex flex-col justify-start bg-[#121316] text-[#EDEDEE] border border-[#282A34]';
+        lightBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold text-gray-400 hover:text-white';
+        darkBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#282A34] text-white';
+      }
+      renderStage();
+    }
+
+    function setQuery(type) {
+      currentQuery = type;
+      const qHi = document.getElementById('q-hi');
+      const qComplex = document.getElementById('q-complex');
+      const userContent = document.getElementById('userMessageContent');
+
+      if (type === 'hi') {
+        userContent.innerText = 'hi';
+        qHi.className = 'px-3 py-1 rounded-lg bg-[#20222B] text-amber-400 border border-amber-500/30 hover:bg-[#282B36] font-bold transition-all';
+        qComplex.className = 'px-3 py-1 rounded-lg bg-[#20222B] text-gray-300 border border-transparent hover:bg-[#282B36] transition-all';
+      } else {
+        userContent.innerText = 'Write a resilient useWebSocket hook in TypeScript with exponential backoff auto-reconnect and ping heartbeat.';
+        qComplex.className = 'px-3 py-1 rounded-lg bg-[#20222B] text-amber-400 border border-amber-500/30 hover:bg-[#282B36] font-bold transition-all';
+        qHi.className = 'px-3 py-1 rounded-lg bg-[#20222B] text-gray-300 border border-transparent hover:bg-[#282B36] transition-all';
+      }
+      resetSimulator();
+    }
+
+    function triggerThinking() {
+      currentState = 'thinking';
+      thoughtSeconds = 0;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        thoughtSeconds += 0.1;
+        const timerElem = document.getElementById('liveTimer');
+        if (timerElem) {
+          timerElem.innerText = thoughtSeconds.toFixed(1) + 's';
+        }
+      }, 100);
+      renderStage();
+    }
+
+    function triggerStream() {
+      currentState = 'streaming';
+      clearInterval(timerInterval);
+      renderStage();
+    }
+
+    function resetSimulator() {
+      currentState = 'thinking';
+      thoughtSeconds = 0;
+      clearInterval(timerInterval);
+      triggerThinking();
+    }
+
+    function renderRationale() {
+      const r = rationaleMap[activeConcept];
+      const container = document.getElementById('conceptRationale');
+      container.innerHTML = `
+        <div class="text-amber-400 font-bold uppercase tracking-wider text-[11px] mb-1">${r.title}</div>
+        <ul class="space-y-1 text-gray-300">
+          ${r.points.map(p => `<li>${p}</li>`).join('')}
+        </ul>
+      `;
+    }
+
+    function renderStage() {
+      const container = document.getElementById('aiStageContainer');
+      const isDark = currentTheme === 'dark';
+      const isStreaming = currentState === 'streaming';
+      const sampleCodeResponse = currentQuery === 'hi' 
+        ? `Hello! I am **RAIZEN**, an enterprise full-stack architect engine fine-tuned for high-performance React, TypeScript, and microservice infrastructure. How can I assist your implementation today?`
+        : `Here is a resilient, enterprise-grade \`useWebSocket\` hook featuring exponential backoff reconnect and heartbeats:
+
+\`\`\`typescript
+export function useWebSocket(url: string, options?: WebSocketOptions) {
+  const [status, setStatus] = useState<ConnectionState>("connecting");
+  // Exponential backoff & auto-recovery logic...
+}
+\`\`\``;
+
+      // 1. CURRENT (BEFORE)
+      if (activeConcept === 'current') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <!-- Premature Ghost Card -->
+            <div class="${isDark ? 'bg-[#18191E] border-[#2E303B]' : 'bg-white border-[#E4E4E7]'} border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+              <div class="flex items-center justify-between border-b ${isDark ? 'border-[#2E303B]' : 'border-gray-200'} pb-2.5 text-[11px]">
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold text-[10px]">✦</div>
+                  <span class="font-bold tracking-wider uppercase font-mono ${isDark ? 'text-white' : 'text-black'}">RAIZEN Engine</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 font-bold font-mono">7.61B</span>
+                  <span class="text-gray-400 font-mono">10:48:12 AM</span>
+                </div>
+                <div class="flex items-center gap-2 font-mono">
+                  <button class="px-2.5 py-1 rounded-full border ${isDark ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-500'} text-[10.5px]">COPY</button>
+                </div>
+              </div>
+              <div class="text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}">
+                ${isStreaming ? sampleCodeResponse : '<div class="h-6 text-gray-400 italic text-xs flex items-center">(Empty body waiting for stream...)</div>'}
+              </div>
+            </div>
+
+            <!-- Detached Secondary Card -->
+            ${!isStreaming ? `
+              <div class="p-3.5 rounded-xl border ${isDark ? 'bg-[#18191E] border-[#2E303B]' : 'bg-white border-gray-200 shadow-sm'} flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2 text-emerald-600 font-medium">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                  <span class="truncate">Streaming zero-defect TypeScript via RAIZEN-7B QLoRA...</span>
+                </div>
+                <button class="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 border border-red-200 font-bold text-[11px] shrink-0">■ STOP</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+        return;
+      }
+
+      // 2. CONCEPT 1: KINETIC SAFFRON SPARK (CLAUDE-STYLE)
+      if (activeConcept === 'c1') {
+        if (!isStreaming) {
+          container.innerHTML = `
+            <div class="flex items-center gap-3 py-2 animate-in fade-in duration-200 font-sans">
+              <!-- Saffron Kinetic Star Asterisk (Claude inspired) -->
+              <div class="w-5 h-5 flex items-center justify-center text-amber-600 animate-kinetic-spin shrink-0 animate-glow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="2" x2="12" y2="22"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                  <line x1="19.07" y1="4.93" x2="4.93" y2="19.07"></line>
+                </svg>
+              </div>
+
+              <!-- Shimmering Text -->
+              <div class="flex items-center gap-2 text-sm font-medium">
+                <span class="${isDark ? 'shimmer-text-dark' : 'shimmer-text-light'} font-mono text-[13px] font-semibold">
+                  ${currentQuery === 'hi' ? 'Contemplating response...' : 'Synthesizing TypeScript AST structure...'}
+                </span>
+                <span class="text-gray-400 text-[11px] font-mono hover:text-gray-600 cursor-pointer" onclick="triggerStream()">(click to stream)</span>
+              </div>
+            </div>
+          `;
+        } else {
+          // Seamless transition directly into response!
+          container.innerHTML = `
+            <div class="${isDark ? 'bg-[#18191E] border-[#2E303B]' : 'bg-white border-[#E4E4E7]'} border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 animate-in fade-in duration-300">
+              <div class="flex items-center justify-between border-b ${isDark ? 'border-[#2E303B]' : 'border-gray-200'} pb-2.5 text-[11px]">
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold text-[10px]">✦</div>
+                  <span class="font-bold tracking-wider uppercase font-mono ${isDark ? 'text-white' : 'text-black'}">RAIZEN Engine</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 font-bold font-mono">7.61B</span>
+                  <span class="text-gray-400 font-mono">10:48:14 AM</span>
+                </div>
+                <div class="flex items-center gap-2 font-mono">
+                  <button class="px-2.5 py-1 rounded-full border ${isDark ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-500'} text-[10.5px]">COPY</button>
+                </div>
+              </div>
+              <div class="text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'} leading-relaxed whitespace-pre-wrap font-sans">
+                ${sampleCodeResponse}
+              </div>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // 3. CONCEPT 2: QUANTUM ORBITAL TRIAD (GEMINI-STYLE)
+      if (activeConcept === 'c2') {
+        if (!isStreaming) {
+          container.innerHTML = `
+            <div class="flex items-center gap-3 py-2 animate-in fade-in duration-200 font-sans">
+              <!-- Gemini Triad Orbit Cluster -->
+              <div class="relative w-6 h-6 flex items-center justify-center shrink-0">
+                <span class="orbit-1 absolute w-2 h-2 rounded-full bg-amber-500"></span>
+                <span class="orbit-2 absolute w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                <span class="orbit-3 absolute w-2 h-2 rounded-full ${isDark ? 'bg-cyan-400' : 'bg-gray-800'}"></span>
+              </div>
+
+              <!-- Status Typography -->
+              <div class="flex items-center gap-2 text-sm font-medium">
+                <span class="${isDark ? 'text-gray-300' : 'text-gray-700'} font-mono text-[13px]">
+                  ${currentQuery === 'hi' ? 'Formulating greeting...' : 'Resolving dependencies & components...'}
+                </span>
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="${isDark ? 'bg-[#18191E] border-[#2E303B]' : 'bg-white border-[#E4E4E7]'} border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 animate-in fade-in duration-300">
+              <div class="flex items-center justify-between border-b ${isDark ? 'border-[#2E303B]' : 'border-gray-200'} pb-2.5 text-[11px]">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold tracking-wider uppercase font-mono ${isDark ? 'text-white' : 'text-black'}">RAIZEN Engine</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 font-bold font-mono">Quantum</span>
+                </div>
+              </div>
+              <div class="text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'} leading-relaxed whitespace-pre-wrap font-sans">
+                ${sampleCodeResponse}
+              </div>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // 4. CONCEPT 3: MORPHING THOUGHT PILL (DEEP-REASONING O1)
+      if (activeConcept === 'c3') {
+        if (!isStreaming) {
+          container.innerHTML = `
+            <div class="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full ${isDark ? 'bg-[#18191F] border-[#2F313E] text-white' : 'bg-white border-gray-200 text-gray-800 shadow-sm'} border transition-all text-xs font-mono">
+              <!-- Heartbeat Brain Icon -->
+              <div class="w-5 h-5 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center animate-heartbeat shrink-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0-4 4 4 4 0 0 0 4 4v1a4 4 0 0 0 4 4 4 4 0 0 0 4-4v-1a4 4 0 0 0 4-4 4 4 0 0 0-4-4V6a4 4 0 0 0-4-4z"></path>
+                </svg>
+              </div>
+
+              <!-- Stage Text -->
+              <span class="${isDark ? 'shimmer-text-dark' : 'shimmer-text-light'} font-bold">
+                Thinking & AST Analysis...
+              </span>
+
+              <!-- Live Stopwatch Timer -->
+              <span id="liveTimer" class="px-2 py-0.5 rounded-full bg-black/5 text-gray-500 font-mono text-[11px] font-bold">
+                ${thoughtSeconds.toFixed(1)}s
+              </span>
+
+              <!-- Micro Stop CTA -->
+              <button onclick="triggerStream()" title="Stop thinking and stream answer" class="w-4 h-4 rounded-full bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center text-[8px] transition-all">
+                ■
+              </button>
+            </div>
+          `;
+        } else {
+          // Pill physically morphed into ThoughtAccordion!
+          container.innerHTML = `
+            <div class="space-y-3">
+              <!-- Morphed Accordion -->
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full ${isDark ? 'bg-[#18191E] border-[#2F313E] text-gray-400' : 'bg-gray-100 border-gray-200 text-gray-600'} border text-[11px] font-mono cursor-pointer hover:border-amber-500/40 transition-all">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <span class="font-bold text-amber-600">Thought for ${thoughtSeconds > 0 ? thoughtSeconds.toFixed(1) : '2.1'} seconds</span>
+                <span class="text-gray-400 text-[10px]">(click to expand 8 thoughts)</span>
+              </div>
+
+              <!-- Streamed Response Card -->
+              <div class="${isDark ? 'bg-[#18191E] border-[#2E303B]' : 'bg-white border-[#E4E4E7]'} border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 animate-in fade-in duration-300">
+                <div class="flex items-center justify-between border-b ${isDark ? 'border-[#2E303B]' : 'border-gray-200'} pb-2.5 text-[11px]">
+                  <div class="flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-md bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold text-[10px]">✦</div>
+                    <span class="font-bold tracking-wider uppercase font-mono ${isDark ? 'text-white' : 'text-black'}">RAIZEN Engine</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 font-bold font-mono">7.61B</span>
+                  </div>
+                  <button class="px-2.5 py-1 rounded-full border ${isDark ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-500'} text-[10.5px]">COPY</button>
+                </div>
+                <div class="text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'} leading-relaxed whitespace-pre-wrap font-sans">
+                  ${sampleCodeResponse}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // 5. CONCEPT 4: OBSIDIAN SHIMMER BEAM
+      if (activeConcept === 'c4') {
+        if (!isStreaming) {
+          container.innerHTML = `
+            <div class="w-full space-y-2 py-2">
+              <!-- Precision Hairline Laser -->
+              <div class="relative w-full h-[2px] bg-gray-300/40 overflow-hidden rounded-full">
+                <div class="w-1/3 h-full bg-gradient-to-r from-transparent via-amber-500 to-transparent animate-laser"></div>
+              </div>
+              <div class="flex items-center justify-between text-xs font-mono text-gray-500">
+                <div class="flex items-center gap-2">
+                  <span class="text-amber-500 font-bold">⚡</span>
+                  <span class="text-[11px] font-bold ${isDark ? 'text-gray-300' : 'text-gray-700'}">Inference Engine Initializing...</span>
+                </div>
+                <span class="text-[10.5px]">14.8 tok/s ready</span>
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="${isDark ? 'bg-[#18191E] border-t-2 border-t-amber-500 border-[#2E303B]' : 'bg-white border-t-2 border-t-amber-500 border-[#E4E4E7]'} border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 animate-in fade-in duration-300">
+              <div class="flex items-center justify-between pb-2 text-[11px]">
+                <span class="font-bold tracking-wider uppercase font-mono ${isDark ? 'text-white' : 'text-black'}">RAIZEN Engine</span>
+                <span class="text-emerald-500 font-mono text-[10px]">16.2 tok/s</span>
+              </div>
+              <div class="text-sm ${isDark ? 'text-gray-200' : 'text-gray-800'} leading-relaxed whitespace-pre-wrap font-sans">
+                ${sampleCodeResponse}
+              </div>
+            </div>
+          `;
+        }
+        return;
+      }
+    }
+
+    // Initialize
+    switchConcept('c1');
+    triggerThinking();
+  </script>
+
+</body>
+</html>
