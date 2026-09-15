@@ -18,9 +18,12 @@ export interface ConnectionState {
   modelInfo: HealthResponse | null;
   lastChecked: Date | null;
   errorMessage: string | null;
+  justConnected?: boolean;
 }
 
 export interface UseRaizenConnectionReturn extends ConnectionState {
+  justConnected: boolean;
+  resetJustConnected: () => void;
   setTunnelUrl: (url: string) => void;
   connect: (urlOverride?: string) => Promise<boolean>;
   disconnect: () => void;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import confetti from "canvas-confetti";
 import {
   ConnectionStatus,
   HealthResponse,
@@ -40,8 +39,18 @@ export function useRaizenConnection(): UseRaizenConnectionReturn {
   const [modelInfo, setModelInfo] = useState<HealthResponse | null>(null);
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [justConnected, setJustConnected] = useState<boolean>(false);
 
   const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
+  const justConnectedTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetJustConnected = useCallback(() => {
+    if (justConnectedTimerRef.current) {
+      clearTimeout(justConnectedTimerRef.current);
+      justConnectedTimerRef.current = null;
+    }
+    setJustConnected(false);
+  }, []);
 
   // Set URL and update localStorage
   const setTunnelUrl = useCallback((url: string) => {
@@ -97,18 +106,16 @@ export function useRaizenConnection(): UseRaizenConnectionReturn {
         setLastChecked(new Date());
         setErrorMessage(null);
 
-        // Trigger celebratory confetti on initial successful connection
+        // Trigger Neural Conduit & Telemetry activation effect on initial connection
         if (triggerCelebration) {
-          try {
-            confetti({
-              particleCount: 50,
-              spread: 60,
-              origin: { y: 0.1 },
-              colors: ["#EA580C", "#FAF8F5", "#121316", "#CCFF00"],
-            });
-          } catch {
-            // Ignore confetti errors in non-browser envs
+          if (justConnectedTimerRef.current) {
+            clearTimeout(justConnectedTimerRef.current);
           }
+          setJustConnected(true);
+          justConnectedTimerRef.current = setTimeout(() => {
+            setJustConnected(false);
+            justConnectedTimerRef.current = null;
+          }, 3800);
         }
 
         return true;
@@ -186,6 +193,10 @@ export function useRaizenConnection(): UseRaizenConnectionReturn {
           clearInterval(heartbeatRef.current);
           heartbeatRef.current = null;
         }
+        if (justConnectedTimerRef.current) {
+          clearTimeout(justConnectedTimerRef.current);
+          justConnectedTimerRef.current = null;
+        }
       };
     }
   }, [status, tunnelUrl, checkHealthWithUrl]);
@@ -197,6 +208,8 @@ export function useRaizenConnection(): UseRaizenConnectionReturn {
     modelInfo,
     lastChecked,
     errorMessage,
+    justConnected,
+    resetJustConnected,
     setTunnelUrl,
     connect,
     disconnect,

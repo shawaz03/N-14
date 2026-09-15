@@ -23,6 +23,7 @@ class TestConnectionHook(unittest.TestCase):
         self.assertIn('"disconnected" | "connecting" | "connected" | "error"', content)
         self.assertIn("interface HealthResponse", content, "Must define HealthResponse")
         self.assertIn("interface UseRaizenConnectionReturn", content, "Must define UseRaizenConnectionReturn")
+        self.assertIn("justConnected", content, "Must declare justConnected in types")
 
     def test_hook_exports_and_sanitizer(self):
         self.assertTrue(os.path.exists(self.hook_file), "useRaizenConnection.ts must exist")
@@ -40,13 +41,13 @@ class TestConnectionHook(unittest.TestCase):
         self.assertIn("180000", content, "Must specify 180,000ms (180s) keep-alive heartbeat interval")
         self.assertIn("`${sanitized}/health`", content, "Must ping /health endpoint")
 
-    def test_confetti_and_error_handling(self):
+    def test_telemetry_activation_and_error_handling(self):
         with open(self.hook_file, "r", encoding="utf-8") as f:
             content = f.read()
 
-        self.assertIn("canvas-confetti", content, "Must import canvas-confetti for connection celebration")
+        self.assertIn("justConnected", content, "Must export justConnected state for Neural Conduit activation")
+        self.assertIn("resetJustConnected", content, "Must export resetJustConnected callback")
         self.assertIn("AbortController", content, "Must configure timeout with AbortController")
-        self.assertIn("#CCFF00", content, "Must include Acid Lime in celebration colors")
 
 if __name__ == "__main__":
     unittest.main()
