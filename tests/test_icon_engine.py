@@ -194,7 +194,27 @@ class TestIconEngine(unittest.TestCase):
                         violations.append(filepath)
         self.assertEqual(violations, [], f"Found lingering lucide-react imports: {violations}")
 
+    def test_neural_conduit_beam_component(self):
+        beam_path = os.path.abspath('raizen-studio/src/components/ui/NeuralConduitBeam.tsx')
+        header_path = os.path.abspath('raizen-studio/src/components/Header.tsx')
+
+        self.assertTrue(os.path.exists(beam_path), "NeuralConduitBeam.tsx must exist")
+        with open(beam_path, 'r', encoding='utf-8') as f:
+            beam_content = f.read()
+
+        self.assertIn('NeuralConduitBeam', beam_content)
+        self.assertIn('TUNNEL LOCKED', beam_content)
+        self.assertIn('TESLA T4 GPU', beam_content)
+        self.assertIn('framer-motion', beam_content)
+
+        with open(header_path, 'r', encoding='utf-8') as f:
+            header_content = f.read()
+
+        self.assertIn('NeuralConduitBeam', header_content, "Header must integrate NeuralConduitBeam")
+        self.assertIn('animate-ping', header_content, "Header must render radar ping beacon")
+
 if __name__ == '__main__':
     unittest.main()
+
 
 

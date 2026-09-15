@@ -10,7 +10,9 @@ import {
   Sparkle,
 } from "@phosphor-icons/react";
 import { MotionIcon } from "./ui/MotionIcon";
+import { NeuralConduitBeam } from "./ui/NeuralConduitBeam";
 import { UseRaizenConnectionReturn } from "../types/connection";
+import { cn } from "../lib/utils";
 
 interface HeaderProps {
   connection: UseRaizenConnectionReturn;
@@ -63,9 +65,18 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
         <div className="flex-1 max-w-2xl hidden md:flex items-center gap-2">
           <form
             onSubmit={handleConnectSubmit}
-            className="w-full flex items-center bg-swiss-canvas border border-swiss-border hover:border-swiss-border-card focus-within:border-swiss-saffron transition-colors rounded-pill p-1 shadow-sm"
+            className={cn(
+              "w-full flex items-center bg-swiss-canvas border border-swiss-border hover:border-swiss-border-card focus-within:border-swiss-saffron transition-all rounded-pill p-1 shadow-sm relative overflow-hidden",
+              connection.justConnected && "ring-2 ring-emerald-500/50 shadow-[0_0_24px_rgba(16,185,129,0.35)]"
+            )}
           >
-            <div className="px-2 text-swiss-muted flex items-center gap-1.5 font-mono text-xs shrink-0">
+            {/* Neural Conduit Laser Beam & Floating HUD */}
+            <NeuralConduitBeam
+              isActive={!!connection.justConnected}
+              latencyMs={connection.latencyMs}
+            />
+
+            <div className="px-2 text-swiss-muted flex items-center gap-1.5 font-mono text-xs shrink-0 relative z-20">
               <MotionIcon icon={TerminalWindow} size={15} weight="duotone" className="text-swiss-saffron" />
               <span>TUNNEL:</span>
             </div>
@@ -77,14 +88,14 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
                 setIsEditing(true);
               }}
               placeholder="Paste Cloudflare URL (e.g. https://*.trycloudflare.com)"
-              className="w-full bg-transparent font-mono text-xs text-swiss-ink placeholder:text-swiss-muted/60 focus:outline-none px-2"
+              className="w-full bg-transparent font-mono text-xs text-swiss-ink placeholder:text-swiss-muted/60 focus:outline-none px-2 relative z-20"
             />
             {connection.status === "connected" && !isEditing ? (
               <button
                 type="button"
                 onClick={() => connection.checkHealth()}
                 title="Refresh connection status"
-                className="px-2.5 py-1 btn-glass-light btn-glass-shine text-swiss-body hover:text-swiss-ink font-mono text-[10px] rounded-pill flex items-center gap-1.5 shrink-0 transition-all"
+                className="px-2.5 py-1 btn-glass-light btn-glass-shine text-swiss-body hover:text-swiss-ink font-mono text-[10px] rounded-pill flex items-center gap-1.5 shrink-0 transition-all relative z-20"
               >
                 <MotionIcon icon={ArrowClockwise} size={13} weight="bold" animation="spin" />
                 <span>PING</span>
@@ -93,7 +104,7 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
               <button
                 type="submit"
                 disabled={connection.status === "connecting" || !inputUrl.trim()}
-                className="px-4 py-1 btn-glass-dark btn-glass-shine text-white font-frozen font-bold text-xs rounded-pill shrink-0 transition-all active:scale-95 disabled:opacity-50"
+                className="px-4 py-1 btn-glass-dark btn-glass-shine text-white font-frozen font-bold text-xs rounded-pill shrink-0 transition-all active:scale-95 disabled:opacity-50 relative z-20"
               >
                 {connection.status === "connecting" ? "LINKING..." : "CONNECT"}
               </button>
@@ -104,7 +115,10 @@ export function Header({ connection, onOpenColabModal }: HeaderProps) {
           <div className="shrink-0 flex items-center gap-1.5 px-3 py-1 bg-white border border-swiss-border rounded-pill font-mono text-[11px]">
             {connection.status === "connected" ? (
               <>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="relative flex items-center justify-center w-2.5 h-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                </div>
                 <span className="text-emerald-700 font-bold uppercase font-frozen text-[10px]">
                   ONLINE
                 </span>
