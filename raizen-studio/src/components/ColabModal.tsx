@@ -68,7 +68,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -85,24 +85,24 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 8 }}
             transition={{ duration: 0.15 }}
-            className="relative w-full max-w-2xl bg-white border border-swiss-border rounded-2xl text-swiss-ink shadow-swiss-lg z-10 overflow-hidden font-sans select-none"
+            className="relative w-full max-w-2xl max-h-[90dvh] flex flex-col bg-white border border-swiss-border rounded-2xl text-swiss-ink shadow-swiss-lg z-10 overflow-hidden font-sans select-none"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-swiss-border">
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 rounded-md bg-swiss-saffron-tint text-swiss-saffron-text font-extrabold flex items-center justify-center font-frozen">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-white border-b border-swiss-border shrink-0">
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <div className="w-6 h-6 rounded-md bg-swiss-saffron-tint text-swiss-saffron-text font-extrabold flex items-center justify-center font-frozen shrink-0">
                   <MotionIcon icon={Sparkle} size={13} weight="duotone" animation="pulse" />
                 </div>
-                <span className="font-extrabold text-sm sm:text-base text-swiss-ink tracking-wider font-frozen uppercase">
+                <span className="font-extrabold text-xs sm:text-base text-swiss-ink tracking-wider font-frozen uppercase truncate">
                   LAUNCH RAIZEN GPU ENGINE
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text border border-swiss-border font-frozen tracking-wide">
+                <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-pill bg-swiss-saffron-tint text-swiss-saffron-text border border-swiss-border font-frozen tracking-wide shrink-0">
                   $0 / MONTH
                 </span>
               </div>
               <button
                 onClick={onClose}
-                className="text-swiss-muted hover:text-swiss-ink p-1.5 rounded-full hover:bg-swiss-canvas transition-colors flex items-center justify-center"
+                className="text-swiss-muted hover:text-swiss-ink p-1.5 rounded-full hover:bg-swiss-canvas transition-colors flex items-center justify-center shrink-0"
                 title="Close Modal (Esc)"
               >
                 <MotionIcon icon={X} size={16} weight="bold" animation="bounce" />
@@ -110,7 +110,7 @@ export function ColabModal({ isOpen, onClose, connection }: ColabModalProps) {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto">
               {/* Architecture Intro */}
               <div className="p-4 bg-swiss-canvas border border-swiss-border rounded-xl flex items-start gap-3.5">
                 <div className="w-8 h-8 rounded-lg bg-swiss-saffron-tint text-swiss-saffron flex items-center justify-center shrink-0 mt-0.5">

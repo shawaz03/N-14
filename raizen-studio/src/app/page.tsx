@@ -28,6 +28,7 @@ export type WorkspaceTab = "chat" | "explore" | "history" | "saved";
 export default function RaizenStudioPage() {
   const [activeTab, setActiveTab] = useState<WorkspaceTab>("chat");
   const [isColabModalOpen, setIsColabModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { toasts, showToast, dismissToast } = useToast();
 
   const connection = useRaizenConnection();
@@ -79,6 +80,7 @@ export default function RaizenStudioPage() {
     history.createSession("New Architectural Session", []);
     clearMessages();
     setActiveTab("chat");
+    setIsMobileMenuOpen(false);
     showToast("Started fresh chat session", "info", "NEW SESSION");
   };
 
@@ -86,6 +88,7 @@ export default function RaizenStudioPage() {
     history.switchSession(session.id);
     setMessages(session.messages);
     setActiveTab("chat");
+    setIsMobileMenuOpen(false);
     showToast(`Resumed: ${session.title}`, "info", "SESSION RESTORED");
   };
 
@@ -122,12 +125,15 @@ export default function RaizenStudioPage() {
 
   return (
     <div className="flex flex-col h-screen h-[100dvh] w-full min-h-0 bg-swiss-canvas text-swiss-ink overflow-hidden font-sans select-none">
-      {/* 1. Top Obsidian Precision Telemetry Bar */}
+      {/* 1. Top Obsidian Precision Telemetry Bar & Mobile Header */}
       <StatusBar
         connection={connection}
         tokenCount={totalTokens}
         tokensPerSec={tokensPerSec}
         isStreaming={isStreaming}
+        onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+        onOpenColabModal={() => setIsColabModalOpen(true)}
+        onNewChat={handleStartNewSession}
       />
 
       {/* 2. Main Studio Canvas (Sidebar + Dynamic Workspace Canvas) */}
@@ -135,9 +141,17 @@ export default function RaizenStudioPage() {
         {/* Left Collapsible Architectural Navigation Drawer */}
         <Sidebar
           activeTab={activeTab}
-          onSelectTab={(tabId) => setActiveTab(tabId as WorkspaceTab)}
+          onSelectTab={(tabId) => {
+            setActiveTab(tabId as WorkspaceTab);
+            setIsMobileMenuOpen(false);
+          }}
           onNewChat={handleStartNewSession}
-          onOpenColabModal={() => setIsColabModalOpen(true)}
+          onOpenColabModal={() => {
+            setIsColabModalOpen(true);
+            setIsMobileMenuOpen(false);
+          }}
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
         />
 
         {/* Dynamic Center Canvas View */}
@@ -235,7 +249,7 @@ export default function RaizenStudioPage() {
               </div>
 
               {/* Floating Command Bar Input Dock */}
-              <div className="w-full bg-gradient-to-t from-swiss-canvas via-swiss-canvas to-transparent pt-4 pb-5 px-4 md:px-8 shrink-0">
+              <div className="w-full bg-gradient-to-t from-swiss-canvas via-swiss-canvas to-transparent pt-3 pb-4 md:pb-5 px-3 md:px-8 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
                 <div className="max-w-4xl mx-auto">
                   <ChatInput
                     onSendMessage={handleSendMessage}

@@ -137,7 +137,7 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={onStopStreaming}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 btn-glass-shine bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen"
+                className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 btn-glass-shine bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-pill uppercase transition-all shadow-sm active:scale-95 font-frozen shrink-0"
                 title="Stop generation (ESC)"
               >
                 <MotionIcon icon={Stop} size={13} weight="fill" animation="pulse" />
@@ -149,7 +149,7 @@ export function ChatInput({
                 onClick={handleSend}
                 disabled={disabled || !input.trim()}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-pill font-bold text-xs uppercase tracking-wider transition-all font-frozen",
+                  "flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-pill font-bold text-xs uppercase tracking-wider transition-all font-frozen shrink-0",
                   input.trim() && !disabled
                     ? "btn-glass-dark btn-glass-shine text-white cursor-pointer active:scale-95"
                     : "bg-swiss-border text-swiss-muted cursor-not-allowed opacity-60"
