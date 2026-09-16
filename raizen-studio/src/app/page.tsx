@@ -121,7 +121,7 @@ export default function RaizenStudioPage() {
   });
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-swiss-canvas text-swiss-ink overflow-hidden font-sans select-none">
+    <div className="flex flex-col h-screen h-[100dvh] w-full min-h-0 bg-swiss-canvas text-swiss-ink overflow-hidden font-sans select-none">
       {/* 1. Top Obsidian Precision Telemetry Bar */}
       <StatusBar
         connection={connection}
